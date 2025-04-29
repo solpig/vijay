@@ -1,5 +1,5 @@
 {
-  "address": "coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF",
+  "address": "HQY5kLNtUJkEiArKxDyrkCKHBtK8pDFGUBifrGFjtLDt",
   "metadata": {
     "name": "vijay",
     "version": "0.1.0",
@@ -8,150 +8,182 @@
   },
   "instructions": [
     {
-      "name": "close",
+      "name": "client_init",
       "discriminator": [
-        98,
-        165,
-        201,
-        177,
-        108,
-        65,
-        206,
-        96
+        200,
+        42,
+        82,
+        229,
+        253,
+        91,
+        189,
+        184
       ],
       "accounts": [
         {
-          "name": "payer",
+          "name": "signer",
           "writable": true,
           "signer": true
         },
         {
-          "name": "vijay",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "decrement",
-      "discriminator": [
-        106,
-        227,
-        168,
-        59,
-        248,
-        27,
-        150,
-        101
-      ],
-      "accounts": [
-        {
-          "name": "vijay",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "increment",
-      "discriminator": [
-        11,
-        18,
-        104,
-        9,
-        104,
-        174,
-        59,
-        33
-      ],
-      "accounts": [
-        {
-          "name": "vijay",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "initialize",
-      "discriminator": [
-        175,
-        175,
-        109,
-        31,
-        13,
-        152,
-        155,
-        237
-      ],
-      "accounts": [
-        {
-          "name": "payer",
+          "name": "client",
           "writable": true,
-          "signer": true
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
         },
         {
-          "name": "vijay",
+          "name": "client_report_card",
           "writable": true,
-          "signer": true
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
         },
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
-      "args": []
-    },
-    {
-      "name": "set",
-      "discriminator": [
-        198,
-        51,
-        53,
-        241,
-        116,
-        29,
-        126,
-        194
-      ],
-      "accounts": [
-        {
-          "name": "vijay",
-          "writable": true
-        }
-      ],
       "args": [
         {
-          "name": "value",
-          "type": "u8"
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "domain",
+          "type": "string"
+        },
+        {
+          "name": "required_skills",
+          "type": "string"
+        },
+        {
+          "name": "contact_details",
+          "type": "string"
         }
       ]
     }
   ],
   "accounts": [
     {
-      "name": "Vijay",
+      "name": "Client",
       "discriminator": [
-        255,
-        176,
+        221,
+        237,
+        145,
+        143,
+        170,
+        194,
+        133,
+        115
+      ]
+    },
+    {
+      "name": "ClientReportCard",
+      "discriminator": [
+        152,
+        9,
+        86,
+        14,
+        195,
+        112,
         4,
-        245,
-        188,
-        253,
-        124,
-        25
+        187
       ]
     }
   ],
   "types": [
     {
-      "name": "Vijay",
+      "name": "Client",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "count",
-            "type": "u8"
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "domain",
+            "type": "string"
+          },
+          {
+            "name": "contact_details",
+            "type": "string"
+          },
+          {
+            "name": "required_skills",
+            "type": "string"
+          },
+          {
+            "name": "project_counter",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ClientReportCard",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "total_projects",
+            "type": "u64"
+          },
+          {
+            "name": "withdrawn",
+            "type": "u64"
+          },
+          {
+            "name": "transferred",
+            "type": "u64"
+          },
+          {
+            "name": "success_rate",
+            "type": "f64"
+          },
+          {
+            "name": "risk_score",
+            "type": "f64"
           }
         ]
       }

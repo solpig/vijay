@@ -21,7 +21,7 @@ export function getVijayProgramId(cluster: Cluster) {
     case 'devnet':
     case 'testnet':
       // This is the program ID for the Vijay program on devnet and testnet.
-      return new PublicKey('coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF')
+      return new PublicKey('HQY5kLNtUJkEiArKxDyrkCKHBtK8pDFGUBifrGFjtLDt')
     case 'mainnet-beta':
     default:
       return VIJAY_PROGRAM_ID

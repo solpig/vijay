@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-vijay = "coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF"
+vijay = "HQY5kLNtUJkEiArKxDyrkCKHBtK8pDFGUBifrGFjtLDt"
 
 [registry]
 url = "https://api.apr.dev"

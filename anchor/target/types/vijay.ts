@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/vijay.json`.
  */
 export type Vijay = {
-  "address": "coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF",
+  "address": "HQY5kLNtUJkEiArKxDyrkCKHBtK8pDFGUBifrGFjtLDt",
   "metadata": {
     "name": "vijay",
     "version": "0.1.0",
@@ -14,150 +14,182 @@ export type Vijay = {
   },
   "instructions": [
     {
-      "name": "close",
+      "name": "clientInit",
       "discriminator": [
-        98,
-        165,
-        201,
-        177,
-        108,
-        65,
-        206,
-        96
+        200,
+        42,
+        82,
+        229,
+        253,
+        91,
+        189,
+        184
       ],
       "accounts": [
         {
-          "name": "payer",
+          "name": "signer",
           "writable": true,
           "signer": true
         },
         {
-          "name": "vijay",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "decrement",
-      "discriminator": [
-        106,
-        227,
-        168,
-        59,
-        248,
-        27,
-        150,
-        101
-      ],
-      "accounts": [
-        {
-          "name": "vijay",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "increment",
-      "discriminator": [
-        11,
-        18,
-        104,
-        9,
-        104,
-        174,
-        59,
-        33
-      ],
-      "accounts": [
-        {
-          "name": "vijay",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "initialize",
-      "discriminator": [
-        175,
-        175,
-        109,
-        31,
-        13,
-        152,
-        155,
-        237
-      ],
-      "accounts": [
-        {
-          "name": "payer",
+          "name": "client",
           "writable": true,
-          "signer": true
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
         },
         {
-          "name": "vijay",
+          "name": "clientReportCard",
           "writable": true,
-          "signer": true
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
         },
         {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
       ],
-      "args": []
-    },
-    {
-      "name": "set",
-      "discriminator": [
-        198,
-        51,
-        53,
-        241,
-        116,
-        29,
-        126,
-        194
-      ],
-      "accounts": [
-        {
-          "name": "vijay",
-          "writable": true
-        }
-      ],
       "args": [
         {
-          "name": "value",
-          "type": "u8"
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "domain",
+          "type": "string"
+        },
+        {
+          "name": "requiredSkills",
+          "type": "string"
+        },
+        {
+          "name": "contactDetails",
+          "type": "string"
         }
       ]
     }
   ],
   "accounts": [
     {
-      "name": "vijay",
+      "name": "client",
       "discriminator": [
-        255,
-        176,
+        221,
+        237,
+        145,
+        143,
+        170,
+        194,
+        133,
+        115
+      ]
+    },
+    {
+      "name": "clientReportCard",
+      "discriminator": [
+        152,
+        9,
+        86,
+        14,
+        195,
+        112,
         4,
-        245,
-        188,
-        253,
-        124,
-        25
+        187
       ]
     }
   ],
   "types": [
     {
-      "name": "vijay",
+      "name": "client",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "count",
-            "type": "u8"
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "domain",
+            "type": "string"
+          },
+          {
+            "name": "contactDetails",
+            "type": "string"
+          },
+          {
+            "name": "requiredSkills",
+            "type": "string"
+          },
+          {
+            "name": "projectCounter",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "clientReportCard",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "totalProjects",
+            "type": "u64"
+          },
+          {
+            "name": "withdrawn",
+            "type": "u64"
+          },
+          {
+            "name": "transferred",
+            "type": "u64"
+          },
+          {
+            "name": "successRate",
+            "type": "f64"
+          },
+          {
+            "name": "riskScore",
+            "type": "f64"
           }
         ]
       }
