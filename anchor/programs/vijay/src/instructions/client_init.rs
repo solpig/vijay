@@ -1,23 +1,28 @@
 use anchor_lang::prelude::*;
 
-pub fn handler(ctx: Context<ClientInfo>, name: String, domain: String, required_skills: String, contact_details: String) -> Result<()> {
-    
+pub fn initialize_client(
+    ctx: Context<ClientInfo>,
+    name: String,
+    domain: String,
+    required_skills: String,
+    contact_details: String,
+) -> Result<()> {
     // creating custom client account
     let client = &mut ctx.accounts.client;
     client.name = name;
     client.domain = domain;
     client.required_skills = required_skills;
-    client.contact_details = contact_details;
+    client.contact = contact_details;
     client.project_counter = 0;
-
+    client.owner = ctx.accounts.signer.key();
 
     // creating custom client report card account
     let client_report = &mut ctx.accounts.client_report_card;
     client_report.total_projects = 0;
     client_report.transferred = 0;
     client_report.withdrawn = 0;
-    client_report.risk_score = 0.0;
-    client_report.success_rate = 0.0;
+    client_report.risk_score = 0;
+    client_report.success_rate = 0;
     Ok(())
 }
 
@@ -55,10 +60,11 @@ pub struct Client {
     #[max_len(50)]
     pub domain: String,
     #[max_len(50)]
-    pub contact_details: String,
+    pub contact: String,
     #[max_len(240)]
     pub required_skills: String,
-    pub project_counter: u64
+    pub project_counter: u64,
+    pub owner: Pubkey,
 }
 
 #[account]
@@ -67,6 +73,6 @@ pub struct ClientReportCard {
     pub total_projects: u64,
     pub withdrawn: u64,
     pub transferred: u64,
-    pub success_rate: f64,
-    pub risk_score: f64
+    pub success_rate: u16,
+    pub risk_score: u16,
 }

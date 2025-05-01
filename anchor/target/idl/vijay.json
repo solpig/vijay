@@ -8,16 +8,16 @@
   },
   "instructions": [
     {
-      "name": "client_init",
+      "name": "initialize_client",
       "discriminator": [
-        200,
-        42,
-        82,
-        229,
-        253,
-        91,
-        189,
-        184
+        160,
+        113,
+        132,
+        124,
+        243,
+        236,
+        21,
+        99
       ],
       "accounts": [
         {
@@ -97,10 +97,1135 @@
           "type": "string"
         },
         {
-          "name": "contact_details",
+          "name": "contact",
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "initialize_freelancer",
+      "discriminator": [
+        182,
+        60,
+        59,
+        193,
+        161,
+        141,
+        191,
+        116
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "freelancer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "freelancer_report_card",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "domain",
+          "type": "string"
+        },
+        {
+          "name": "skills",
+          "type": "string"
+        },
+        {
+          "name": "contact",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "initialize_project",
+      "discriminator": [
+        69,
+        126,
+        215,
+        37,
+        20,
+        60,
+        73,
+        235
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "client",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "project",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "counter"
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "url",
+          "type": "string"
+        },
+        {
+          "name": "pay_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "project_escrow_setup",
+      "discriminator": [
+        16,
+        53,
+        104,
+        225,
+        12,
+        112,
+        90,
+        207
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "project",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "project_id"
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "freelancer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "freelancer_key"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116,
+                  95,
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.name",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.owner",
+                "account": "Project"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.name",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.owner",
+                "account": "Project"
+              }
+            ]
+          }
+        },
+        {
+          "name": "freelancer_project",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114,
+                  95,
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.name",
+                "account": "Project"
+              },
+              {
+                "kind": "arg",
+                "path": "freelancer_project_id"
+              },
+              {
+                "kind": "account",
+                "path": "freelancer.owner",
+                "account": "Freelancer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "freelancer_report_card",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "freelancer.owner",
+                "account": "Freelancer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "project_id",
+          "type": "u64"
+        },
+        {
+          "name": "freelancer_key",
+          "type": "pubkey"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "total_tasks",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "request_task_review",
+      "discriminator": [
+        159,
+        153,
+        152,
+        117,
+        254,
+        163,
+        126,
+        49
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "freelancer_project",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114,
+                  95,
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "project_name"
+              },
+              {
+                "kind": "arg",
+                "path": "freelancer_project_id"
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "project_name",
+          "type": "string"
+        },
+        {
+          "name": "freelancer_project_id",
+          "type": "u64"
+        },
+        {
+          "name": "url",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "review_task_process",
+      "discriminator": [
+        239,
+        57,
+        131,
+        246,
+        43,
+        104,
+        129,
+        32
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "project",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "project_id"
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "freelancer_project",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114,
+                  95,
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.name",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.assigned_freelancer_project_id",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.assigned_freelancer",
+                "account": "Project"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116,
+                  95,
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.name",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.owner",
+                "account": "Project"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.name",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.owner",
+                "account": "Project"
+              }
+            ]
+          }
+        },
+        {
+          "name": "freelancer_report_card",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.assigned_freelancer",
+                "account": "Project"
+              }
+            ]
+          }
+        },
+        {
+          "name": "receiver",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "project_id",
+          "type": "u64"
+        },
+        {
+          "name": "approve",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "transfer_project",
+      "discriminator": [
+        164,
+        123,
+        142,
+        233,
+        67,
+        142,
+        71,
+        148
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "project",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "project_id"
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116,
+                  95,
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.name",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.owner",
+                "account": "Project"
+              }
+            ]
+          }
+        },
+        {
+          "name": "freelancer_project",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114,
+                  95,
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.name",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.assigned_freelancer_project_id",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.assigned_freelancer",
+                "account": "Project"
+              }
+            ]
+          }
+        },
+        {
+          "name": "freelancer_report",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.assigned_freelancer",
+                "account": "Project"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "freelancer",
+          "type": "pubkey"
+        },
+        {
+          "name": "freelancer_project_id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "withdraw_project",
+      "discriminator": [
+        8,
+        130,
+        133,
+        212,
+        253,
+        104,
+        252,
+        145
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "project",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "project_id"
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116,
+                  95,
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.name",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.owner",
+                "account": "Project"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.name",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.owner",
+                "account": "Project"
+              }
+            ]
+          }
+        },
+        {
+          "name": "freelancer_project",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114,
+                  95,
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.name",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.assigned_freelancer_project_id",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.assigned_freelancer",
+                "account": "Project"
+              }
+            ]
+          }
+        },
+        {
+          "name": "freelancer_report_card",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.assigned_freelancer",
+                "account": "Project"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -129,6 +1254,126 @@
         4,
         187
       ]
+    },
+    {
+      "name": "Escrow",
+      "discriminator": [
+        31,
+        213,
+        123,
+        187,
+        186,
+        22,
+        218,
+        155
+      ]
+    },
+    {
+      "name": "Freelancer",
+      "discriminator": [
+        85,
+        117,
+        113,
+        118,
+        145,
+        222,
+        67,
+        98
+      ]
+    },
+    {
+      "name": "FreelancerProject",
+      "discriminator": [
+        103,
+        239,
+        90,
+        213,
+        230,
+        160,
+        32,
+        251
+      ]
+    },
+    {
+      "name": "FreelancerReportCard",
+      "discriminator": [
+        183,
+        27,
+        241,
+        217,
+        1,
+        41,
+        241,
+        179
+      ]
+    },
+    {
+      "name": "Project",
+      "discriminator": [
+        205,
+        168,
+        189,
+        202,
+        181,
+        247,
+        142,
+        19
+      ]
+    },
+    {
+      "name": "Vault",
+      "discriminator": [
+        211,
+        8,
+        232,
+        43,
+        2,
+        152,
+        117,
+        119
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "NumericalOverflow",
+      "msg": "Overflow occurred during math operation"
+    },
+    {
+      "code": 6001,
+      "name": "UnAuthorizedSetup",
+      "msg": "Only project owner allowed to setup the escrow"
+    },
+    {
+      "code": 6002,
+      "name": "UnAuthorizedReviewer",
+      "msg": "Only project owner allowed to review the project"
+    },
+    {
+      "code": 6003,
+      "name": "EscrowInActive",
+      "msg": "Escrow account is inactive"
+    },
+    {
+      "code": 6004,
+      "name": "ProjectInActive",
+      "msg": "Project is inactive"
+    },
+    {
+      "code": 6005,
+      "name": "FreelancerProjectInActive",
+      "msg": "Freelancer project is inactive"
+    },
+    {
+      "code": 6006,
+      "name": "TasksCompleted",
+      "msg": "All the tasks have been completed"
+    },
+    {
+      "code": 6007,
+      "name": "NotAnOwner",
+      "msg": "Only owner is allowed to proceed with this operation"
     }
   ],
   "types": [
@@ -146,7 +1391,7 @@
             "type": "string"
           },
           {
-            "name": "contact_details",
+            "name": "contact",
             "type": "string"
           },
           {
@@ -156,6 +1401,10 @@
           {
             "name": "project_counter",
             "type": "u64"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
           }
         ]
       }
@@ -179,13 +1428,188 @@
           },
           {
             "name": "success_rate",
-            "type": "f64"
+            "type": "u16"
           },
           {
             "name": "risk_score",
-            "type": "f64"
+            "type": "u16"
           }
         ]
+      }
+    },
+    {
+      "name": "Escrow",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "depositor",
+            "type": "pubkey"
+          },
+          {
+            "name": "receiver",
+            "type": "pubkey"
+          },
+          {
+            "name": "vault",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "total_tasks",
+            "type": "u64"
+          },
+          {
+            "name": "tasks_completed",
+            "type": "u64"
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Freelancer",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "domain",
+            "type": "string"
+          },
+          {
+            "name": "skills",
+            "type": "string"
+          },
+          {
+            "name": "contact",
+            "type": "string"
+          },
+          {
+            "name": "project_counter",
+            "type": "u64"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FreelancerProject",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "completed_task_url",
+            "type": "string"
+          },
+          {
+            "name": "project_name",
+            "type": "string"
+          },
+          {
+            "name": "project_client",
+            "type": "pubkey"
+          },
+          {
+            "name": "approved_tasks",
+            "type": "u64"
+          },
+          {
+            "name": "rejected_tasks",
+            "type": "u64"
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FreelancerReportCard",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "total_projects",
+            "type": "u64"
+          },
+          {
+            "name": "completed",
+            "type": "u64"
+          },
+          {
+            "name": "rejected",
+            "type": "u64"
+          },
+          {
+            "name": "success_rate",
+            "type": "u16"
+          },
+          {
+            "name": "risk_score",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Project",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "url",
+            "type": "string"
+          },
+          {
+            "name": "pay_amount",
+            "type": "u64"
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "assigned_freelancer",
+            "type": "pubkey"
+          },
+          {
+            "name": "assigned_freelancer_project_id",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Vault",
+      "type": {
+        "kind": "struct",
+        "fields": []
       }
     }
   ]
