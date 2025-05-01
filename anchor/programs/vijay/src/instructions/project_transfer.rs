@@ -22,7 +22,9 @@ pub fn transfer_project(ctx: Context<TransferInfo>, freelancer: Pubkey, freelanc
     let freelancer_report = &mut ctx.accounts.freelancer_report;
     freelancer_report.rejected = freelancer_report.rejected.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
     freelancer_report.projects_in_progress = freelancer_report.projects_in_progress.checked_sub(1).ok_or(ErrorCode::NumericalOverflow)?;
-    freelancer_report.risk_score = ((freelancer_report.rejected * 10000) / freelancer_report.total_projects) as u16;
+    // skipping the in progress projects for risk_score calculation
+    let completed_projects = freelancer_report.total_projects.checked_sub(freelancer_report.projects_in_progress).ok_or(ErrorCode::NumericalOverflow)?;
+    freelancer_report.risk_score = ((freelancer_report.rejected * 10000) / completed_projects) as u16;
 
      // set the client performance report card
      let client_report_card = &mut ctx.accounts.client_report_card;

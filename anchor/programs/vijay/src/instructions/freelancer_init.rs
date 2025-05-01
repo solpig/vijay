@@ -19,6 +19,7 @@ pub fn initialize_freelancer(
     // creating custom freelancer report card account
     let freelancer_report = &mut ctx.accounts.freelancer_report_card;
     freelancer_report.total_projects = 0;
+    freelancer_report.projects_in_progress = 0;
     freelancer_report.completed = 0;
     freelancer_report.rejected = 0;
     freelancer_report.risk_score = 0;

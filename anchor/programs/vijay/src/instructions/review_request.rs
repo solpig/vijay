@@ -10,6 +10,7 @@ pub fn request_task_review(
 ) -> Result<()> {
     let freelancer_project = &mut ctx.accounts.freelancer_project;
     freelancer_project.completed_task_url = url;
+    // emit the event here
     Ok(())
 }
 

@@ -15,8 +15,9 @@ pub fn initialize_project(
     project.description = description;
     project.url = url;
     project.pay_amount = pay_amount;
-    project.is_active = false;
-    project.owner = ctx.accounts.signer.key().clone();
+    project.is_active = true;
+    project.in_progress = false;
+    project.owner = ctx.accounts.signer.key();
     project.assigned_freelancer = Pubkey::default();
     project.assigned_freelancer_project_id = 0;
     Ok(())
@@ -58,6 +59,7 @@ pub struct Project {
     pub url: String,
     pub pay_amount: u64,
     pub is_active: bool,
+    pub in_progress: bool,
     pub owner: Pubkey,
     pub assigned_freelancer: Pubkey,
     pub assigned_freelancer_project_id: u64,

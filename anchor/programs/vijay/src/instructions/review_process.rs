@@ -29,27 +29,35 @@ pub fn review_task_process(
 
             escrow.tasks_completed = escrow.tasks_completed.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
 
-            // in case all tasks are completed mark escrow as inactive
-            if escrow.tasks_completed == escrow.total_tasks {
-                escrow.is_active = false;
-                
-                // also calculate and finalize the freelancer and client's performance
-                let freelancer_report = &mut ctx.accounts.freelancer_report_card;
-                freelancer_report.completed = freelancer_report.completed.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
-                freelancer_report.projects_in_progress = freelancer_report.projects_in_progress.checked_sub(1).ok_or(ErrorCode::NumericalOverflow)?;
-                freelancer_report.success_rate = ((freelancer_report.completed * 10000)/ freelancer_report.total_projects) as u16;
-
-                let client_report_card = &mut ctx.accounts.client_report_card;
-                client_report_card.completed = client_report_card.completed.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
-                client_report_card.projects_in_progress = client_report_card.projects_in_progress.checked_sub(1).ok_or(ErrorCode::NumericalOverflow)?;
-                client_report_card.success_rate = ((client_report_card.completed * 10000) / client_report_card.total_projects) as u16;
-            }
-
             let approved_tasks = freelancer_project
             .approved_tasks
             .checked_add(1)
             .ok_or(ErrorCode::NumericalOverflow)?;
             freelancer_project.approved_tasks = approved_tasks;
+
+            // in case all tasks are completed mark escrow as inactive
+            if escrow.tasks_completed == escrow.total_tasks {
+                escrow.is_active = false;
+                freelancer_project.is_active = false;
+
+                let project  = &mut ctx.accounts.project;
+                project.is_active = false;
+                project.in_progress = false;
+                
+                // also calculate and finalize the freelancer and client's performance
+                let freelancer_report = &mut ctx.accounts.freelancer_report_card;
+                freelancer_report.completed = freelancer_report.completed.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
+                freelancer_report.projects_in_progress = freelancer_report.projects_in_progress.checked_sub(1).ok_or(ErrorCode::NumericalOverflow)?;
+                let actual_total_projects = freelancer_report.total_projects.checked_sub(freelancer_report.projects_in_progress).ok_or(ErrorCode::NumericalOverflow)?;
+                freelancer_report.success_rate = ((freelancer_report.completed * 10000)/ actual_total_projects) as u16;
+
+                let client_report_card = &mut ctx.accounts.client_report_card;
+                client_report_card.completed = client_report_card.completed.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
+                client_report_card.projects_in_progress = client_report_card.projects_in_progress.checked_sub(1).ok_or(ErrorCode::NumericalOverflow)?;
+                // not considering the in progress projects for calculating success_rate
+                let actual_total_projects = client_report_card.total_projects.checked_sub(client_report_card.projects_in_progress).ok_or(ErrorCode::NumericalOverflow)?;
+                client_report_card.success_rate = ((client_report_card.completed * 10000) / actual_total_projects) as u16;
+            }
 
         }
         false => {

@@ -18,6 +18,7 @@ pub fn project_escrow_setup(
     );
 
     let project = &mut ctx.accounts.project;
+    project.in_progress = true;
     project.assigned_freelancer = ctx.accounts.freelancer.owner;
     project.assigned_freelancer_project_id = freelancer_project_id;
 

@@ -19,6 +19,8 @@ pub fn initialize_client(
     // creating custom client report card account
     let client_report = &mut ctx.accounts.client_report_card;
     client_report.total_projects = 0;
+    client_report.projects_in_progress = 0;
+    client_report.completed = 0;
     client_report.transferred = 0;
     client_report.withdrawn = 0;
     client_report.risk_score = 0;
