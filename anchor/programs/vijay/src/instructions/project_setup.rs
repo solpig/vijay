@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::error_codes::{self, ErrorCode};
 
-use super::{Freelancer, FreelancerReportCard, Project};
+use super::{ClientReportCard, Freelancer, FreelancerReportCard, Project};
 
 pub fn project_escrow_setup(
     ctx: Context<ProjectSetupInfo>,
@@ -53,6 +53,11 @@ pub fn project_escrow_setup(
 
     let freelancer_report_card = &mut ctx.accounts.freelancer_report_card;
     freelancer_report_card.total_projects = freelancer_report_card.total_projects.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
+    freelancer_report_card.projects_in_progress = freelancer_report_card.projects_in_progress.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
+
+    let client_report_card = &mut ctx.accounts.client_report_card;
+    client_report_card.total_projects = client_report_card.total_projects.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
+    client_report_card.projects_in_progress = client_report_card.projects_in_progress.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
 
     Ok(())
 }
@@ -110,6 +115,13 @@ pub struct ProjectSetupInfo<'info> {
         bump,
     )]
     pub freelancer_report_card: Account<'info, FreelancerReportCard>,
+
+    #[account(
+        mut,
+        seeds = [b"client_report", signer.key().as_ref()],
+        bump,
+    )]
+    pub client_report_card: Account<'info, ClientReportCard>,
 
     pub system_program: Program<'info, System>,
 }

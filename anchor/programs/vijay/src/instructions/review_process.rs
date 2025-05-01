@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::error_codes::ErrorCode;
 
-use super::{Escrow, FreelancerProject, FreelancerReportCard, Project, Vault};
+use super::{ClientReportCard, Escrow, FreelancerProject, FreelancerReportCard, Project, Vault};
 
 pub fn review_task_process(
     ctx: Context<TaskReviewProcess>,
@@ -30,12 +30,19 @@ pub fn review_task_process(
             escrow.tasks_completed = escrow.tasks_completed.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
 
             // in case all tasks are completed mark escrow as inactive
-            // also calculate and finalize the freelancer performance
             if escrow.tasks_completed == escrow.total_tasks {
                 escrow.is_active = false;
+                
+                // also calculate and finalize the freelancer and client's performance
                 let freelancer_report = &mut ctx.accounts.freelancer_report_card;
                 freelancer_report.completed = freelancer_report.completed.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
+                freelancer_report.projects_in_progress = freelancer_report.projects_in_progress.checked_sub(1).ok_or(ErrorCode::NumericalOverflow)?;
                 freelancer_report.success_rate = ((freelancer_report.completed * 10000)/ freelancer_report.total_projects) as u16;
+
+                let client_report_card = &mut ctx.accounts.client_report_card;
+                client_report_card.completed = client_report_card.completed.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
+                client_report_card.projects_in_progress = client_report_card.projects_in_progress.checked_sub(1).ok_or(ErrorCode::NumericalOverflow)?;
+                client_report_card.success_rate = ((client_report_card.completed * 10000) / client_report_card.total_projects) as u16;
             }
 
             let approved_tasks = freelancer_project
@@ -95,6 +102,14 @@ pub struct TaskReviewProcess<'info> {
         bump,
     )]
     pub freelancer_report_card: Account<'info, FreelancerReportCard>,
+
+
+    #[account(
+        mut,
+        seeds = [b"client_report", signer.key().as_ref()],
+        bump,
+    )]
+    pub client_report_card: Account<'info, ClientReportCard>,
 
     /// CHECK: receiver is same as the one set under escrow account, required to transfer SOL
     #[account(mut, address = escrow.receiver)]

@@ -71,6 +71,7 @@ pub struct Freelancer {
 #[derive(InitSpace)]
 pub struct FreelancerReportCard {
     pub total_projects: u64,
+    pub projects_in_progress: u64,
     pub completed: u64,
     pub rejected: u64,
     pub success_rate: u16,

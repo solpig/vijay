@@ -2,7 +2,7 @@ use anchor_lang:: prelude::*;
 
 use crate::error_codes::ErrorCode;
 
-use super::{Escrow, FreelancerProject, FreelancerReportCard, Project, Vault};
+use super::{ClientReportCard, Escrow, FreelancerProject, FreelancerReportCard, Project, Vault};
 
 pub fn withdraw_project(ctx: Context<WithdrawInfo>) -> Result<()> {
     // in-activate the project account
@@ -33,7 +33,15 @@ pub fn withdraw_project(ctx: Context<WithdrawInfo>) -> Result<()> {
     // set the freelancer performance report card
     let freelancer_report = &mut ctx.accounts.freelancer_report_card;
     freelancer_report.rejected = freelancer_report.rejected.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
+    freelancer_report.projects_in_progress = freelancer_report.projects_in_progress.checked_sub(1).ok_or(ErrorCode::NumericalOverflow)?;
     freelancer_report.risk_score = ((freelancer_report.rejected * 10000) / freelancer_report.total_projects) as u16;
+
+    // set the client performance report card
+    let client_report_card = &mut ctx.accounts.client_report_card;
+    client_report_card.withdrawn = client_report_card.withdrawn.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
+    client_report_card.projects_in_progress = client_report_card.projects_in_progress.checked_sub(1).ok_or(ErrorCode::NumericalOverflow)?;
+    let total_risk_points = client_report_card.withdrawn + client_report_card.transferred;
+    client_report_card.risk_score = ((total_risk_points * 10000) / client_report_card.completed) as u16;
 
     Ok(())
 }
@@ -81,6 +89,12 @@ pub struct WithdrawInfo<'info> {
         seeds = [b"freelancer_report", project.assigned_freelancer.as_ref()],
         bump,
     )]
-    pub freelancer_report_card: Account<'info, FreelancerReportCard>
+    pub freelancer_report_card: Account<'info, FreelancerReportCard>,
 
+    #[account(
+        mut,
+        seeds = [b"client_report", signer.key().as_ref()],
+        bump,
+    )]
+    pub client_report_card: Account<'info, ClientReportCard>
 }

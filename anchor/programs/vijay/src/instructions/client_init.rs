@@ -71,6 +71,8 @@ pub struct Client {
 #[derive(InitSpace)]
 pub struct ClientReportCard {
     pub total_projects: u64,
+    pub projects_in_progress: u64,
+    pub completed: u64,
     pub withdrawn: u64,
     pub transferred: u64,
     pub success_rate: u16,
