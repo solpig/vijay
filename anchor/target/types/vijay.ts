@@ -537,6 +537,36 @@ export type Vijay = {
           }
         },
         {
+          "name": "clientReportCard",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
@@ -834,6 +864,36 @@ export type Vijay = {
           }
         },
         {
+          "name": "clientReportCard",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
           "name": "receiver",
           "writable": true
         }
@@ -1015,6 +1075,36 @@ export type Vijay = {
                 "kind": "account",
                 "path": "project.assigned_freelancer",
                 "account": "project"
+              }
+            ]
+          }
+        },
+        {
+          "name": "clientReportCard",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
               }
             ]
           }
@@ -1229,6 +1319,36 @@ export type Vijay = {
               }
             ]
           }
+        },
+        {
+          "name": "clientReportCard",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
         }
       ],
       "args": []
@@ -1425,6 +1545,14 @@ export type Vijay = {
             "type": "u64"
           },
           {
+            "name": "projectsInProgress",
+            "type": "u64"
+          },
+          {
+            "name": "completed",
+            "type": "u64"
+          },
+          {
             "name": "withdrawn",
             "type": "u64"
           },
@@ -1553,6 +1681,10 @@ export type Vijay = {
             "type": "u64"
           },
           {
+            "name": "projectsInProgress",
+            "type": "u64"
+          },
+          {
             "name": "completed",
             "type": "u64"
           },
@@ -1594,6 +1726,10 @@ export type Vijay = {
           },
           {
             "name": "isActive",
+            "type": "bool"
+          },
+          {
+            "name": "inProgress",
             "type": "bool"
           },
           {

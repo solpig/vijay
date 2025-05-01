@@ -531,6 +531,36 @@
           }
         },
         {
+          "name": "client_report_card",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
@@ -828,6 +858,36 @@
           }
         },
         {
+          "name": "client_report_card",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
           "name": "receiver",
           "writable": true
         }
@@ -1009,6 +1069,36 @@
                 "kind": "account",
                 "path": "project.assigned_freelancer",
                 "account": "Project"
+              }
+            ]
+          }
+        },
+        {
+          "name": "client_report_card",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
               }
             ]
           }
@@ -1223,6 +1313,36 @@
               }
             ]
           }
+        },
+        {
+          "name": "client_report_card",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
         }
       ],
       "args": []
@@ -1419,6 +1539,14 @@
             "type": "u64"
           },
           {
+            "name": "projects_in_progress",
+            "type": "u64"
+          },
+          {
+            "name": "completed",
+            "type": "u64"
+          },
+          {
             "name": "withdrawn",
             "type": "u64"
           },
@@ -1547,6 +1675,10 @@
             "type": "u64"
           },
           {
+            "name": "projects_in_progress",
+            "type": "u64"
+          },
+          {
             "name": "completed",
             "type": "u64"
           },
@@ -1588,6 +1720,10 @@
           },
           {
             "name": "is_active",
+            "type": "bool"
+          },
+          {
+            "name": "in_progress",
             "type": "bool"
           },
           {
