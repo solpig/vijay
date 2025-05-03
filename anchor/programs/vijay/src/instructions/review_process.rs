@@ -13,6 +13,12 @@ pub fn review_task_process(
         ctx.accounts.signer.key() == ctx.accounts.project.owner,
         ErrorCode::UnAuthorizedReviewer
     );
+
+    require!(
+        ctx.accounts.freelancer_project.completed_task_url != "",
+        ErrorCode::TaskReviewNotRequested
+    );
+
     let freelancer_project = &mut ctx.accounts.freelancer_project;
     freelancer_project.completed_task_url = "".to_string();
     match approve {
@@ -22,10 +28,10 @@ pub fn review_task_process(
             require!(escrow.is_active, ErrorCode::EscrowInActive);
             require!(escrow.tasks_completed < escrow.total_tasks, ErrorCode::TasksCompleted);
 
-            let amount_per_task = escrow.amount / escrow.total_tasks;
+            let amount_per_task = escrow.budget / escrow.total_tasks;
 
             **ctx.accounts.vault.to_account_info().try_borrow_mut_lamports()? = ctx.accounts.vault.to_account_info().lamports().checked_sub(amount_per_task).ok_or(ErrorCode::NumericalOverflow)?;
-            **ctx.accounts.receiver.to_account_info().try_borrow_mut_lamports()? = ctx.accounts.vault.to_account_info().lamports().checked_add(amount_per_task).ok_or(ErrorCode::NumericalOverflow)?;
+            **ctx.accounts.receiver.to_account_info().try_borrow_mut_lamports()? = ctx.accounts.receiver.to_account_info().lamports().checked_add(amount_per_task).ok_or(ErrorCode::NumericalOverflow)?;
 
             escrow.tasks_completed = escrow.tasks_completed.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
 
@@ -84,21 +90,21 @@ pub struct TaskReviewProcess<'info> {
 
     #[account(
         mut,
-        seeds = [b"freelancer_project", project.name.as_bytes().as_ref(), project.assigned_freelancer_project_id.to_le_bytes().as_ref(), project.assigned_freelancer.as_ref()],
+        seeds = [b"freelancer_project", project.name.as_bytes()[..32].as_ref(), project.assigned_freelancer_project_id.to_le_bytes().as_ref(), project.assigned_freelancer.as_ref()],
         bump
     )]
     pub freelancer_project: Account<'info, FreelancerProject>,
 
     #[account(
         mut,
-        seeds = [b"project_escrow", project.name.as_bytes().as_ref(), project.owner.as_ref()],
+        seeds = [b"project_escrow", project.name.as_bytes()[..32].as_ref(), project.owner.as_ref()],
         bump
     )]
     pub escrow: Account<'info, Escrow>,
 
     #[account(
         mut,
-        seeds = [b"vault", project.name.as_bytes().as_ref(), project.owner.as_ref()],
+        seeds = [b"vault", project.name.as_bytes()[..32].as_ref(), project.owner.as_ref()],
         bump
     )]
     pub vault: Account<'info, Vault>,
@@ -121,5 +127,5 @@ pub struct TaskReviewProcess<'info> {
 
     /// CHECK: receiver is same as the one set under escrow account, required to transfer SOL
     #[account(mut, address = escrow.receiver)]
-    pub receiver: AccountInfo<'info>,
+    pub receiver: UncheckedAccount<'info>,
 }

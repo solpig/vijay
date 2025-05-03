@@ -51,13 +51,7 @@ pub mod vijay {
         amount: u64,
         total_tasks: u64,
     ) -> Result<()> {
-        let freelancer = &mut ctx.accounts.freelancer;
-        let counter_increment = freelancer
-            .project_counter
-            .checked_add(1)
-            .ok_or(error_codes::ErrorCode::NumericalOverflow)?;
-        freelancer.project_counter = counter_increment;
-        instructions::project_escrow_setup(ctx, project_id, freelancer_key, counter_increment, amount, total_tasks)
+        instructions::project_escrow_setup(ctx, project_id, freelancer_key, amount, total_tasks)
     }
 
     pub fn request_task_review(

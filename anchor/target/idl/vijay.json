@@ -485,8 +485,9 @@
                 "account": "Project"
               },
               {
-                "kind": "arg",
-                "path": "freelancer_project_id"
+                "kind": "account",
+                "path": "freelancer.project_counter.checked_add(1)",
+                "account": "Freelancer"
               },
               {
                 "kind": "account",
@@ -1455,6 +1456,21 @@
       ]
     }
   ],
+  "events": [
+    {
+      "name": "ReviewRequested",
+      "discriminator": [
+        138,
+        245,
+        234,
+        140,
+        80,
+        2,
+        101,
+        150
+      ]
+    }
+  ],
   "errors": [
     {
       "code": 6000,
@@ -1495,6 +1511,11 @@
       "code": 6007,
       "name": "NotAnOwner",
       "msg": "Only owner is allowed to proceed with this operation"
+    },
+    {
+      "code": 6008,
+      "name": "TaskReviewNotRequested",
+      "msg": "Task review not yet requested"
     }
   ],
   "types": [
@@ -1584,7 +1605,7 @@
             "type": "pubkey"
           },
           {
-            "name": "amount",
+            "name": "budget",
             "type": "u64"
           },
           {
@@ -1738,6 +1759,22 @@
           {
             "name": "assigned_freelancer_project_id",
             "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ReviewRequested",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "project_name",
+            "type": "string"
+          },
+          {
+            "name": "project_owner",
+            "type": "pubkey"
           }
         ]
       }

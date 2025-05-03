@@ -17,5 +17,7 @@ pub enum ErrorCode {
     #[msg("All the tasks have been completed")]
     TasksCompleted,
     #[msg("Only owner is allowed to proceed with this operation")]
-    NotAnOwner
+    NotAnOwner,
+    #[msg("Task review not yet requested")]
+    TaskReviewNotRequested
 }

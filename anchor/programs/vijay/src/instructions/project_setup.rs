@@ -1,4 +1,4 @@
-use anchor_lang::prelude::*;
+use anchor_lang::{prelude::*, solana_program::{program::invoke, system_instruction}};
 
 use crate::error_codes::{self, ErrorCode};
 
@@ -8,7 +8,6 @@ pub fn project_escrow_setup(
     ctx: Context<ProjectSetupInfo>,
     _project_id: u64,
     _freelancer_key: Pubkey,
-    freelancer_project_id: u64,
     amount: u64,
     total_tasks: u64,
 ) -> Result<()> {
@@ -17,32 +16,43 @@ pub fn project_escrow_setup(
         error_codes::ErrorCode::UnAuthorizedSetup
     );
 
+    let freelancer = &mut ctx.accounts.freelancer;
+
+    let counter_increment = freelancer
+        .project_counter
+        .checked_add(1)
+        .ok_or(error_codes::ErrorCode::NumericalOverflow)?;
+    freelancer.project_counter = counter_increment;
+
     let project = &mut ctx.accounts.project;
     project.in_progress = true;
     project.assigned_freelancer = ctx.accounts.freelancer.owner;
-    project.assigned_freelancer_project_id = freelancer_project_id;
+    project.assigned_freelancer_project_id = counter_increment;
 
     // set up the escrow account
     let escrow = &mut ctx.accounts.escrow;
     escrow.depositor = ctx.accounts.signer.key();
     escrow.receiver = ctx.accounts.freelancer.owner;
-    escrow.amount = amount;
+    escrow.budget = amount;
     escrow.total_tasks = total_tasks;
     escrow.tasks_completed = 0;
     escrow.vault = ctx.accounts.vault.key();
     escrow.is_active = true;
 
-    **ctx
-        .accounts
-        .vault
-        .to_account_info()
-        .try_borrow_mut_lamports()? = ctx.accounts.vault.to_account_info().lamports().checked_add(amount).ok_or(ErrorCode::NumericalOverflow)?;
-    **ctx
-        .accounts
-        .signer
-        .to_account_info()
-        .try_borrow_mut_lamports()? = ctx.accounts.signer.to_account_info().lamports().checked_sub(amount).ok_or(ErrorCode::NumericalOverflow)?;
+    let sys_ins = system_instruction::transfer(
+        &ctx.accounts.signer.key(),
+        &ctx.accounts.vault.key(),
+        amount,
+    );
 
+    invoke(
+        &sys_ins,
+        &[
+            ctx.accounts.signer.to_account_info(),
+            ctx.accounts.vault.to_account_info(),
+        ],
+    )?;
+    
     // set up the freelancer project
     let freelancer_project = &mut ctx.accounts.freelancer_project;
     freelancer_project.project_name = ctx.accounts.project.name.clone();
@@ -64,7 +74,7 @@ pub fn project_escrow_setup(
 }
 
 #[derive(Accounts)]
-#[instruction(project_id: u64, freelancer_key: Pubkey, freelancer_project_id: u64)]
+#[instruction(project_id: u64, freelancer_key: Pubkey)]
 pub struct ProjectSetupInfo<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
@@ -87,7 +97,7 @@ pub struct ProjectSetupInfo<'info> {
         init,
         space = 8+Escrow::INIT_SPACE,
         payer = signer,
-        seeds = [b"project_escrow", project.name.as_bytes().as_ref(), project.owner.as_ref()],
+        seeds = [b"project_escrow", project.name.as_bytes()[..32].as_ref(), project.owner.as_ref()],
         bump
     )]
     pub escrow: Account<'info, Escrow>,
@@ -96,7 +106,7 @@ pub struct ProjectSetupInfo<'info> {
         init,
         space = 8,
         payer = signer,
-        seeds = [b"vault", project.name.as_bytes().as_ref(), project.owner.as_ref()],
+        seeds = [b"vault", project.name.as_bytes()[..32].as_ref(), project.owner.as_ref()],
         bump
     )]
     pub vault: Account<'info, Vault>,
@@ -105,7 +115,7 @@ pub struct ProjectSetupInfo<'info> {
         init,
         space = 8 + Freelancer::INIT_SPACE,
         payer = signer,
-        seeds = [b"freelancer_project", project.name.as_bytes().as_ref(), freelancer_project_id.to_le_bytes().as_ref(), freelancer.owner.as_ref()],
+        seeds = [b"freelancer_project", project.name.as_bytes()[..32].as_ref(), freelancer.project_counter.checked_add(1).unwrap().to_le_bytes().as_ref(), freelancer.owner.as_ref()],
         bump
     )]
     pub freelancer_project: Account<'info, FreelancerProject>,
@@ -133,7 +143,7 @@ pub struct Escrow {
     pub depositor: Pubkey,
     pub receiver: Pubkey,
     pub vault: Pubkey,
-    pub amount: u64,
+    pub budget: u64,
     pub total_tasks: u64,
     pub tasks_completed: u64,
     pub is_active: bool,

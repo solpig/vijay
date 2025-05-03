@@ -491,8 +491,9 @@ export type Vijay = {
                 "account": "project"
               },
               {
-                "kind": "arg",
-                "path": "freelancerProjectId"
+                "kind": "account",
+                "path": "freelancer.project_counter.checked_add(1)",
+                "account": "freelancer"
               },
               {
                 "kind": "account",
@@ -1461,6 +1462,21 @@ export type Vijay = {
       ]
     }
   ],
+  "events": [
+    {
+      "name": "reviewRequested",
+      "discriminator": [
+        138,
+        245,
+        234,
+        140,
+        80,
+        2,
+        101,
+        150
+      ]
+    }
+  ],
   "errors": [
     {
       "code": 6000,
@@ -1501,6 +1517,11 @@ export type Vijay = {
       "code": 6007,
       "name": "notAnOwner",
       "msg": "Only owner is allowed to proceed with this operation"
+    },
+    {
+      "code": 6008,
+      "name": "taskReviewNotRequested",
+      "msg": "Task review not yet requested"
     }
   ],
   "types": [
@@ -1590,7 +1611,7 @@ export type Vijay = {
             "type": "pubkey"
           },
           {
-            "name": "amount",
+            "name": "budget",
             "type": "u64"
           },
           {
@@ -1744,6 +1765,22 @@ export type Vijay = {
           {
             "name": "assignedFreelancerProjectId",
             "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "reviewRequested",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "projectName",
+            "type": "string"
+          },
+          {
+            "name": "projectOwner",
+            "type": "pubkey"
           }
         ]
       }
