@@ -39,16 +39,9 @@ pub mod vijay {
         name: String,
         description: String,
         url: String,
-        pay_amount: u64,
+        budget: u64,
     ) -> Result<()> {
-        let client = &mut ctx.accounts.client;
-
-        let counter_increment = client
-            .project_counter
-            .checked_add(1)
-            .ok_or(error_codes::ErrorCode::NumericalOverflow)?;
-        client.project_counter = counter_increment;
-        instructions::initialize_project(ctx, counter_increment, name, description, url, pay_amount)
+        instructions::initialize_project(ctx, name, description, url, budget)
     }
 
     pub fn project_escrow_setup(

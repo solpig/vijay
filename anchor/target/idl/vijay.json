@@ -271,8 +271,9 @@
                 ]
               },
               {
-                "kind": "arg",
-                "path": "counter"
+                "kind": "account",
+                "path": "client.project_counter.checked_add(1)",
+                "account": "Client"
               },
               {
                 "kind": "account",
@@ -300,7 +301,7 @@
           "type": "string"
         },
         {
-          "name": "pay_amount",
+          "name": "budget",
           "type": "u64"
         }
       ]
@@ -1715,7 +1716,7 @@
             "type": "string"
           },
           {
-            "name": "pay_amount",
+            "name": "budget",
             "type": "u64"
           },
           {

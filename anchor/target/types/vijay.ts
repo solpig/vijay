@@ -277,8 +277,9 @@ export type Vijay = {
                 ]
               },
               {
-                "kind": "arg",
-                "path": "counter"
+                "kind": "account",
+                "path": "client.project_counter.checked_add(1)",
+                "account": "client"
               },
               {
                 "kind": "account",
@@ -306,7 +307,7 @@ export type Vijay = {
           "type": "string"
         },
         {
-          "name": "payAmount",
+          "name": "budget",
           "type": "u64"
         }
       ]
@@ -1721,7 +1722,7 @@ export type Vijay = {
             "type": "string"
           },
           {
-            "name": "payAmount",
+            "name": "budget",
             "type": "u64"
           },
           {

@@ -1,20 +1,31 @@
 use anchor_lang::prelude::*;
 
 use super::Client;
+use crate::error_codes::ErrorCode;
 
 pub fn initialize_project(
     ctx: Context<ProjectInfo>,
-    _counter: u64,
     name: String,
     description: String,
     url: String,
-    pay_amount: u64,
+    budget: u64,
 ) -> Result<()> {
+
+    require!(ctx.accounts.client.owner == ctx.accounts.signer.key(), ErrorCode::NotAnOwner);
+
+    let client = &mut ctx.accounts.client;
+
+    let project_counter = client
+        .project_counter
+        .checked_add(1)
+        .ok_or(ErrorCode::NumericalOverflow)?;
+    client.project_counter = project_counter;
+
     let project = &mut ctx.accounts.project;
     project.name = name;
     project.description = description;
     project.url = url;
-    project.pay_amount = pay_amount;
+    project.budget = budget;
     project.is_active = true;
     project.in_progress = false;
     project.owner = ctx.accounts.signer.key();
@@ -24,7 +35,6 @@ pub fn initialize_project(
 }
 
 #[derive(Accounts)]
-#[instruction(counter: u64)]
 pub struct ProjectInfo<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
@@ -40,7 +50,7 @@ pub struct ProjectInfo<'info> {
         init,
         space = 8 + Project::INIT_SPACE,
         payer = signer,
-        seeds = [b"client_project", counter.to_le_bytes().as_ref(), signer.key().as_ref()],
+        seeds = [b"client_project", client.project_counter.checked_add(1).unwrap().to_le_bytes().as_ref(), signer.key().as_ref()],
         bump
     )]
     pub project: Account<'info, Project>,
@@ -57,7 +67,7 @@ pub struct Project {
     pub description: String,
     #[max_len(50)]
     pub url: String,
-    pub pay_amount: u64,
+    pub budget: u64,
     pub is_active: bool,
     pub in_progress: bool,
     pub owner: Pubkey,
