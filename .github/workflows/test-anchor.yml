@@ -48,7 +48,7 @@ jobs:
         env:
           RUSTUP_TOOLCHAIN: nightly-2025-04-01
 
-      - run: pnpm run anchor test -- -Znext-lockfile-bump
+      - run: pnpm run anchor test
         shell: bash
         env:
           RUSTUP_TOOLCHAIN: nightly-2025-04-01
