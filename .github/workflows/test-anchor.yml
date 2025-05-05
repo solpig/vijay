@@ -43,7 +43,7 @@ jobs:
       - name: Check solana config
         run: solana config get
 
-      - run: pnpm run anchor build -- -Znext-lockfile-bump
+      - run: pnpm run cargo-build
         shell: bash
         env:
           RUSTUP_TOOLCHAIN: nightly-2025-04-01
