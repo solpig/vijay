@@ -320,7 +320,7 @@ describe('vijay', () => {
       expect(freelancerProject.projectName).toEqual(firstProject.name);
       expect(freelancerProject.projectClient).toEqual(client_wallet_publicKey);
       expect(freelancerProject.approvedTasks.toNumber()).toEqual(0);
-      expect(freelancerProject.rejectedTasks.toNumber()).toEqual(0);
+      expect(freelancerProject.rejectedAttempts.toNumber()).toEqual(0);
       expect(freelancerProject.isActive).toEqual(true);
 
       // assert if the client report card has been updated
@@ -426,8 +426,6 @@ describe('vijay', () => {
     );
 
     const clientProject = await program.account.project.fetch(clientProjectPda);
-    console.log("Client project::::", clientProject)
-    console.log("client waller::::", client_wallet_publicKey.toString())
 
     const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
       [Buffer.from("freelancer_project"), Buffer.from(projectName).subarray(0,32), freelancerProjectId.toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
@@ -610,7 +608,7 @@ describe('vijay', () => {
     .rpc();
     const freelancerProject = await program.account.freelancerProject.fetch(freelancerProjectPda);
     expect(freelancerProject.completedTaskUrl).toEqual("");
-    expect(freelancerProject.rejectedTasks.toNumber()).toEqual(1);
+    expect(freelancerProject.rejectedAttempts.toNumber()).toEqual(1);
   });
 
   test('Client cancelling the project', async () => {
@@ -864,7 +862,7 @@ describe('vijay', () => {
         expect(newFreelancerProject.projectName).toEqual(project.name);
         expect(newFreelancerProject.projectClient.toString()).toEqual(client_wallet_publicKey.toString());
         expect(newFreelancerProject.approvedTasks.toNumber()).toEqual(0);
-        expect(newFreelancerProject.rejectedTasks.toNumber()).toEqual(0);
+        expect(newFreelancerProject.rejectedAttempts.toNumber()).toEqual(0);
         expect(newFreelancerProject.isActive).toEqual(true);
 
         expect(newFreelancerReport.totalProjects.toNumber()).toEqual(1);
@@ -886,5 +884,52 @@ describe('vijay', () => {
         expect(clientReport.successRate).toEqual(5000);
         expect(clientReport.riskScore).toEqual(20000);
 
+  });
+
+  test('Freelancer should not be able to setup a project', async () => {
+    const [freelancerPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("freelancer"), client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+    
+    const counter = new anchor.BN(4).toArrayLike(Buffer, "le", 8);
+    
+    const [projectPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("client_project"), counter, client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+
+    const projectDetails = {
+      name: "Freelancing on Solana - Project 4",
+      description: "A decentralized application using Solana",
+      url: "some_url.com",
+      budget: new anchor.BN(1000),
+    };
+
+    try {
+      await program.methods
+      .initializeProject(
+        projectDetails.name,
+        projectDetails.description,
+        projectDetails.url,
+        projectDetails.budget,
+      ).accountsPartial({
+        signer: freelancer_wallet.publicKey,
+        client: freelancerPda,
+        project: projectPda,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([freelancer_wallet])
+      .rpc();
+    } catch (err) {
+      if (err instanceof anchor.AnchorError) {
+          expect(
+            err.error.errorCode.code
+          ).toEqual("AccountNotInitialized");
+          expect(
+            err.error.errorMessage
+          ).toEqual("The program expected this account to be already initialized");
+      }
+    }
   });
 });

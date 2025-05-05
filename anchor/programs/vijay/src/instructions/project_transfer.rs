@@ -34,7 +34,7 @@ pub fn transfer_project(ctx: Context<TransferInfo>, _project_id: u64, new_freela
      new_freelancer_project.project_client = ctx.accounts.project.owner;
      new_freelancer_project.completed_task_url = "".to_string();
      new_freelancer_project.approved_tasks = 0;
-     new_freelancer_project.rejected_tasks = 0;
+     new_freelancer_project.rejected_attempts = 0;
      new_freelancer_project.is_active = true;
 
     // update the new freelancer report card

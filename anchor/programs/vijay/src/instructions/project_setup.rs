@@ -59,7 +59,7 @@ pub fn project_escrow_setup(
     freelancer_project.project_client = ctx.accounts.project.owner;
     freelancer_project.completed_task_url = "".to_string();
     freelancer_project.approved_tasks = 0;
-    freelancer_project.rejected_tasks = 0;
+    freelancer_project.rejected_attempts = 0;
     freelancer_project.is_active = true;
 
     let freelancer_report_card = &mut ctx.accounts.freelancer_report_card;
@@ -157,7 +157,7 @@ pub struct FreelancerProject {
     pub project_name: String,
     pub project_client: Pubkey,
     pub approved_tasks: u64,
-    pub rejected_tasks: u64,
+    pub rejected_attempts: u64,
     pub is_active: bool,
 }
 

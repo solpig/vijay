@@ -1852,7 +1852,7 @@
             "type": "u64"
           },
           {
-            "name": "rejected_tasks",
+            "name": "rejected_attempts",
             "type": "u64"
           },
           {

@@ -1858,7 +1858,7 @@ export type Vijay = {
             "type": "u64"
           },
           {
-            "name": "rejectedTasks",
+            "name": "rejectedAttempts",
             "type": "u64"
           },
           {

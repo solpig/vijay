@@ -74,10 +74,10 @@ pub fn review_task_process(
         }
         false => {
             let rejected_tasks = freelancer_project
-                .rejected_tasks
+                .rejected_attempts
                 .checked_add(1)
                 .ok_or(ErrorCode::NumericalOverflow)?;
-            freelancer_project.rejected_tasks = rejected_tasks;
+            freelancer_project.rejected_attempts = rejected_tasks;
         }
     }
     Ok(())

@@ -8,7 +8,9 @@ pub fn withdraw_project(ctx: Context<WithdrawInfo>, _project_id: u64) -> Result<
     // in-activate the project account
     // escrow account has been closed under #[derive(Accounts)] so no change required there
     let project = &mut ctx.accounts.project;
+    require!(project.owner == ctx.accounts.signer.key(), ErrorCode::NotAnOwner);
     require!(project.is_active, ErrorCode::ProjectInActive);
+
     project.is_active = false;
     project.in_progress = false;
     
