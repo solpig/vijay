@@ -7,7 +7,7 @@
     "anchor-build": "cd anchor && cargo build-sbf -- -Znext-lockfile-bump",
     "cargo-build": "cd anchor && cargo build-sbf -- -Znext-lockfile-bump",
     "anchor-localnet": "cd anchor && anchor localnet",
-    "anchor-test": "cd anchor && anchor test",
+    "anchor-test": "cd anchor && anchor test --skip-build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
