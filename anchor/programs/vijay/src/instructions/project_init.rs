@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use super::Client;
+use super::{Client, ClientReportCard};
 use crate::error_codes::ErrorCode;
 
 pub fn initialize_project(
@@ -14,12 +14,15 @@ pub fn initialize_project(
     require!(ctx.accounts.client.owner == ctx.accounts.signer.key(), ErrorCode::NotAnOwner);
 
     let client = &mut ctx.accounts.client;
+    let client_report = &mut ctx.accounts.client_report;
 
     let project_counter = client
         .project_counter
         .checked_add(1)
         .ok_or(ErrorCode::NumericalOverflow)?;
+    
     client.project_counter = project_counter;
+    client_report.total_projects = project_counter;
 
     let project = &mut ctx.accounts.project;
     project.name = name;
@@ -31,6 +34,7 @@ pub fn initialize_project(
     project.owner = ctx.accounts.signer.key();
     project.assigned_freelancer = Pubkey::default();
     project.assigned_freelancer_project_id = 0;
+
     Ok(())
 }
 
@@ -54,6 +58,13 @@ pub struct ProjectInfo<'info> {
         bump
     )]
     pub project: Account<'info, Project>,
+
+    #[account(
+        mut,
+        seeds = [b"client_report", signer.key().as_ref()],
+        bump,
+    )]
+    pub client_report: Account<'info, ClientReportCard>,
 
     pub system_program: Program<'info, System>,
 }

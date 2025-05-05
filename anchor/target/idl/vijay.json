@@ -283,6 +283,36 @@
           }
         },
         {
+          "name": "client_report",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
@@ -411,6 +441,10 @@
                 ]
               },
               {
+                "kind": "arg",
+                "path": "project_id"
+              },
+              {
                 "kind": "account",
                 "path": "project.name",
                 "account": "Project"
@@ -437,6 +471,10 @@
                   108,
                   116
                 ]
+              },
+              {
+                "kind": "arg",
+                "path": "project_id"
               },
               {
                 "kind": "account",
@@ -681,6 +719,7 @@
         },
         {
           "name": "project",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -784,6 +823,10 @@
                 ]
               },
               {
+                "kind": "arg",
+                "path": "project_id"
+              },
+              {
                 "kind": "account",
                 "path": "project.name",
                 "account": "Project"
@@ -810,6 +853,10 @@
                   108,
                   116
                 ]
+              },
+              {
+                "kind": "arg",
+                "path": "project_id"
               },
               {
                 "kind": "account",
@@ -920,6 +967,7 @@
       "accounts": [
         {
           "name": "signer",
+          "writable": true,
           "signer": true
         },
         {
@@ -958,6 +1006,33 @@
           }
         },
         {
+          "name": "new_freelancer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "new_freelancer_key"
+              }
+            ]
+          }
+        },
+        {
           "name": "escrow",
           "writable": true,
           "pda": {
@@ -980,6 +1055,10 @@
                   111,
                   119
                 ]
+              },
+              {
+                "kind": "arg",
+                "path": "project_id"
               },
               {
                 "kind": "account",
@@ -1076,7 +1155,7 @@
           }
         },
         {
-          "name": "client_report_card",
+          "name": "client_report",
           "writable": true,
           "pda": {
             "seeds": [
@@ -1104,16 +1183,99 @@
               }
             ]
           }
+        },
+        {
+          "name": "new_freelancer_project",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114,
+                  95,
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.name",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "new_freelancer.project_counter.checked_add(1)",
+                "account": "Freelancer"
+              },
+              {
+                "kind": "arg",
+                "path": "new_freelancer_key"
+              }
+            ]
+          }
+        },
+        {
+          "name": "new_freelancer_report",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "new_freelancer_key"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
         {
-          "name": "freelancer",
-          "type": "pubkey"
+          "name": "project_id",
+          "type": "u64"
         },
         {
-          "name": "freelancer_project_id",
-          "type": "u64"
+          "name": "freelancer",
+          "type": "pubkey"
         }
       ]
     },
@@ -1195,6 +1357,10 @@
                 ]
               },
               {
+                "kind": "arg",
+                "path": "project_id"
+              },
+              {
                 "kind": "account",
                 "path": "project.name",
                 "account": "Project"
@@ -1221,6 +1387,10 @@
                   108,
                   116
                 ]
+              },
+              {
+                "kind": "arg",
+                "path": "project_id"
               },
               {
                 "kind": "account",
@@ -1347,7 +1517,12 @@
           }
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "project_id",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [

@@ -72,16 +72,17 @@ pub mod vijay {
     }
 
     pub fn withdraw_project(
-        ctx: Context<WithdrawInfo>
+        ctx: Context<WithdrawInfo>,
+        project_id: u64
     ) -> Result<()> {
-        instructions::withdraw_project(ctx)
+        instructions::withdraw_project(ctx, project_id)
     }
 
     pub fn transfer_project(
         ctx: Context<TransferInfo>,
+        project_id: u64,
         freelancer: Pubkey,
-        freelancer_project_id: u64
     ) -> Result<()> {
-        instructions::transfer_project(ctx, freelancer, freelancer_project_id)
+        instructions::transfer_project(ctx, project_id, freelancer)
     }
 }

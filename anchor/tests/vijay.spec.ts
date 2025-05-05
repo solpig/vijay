@@ -128,7 +128,7 @@ describe('vijay', () => {
     expect(freelancer.owner.toString()).toEqual(freelancer_wallet.publicKey.toString());
   });
 
-  test('Creating two different project for a client', async () => {
+  test('Client setting up two different projects for freelancing', async () => {
     const [clientPda] = anchor.web3.PublicKey.findProgramAddressSync(
       [Buffer.from("client"), client_wallet_publicKey.toBuffer()],
       program.programId
@@ -217,35 +217,36 @@ describe('vijay', () => {
     expect(projectTwo.owner.toString()).toEqual(client_wallet_publicKey.toString());
   });
 
-  test('Assigning a project to a freelancer', async () => {
-    const counter = new anchor.BN(1).toArrayLike(Buffer, "le", 8);
+  test('Client assigning two different projects to a single freelancer', async () => {
+    const firstProjectCounter = new anchor.BN(1).toArrayLike(Buffer, "le", 8);
+    const secondProjectCounter = new anchor.BN(2).toArrayLike(Buffer, "le", 8);
    
     const [freelancerPda] = anchor.web3.PublicKey.findProgramAddressSync(
       [Buffer.from("freelancer"), freelancer_wallet.publicKey.toBuffer()],
       program.programId
     );
 
-    const [clientProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("client_project"),counter, client_wallet_publicKey.toBuffer()],
+    const [firstProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("client_project"),firstProjectCounter, client_wallet_publicKey.toBuffer()],
       program.programId
     );
 
     // fetching the client project and freelancer account
     const freelancer = await program.account.freelancer.fetch(freelancerPda);
-    const project = await program.account.project.fetch(clientProjectPda);
+    const firstProject = await program.account.project.fetch(firstProjectPda);
 
     const [projectEscrowPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("project_escrow"), Buffer.from(project.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      [Buffer.from("project_escrow"), firstProjectCounter, Buffer.from(firstProject.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
       program.programId
     );
     
     const [escrowVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("vault"), Buffer.from(project.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      [Buffer.from("vault"), firstProjectCounter, Buffer.from(firstProject.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
       program.programId
     );
    
     const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("freelancer_project"), Buffer.from(project.name).subarray(0,32), new anchor.BN(1).toArrayLike(Buffer, "le", 8),  freelancer.owner.toBuffer()],
+      [Buffer.from("freelancer_project"), Buffer.from(firstProject.name).subarray(0,32), new anchor.BN(1).toArrayLike(Buffer, "le", 8),  freelancer.owner.toBuffer()],
       program.programId
     );
 
@@ -275,7 +276,7 @@ describe('vijay', () => {
         projectDetails.total_task,
       ).accountsPartial({
         signer: client_wallet_publicKey,
-        project: clientProjectPda,
+        project: firstProjectPda,
         escrow: projectEscrowPda,
         vault: escrowVaultPda,
         freelancer: freelancerPda,
@@ -286,7 +287,7 @@ describe('vijay', () => {
       }).rpc();
 
       // get the account details after the transaction
-      const updatedProject = await program.account.project.fetch(clientProjectPda);
+      const updatedProject = await program.account.project.fetch(firstProjectPda);
       const updatedFreelancer = await program.account.freelancer.fetch(freelancerPda);
       const escrow = await program.account.escrow.fetch(projectEscrowPda);
       const freelancerProject = await program.account.freelancerProject.fetch(freelancerProjectPda);
@@ -316,22 +317,76 @@ describe('vijay', () => {
 
       // assert if the freelancer project has been created with correct details
       expect(freelancerProject.completedTaskUrl).toEqual("");
-      expect(freelancerProject.projectName).toEqual(project.name);
+      expect(freelancerProject.projectName).toEqual(firstProject.name);
       expect(freelancerProject.projectClient).toEqual(client_wallet_publicKey);
       expect(freelancerProject.approvedTasks.toNumber()).toEqual(0);
       expect(freelancerProject.rejectedTasks.toNumber()).toEqual(0);
       expect(freelancerProject.isActive).toEqual(true);
 
       // assert if the client report card has been updated
-      expect(clientReport.totalProjects.toNumber()).toEqual(1);
+      expect(clientReport.totalProjects.toNumber()).toEqual(2);
       expect(clientReport.projectsInProgress.toNumber()).toEqual(1);
 
       // assert if the freelancer report card has been updated
       expect(freelancerReport.totalProjects.toNumber()).toEqual(1);
       expect(freelancerReport.projectsInProgress.toNumber()).toEqual(1);
+
+      // assign another project to the freelancer
+      const secondProjectDetails = {
+        projectID: new anchor.BN(2),
+        freelancer: freelancer_wallet.publicKey,
+        budget: new anchor.BN(amount),
+        total_task: new anchor.BN(4),
+      }
+
+      const [secondProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from("client_project"), secondProjectCounter, client_wallet_publicKey.toBuffer()],
+        program.programId
+      );
+      const secondProject = await program.account.project.fetch(secondProjectPda);
+
+      const [secondProjectEscrowPda] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from("project_escrow"), secondProjectCounter, Buffer.from(secondProject.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+        program.programId
+      );
+      
+      const [secondEscrowVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from("vault"), secondProjectCounter, Buffer.from(secondProject.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+        program.programId
+      );
+     
+      const [secondFreelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from("freelancer_project"), Buffer.from(secondProject.name).subarray(0,32), secondProjectCounter,  freelancer.owner.toBuffer()],
+        program.programId
+      );
+
+      await program.methods.projectEscrowSetup(
+        secondProjectDetails.projectID,
+        secondProjectDetails.freelancer,
+        secondProjectDetails.budget,
+        secondProjectDetails.total_task,
+      ).accountsPartial({
+        signer: client_wallet_publicKey,
+        project: secondProjectPda,
+        escrow: secondProjectEscrowPda,
+        vault: secondEscrowVaultPda,
+        freelancer: freelancerPda,
+        freelancerProject: secondFreelancerProjectPda,
+        freelancerReportCard: freelancerReportPda,
+        clientReportCard: clientReportPda,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      }).rpc();
+
+      const updatedClientReport = await program.account.clientReportCard.fetch(clientReportPda);
+      const updatedFreelancerReport = await program.account.freelancerReportCard.fetch(freelancerReportPda);
+
+      // assert if the freelancer and client report is updated
+      expect(updatedClientReport.projectsInProgress.toNumber()).toEqual(2);
+      expect(updatedFreelancerReport.projectsInProgress.toNumber()).toEqual(2);
+      expect(updatedFreelancerReport.totalProjects.toNumber()).toEqual(2);
   });
 
-  test('Requesting a task review', async () => {
+  test('Freelancer requesting for a task review', async () => {
     const freelancerProjectId = new anchor.BN(1);  
     const taskDetails = {
       taskUrl: "some_url.com",
@@ -359,28 +414,34 @@ describe('vijay', () => {
     expect(freelancerProject.completedTaskUrl).toEqual(taskDetails.taskUrl);
   });
 
-  test('approving a task review', async () => {
-    const projectId = new anchor.BN(1);
-    const projectName = "Freelancing on Solana - Project 1"
+  test('Client approving a task review', async () => {
+    const freelancerProjectId = new anchor.BN(1);
+    const projectName = "Freelancing on Solana - Project 1";
+    const taskUrl = "some_other_url.com";
 
     // get all the PDAs
     const [clientProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("client_project"),projectId.toArrayLike(Buffer, "le", 8), client_wallet_publicKey.toBuffer()],
+      [Buffer.from("client_project"), freelancerProjectId.toArrayLike(Buffer, "le", 8), client_wallet_publicKey.toBuffer()],
       program.programId
     );
+
+    const clientProject = await program.account.project.fetch(clientProjectPda);
+    console.log("Client project::::", clientProject)
+    console.log("client waller::::", client_wallet_publicKey.toString())
 
     const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("freelancer_project"), Buffer.from(projectName).subarray(0,32), new anchor.BN(1).toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
+      [Buffer.from("freelancer_project"), Buffer.from(projectName).subarray(0,32), freelancerProjectId.toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
       program.programId
     );
 
+
     const [projectEscrowPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("project_escrow"), Buffer.from(projectName).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      [Buffer.from("project_escrow"), freelancerProjectId.toArrayLike(Buffer, "le", 8), Buffer.from(projectName).subarray(0,32), clientProject.owner.toBuffer()],
       program.programId
     );
 
     const [escrowVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("vault"), Buffer.from(projectName).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      [Buffer.from("vault"), freelancerProjectId.toArrayLike(Buffer, "le", 8), Buffer.from(projectName).subarray(0,32), client_wallet_publicKey.toBuffer()],
       program.programId
     );
 
@@ -402,7 +463,7 @@ describe('vijay', () => {
     console.log(`Vault balance before: ${InitialVaultBalance}`);
 
     await program.methods
-            .reviewTaskProcess(projectId, true)
+            .reviewTaskProcess(freelancerProjectId, true)
             .accountsPartial({
               signer: client_wallet_publicKey,
               project: clientProjectPda,
@@ -433,6 +494,397 @@ describe('vijay', () => {
     expect(freelancerProject.completedTaskUrl).toEqual("");
     expect(freelancerProject.approvedTasks.toNumber()).toEqual(1);
 
-    //TODO: make another call to assert the last task completion
+    // request another review 
+    await program.methods.requestTaskReview(
+      projectName,
+      freelancerProjectId,
+      taskUrl,
+    )
+    .accountsPartial({
+      signer: freelancer_wallet.publicKey,
+      freelancerProject: freelancerProjectPda
+    })
+    .signers([freelancer_wallet])
+    .rpc();
+
+    // // approve the second review
+    await program.methods
+            .reviewTaskProcess(freelancerProjectId, true)
+            .accountsPartial({
+              signer: client_wallet_publicKey,
+              project: clientProjectPda,
+              freelancerProject: freelancerProjectPda,
+              escrow: projectEscrowPda,
+              vault: escrowVaultPda,
+              freelancerReportCard: freelancerReportPda,
+              clientReportCard: clientReportPda,
+              receiver: freelancer_wallet.publicKey
+            })
+            .rpc();
+
+    const escrowAccount = await program.account.escrow.fetch(projectEscrowPda);
+    const updatedProjectAccount = await program.account.project.fetch(clientProjectPda);
+    const updatedFreelancerReport = await program.account.freelancerReportCard.fetch(freelancerReportPda);
+    const updatedClientReport = await program.account.clientReportCard.fetch(clientReportPda);
+
+    expect(escrowAccount.tasksCompleted.toNumber()).toEqual(2);
+    expect(escrowAccount.isActive).toEqual(false);
+   
+    expect(updatedProjectAccount.inProgress).toEqual(false);
+    expect(updatedProjectAccount.isActive).toEqual(false);
+   
+    expect(updatedFreelancerReport.completed.toNumber()).toEqual(1);
+    expect(updatedFreelancerReport.projectsInProgress.toNumber()).toEqual(1);
+    expect(updatedFreelancerReport.successRate).toEqual(10000);
+    expect(updatedClientReport.completed.toNumber()).toEqual(1);
+    expect(updatedClientReport.projectsInProgress.toNumber()).toEqual(1);
+    expect(updatedClientReport.successRate).toEqual(10000);
+
+  });
+
+  test('Client rejecting a task review', async () => {
+    const freelancerProjectId = new anchor.BN(2);  
+    const taskDetails = {
+      taskUrl: "some_url.com",
+      projectName: "Freelancing on Solana - Project 2"
+    };
+    
+    const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("freelancer_project"), Buffer.from(taskDetails.projectName).subarray(0,32),freelancerProjectId.toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
+      program.programId
+    );
+
+    // request a task review
+    await program.methods.requestTaskReview(
+      taskDetails.projectName,
+      freelancerProjectId,
+      taskDetails.taskUrl,
+    )
+    .accountsPartial({
+      signer: freelancer_wallet.publicKey,
+      freelancerProject: freelancerProjectPda
+    })
+    .signers([freelancer_wallet])
+    .rpc();
+
+    // get all the PDAs
+    const [clientProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("client_project"),freelancerProjectId.toArrayLike(Buffer, "le", 8), client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+
+    const [projectEscrowPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("project_escrow"), freelancerProjectId.toArrayLike(Buffer, "le", 8), Buffer.from(taskDetails.projectName).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+
+    const [escrowVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("vault"), freelancerProjectId.toArrayLike(Buffer, "le", 8), Buffer.from(taskDetails.projectName).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+
+    const [freelancerReportPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("freelancer_report"), freelancer_wallet.publicKey.toBuffer()],
+      program.programId
+    );
+
+    const [clientReportPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("client_report"), client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+    
+    
+    // reject the task review
+    await program.methods
+    .reviewTaskProcess(freelancerProjectId, false)
+    .accountsPartial({
+      signer: client_wallet_publicKey,
+      project: clientProjectPda,
+      freelancerProject: freelancerProjectPda,
+      escrow: projectEscrowPda,
+      vault: escrowVaultPda,
+      freelancerReportCard: freelancerReportPda,
+      clientReportCard: clientReportPda,
+      receiver: freelancer_wallet.publicKey
+    })
+    .rpc();
+    const freelancerProject = await program.account.freelancerProject.fetch(freelancerProjectPda);
+    expect(freelancerProject.completedTaskUrl).toEqual("");
+    expect(freelancerProject.rejectedTasks.toNumber()).toEqual(1);
+  });
+
+  test('Client cancelling the project', async () => {
+     const projectID = new anchor.BN(2);
+
+     const [clientProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("client_project"), projectID.toArrayLike(Buffer, "le", 8), client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+    const clientProject = await program.account.project.fetch(clientProjectPda);
+
+    const [escrowVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("vault"), projectID.toArrayLike(Buffer, "le", 8), Buffer.from(clientProject.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+
+    const [projectEscrowPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("project_escrow"), projectID.toArrayLike(Buffer, "le", 8), Buffer.from(clientProject.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+
+    const [freelancerReportPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("freelancer_report"), freelancer_wallet.publicKey.toBuffer()],
+      program.programId
+    );
+
+    const [clientReportPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("client_report"), client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+
+    const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("freelancer_project"), Buffer.from(clientProject.name).subarray(0,32), projectID.toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
+      program.programId
+    );
+
+    let initialClientBalance = await provider.connection.getBalance(client_wallet_publicKey);
+
+    await program.methods
+    .withdrawProject(projectID)
+    .accountsPartial({
+      signer: client_wallet_publicKey,
+      project: clientProjectPda,
+      escrow: projectEscrowPda,
+      vault: escrowVaultPda,
+      freelancerProject: freelancerProjectPda,
+      freelancerReportCard: freelancerReportPda,
+      clientReportCard: clientReportPda
+    }).rpc();
+
+    let updatedClientBalance = await provider.connection.getBalance(client_wallet_publicKey);
+   
+    // updated balance will be slightly more than transferred amount since vault and escrow account are getting closed
+    // therefore the rent is refunded
+    expect(updatedClientBalance).toBeGreaterThan(initialClientBalance);
+
+    const freelanceReport = await program.account.freelancerReportCard.fetch(freelancerReportPda);
+    expect(freelanceReport.successRate).toEqual(5000);
+    expect(freelanceReport.riskScore).toEqual(5000);
+    expect(freelanceReport.rejected.toNumber()).toEqual(1);
+    
+    const clientReport = await program.account.clientReportCard.fetch(clientReportPda);
+    expect(clientReport.withdrawn.toNumber()).toEqual(1);
+    expect(clientReport.successRate).toEqual(5000);
+    expect(clientReport.riskScore).toEqual(5000);
+
+    const updatedClientProject = await program.account.project.fetch(clientProjectPda);
+    expect(updatedClientProject.isActive).toEqual(false);
+    expect(updatedClientProject.inProgress).toEqual(false);
+
+    const updatedFreelancerProject = await program.account.freelancerProject.fetch(freelancerProjectPda);
+    expect(updatedFreelancerProject.isActive).toEqual(false);
+  });
+
+  test('Client transferring the project', async () => {
+    const projectCounter = new anchor.BN(3).toArrayLike(Buffer, "le", 8);
+
+    const [clientPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("client"), client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+   
+    const [freelancerPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("freelancer"), freelancer_wallet.publicKey.toBuffer()],
+      program.programId
+    );
+
+    const [projectPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("client_project"), projectCounter, client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+
+    const projectDetails = {
+      name: "Freelancing on Solana - Project 3",
+      description: "A decentralized application using Solana",
+      url: "some_url.com",
+      budget: new anchor.BN(1000),
+    }
+
+    // project setup by client
+    await program.methods
+      .initializeProject(
+        projectDetails.name,
+        projectDetails.description,
+        projectDetails.url,
+        projectDetails.budget,
+      ).accountsPartial({
+        signer: client_wallet_publicKey,
+        client: clientPda,
+        project: projectPda,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      }).rpc();
+
+    // fetching the client project and freelancer account
+    const freelancer = await program.account.freelancer.fetch(freelancerPda);
+    const project = await program.account.project.fetch(projectPda);
+
+    const [projectEscrowPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("project_escrow"), projectCounter, Buffer.from(project.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+    
+    const [escrowVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("vault"), projectCounter, Buffer.from(project.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+   
+    const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("freelancer_project"), Buffer.from(project.name).subarray(0,32), projectCounter,  freelancer.owner.toBuffer()],
+      program.programId
+    );
+
+    const [freelancerReportPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("freelancer_report"), freelancer_wallet.publicKey.toBuffer()],
+      program.programId
+    );
+
+    const [clientReportPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("client_report"), client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+
+    const amount = 2 * anchor.web3.LAMPORTS_PER_SOL;
+
+    const projectMetaInfo = {
+      projectID: new anchor.BN(3),
+      freelancer: freelancer_wallet.publicKey,
+      budget: new anchor.BN(amount),
+      total_task: new anchor.BN(5),
+    }
+
+    // setup the project escrow and assign the project to the freelancer
+    await program.methods.projectEscrowSetup(
+          projectMetaInfo.projectID,
+          projectMetaInfo.freelancer,
+          projectMetaInfo.budget,
+          projectMetaInfo.total_task,
+      ).accountsPartial({
+        signer: client_wallet_publicKey,
+        project: projectPda,
+        escrow: projectEscrowPda,
+        vault: escrowVaultPda,
+        freelancer: freelancerPda,
+        freelancerProject: freelancerProjectPda,
+        freelancerReportCard: freelancerReportPda,
+        clientReportCard: clientReportPda,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      }).rpc();
+
+      // setting up the new freelancer
+      const newFreelancerKeyPair: anchor.web3.Keypair = anchor.web3.Keypair.generate();
+      await provider.connection.requestAirdrop(newFreelancerKeyPair.publicKey, 2 * LAMPORTS_PER_SOL);
+
+      // Wait for confirmation
+      await provider.connection.confirmTransaction(
+        await provider.connection.requestAirdrop(newFreelancerKeyPair.publicKey, 10 * LAMPORTS_PER_SOL),
+        "confirmed"
+      );
+      console.log(`Freelancer wallet ${newFreelancerKeyPair.publicKey.toString()} airdropped with 10 SOL`);
+
+
+      // set the new freelancer account
+      const freelancerDetails = {
+        name: "Rocky",
+        domain: "web3, blockchain, defi",
+        skills: "Rust, React, Solana",
+        contact: "123-456-7890"
+      };
+      
+      await program.methods
+        .initializeFreelancer(
+          freelancerDetails.name,
+          freelancerDetails.domain,
+          freelancerDetails.skills,
+          freelancerDetails.contact
+        ).accounts({
+          signer: newFreelancerKeyPair.publicKey,
+        })
+        .signers([newFreelancerKeyPair])
+        .rpc();
+
+      // get the PDAs for the new freelancer
+      const [newFreelancerPda] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from("freelancer"), newFreelancerKeyPair.publicKey.toBuffer()],
+        program.programId
+      );
+      
+      const [newFreelancerReportPda] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from("freelancer_report"), newFreelancerKeyPair.publicKey.toBuffer()],
+        program.programId
+      );
+      
+      const [newFreelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from("freelancer_project"), Buffer.from(project.name).subarray(0,32), new anchor.BN(1).toArrayLike(Buffer, "le", 8), newFreelancerKeyPair.publicKey.toBuffer()],
+        program.programId
+      );
+
+      //transfer the project to new freelancer
+      await program.methods
+        .transferProject(
+          projectMetaInfo.projectID,
+          newFreelancerKeyPair.publicKey,
+        ).accountsPartial({
+          signer: client_wallet_publicKey,
+          project: projectPda,
+          newFreelancer: newFreelancerPda,
+          escrow: projectEscrowPda,
+          freelancerProject: freelancerProjectPda,
+          freelancerReport: freelancerReportPda,
+          clientReport: clientReportPda,
+          newFreelancerReport: newFreelancerReportPda,
+          newFreelancerProject: newFreelancerProjectPda,
+        }).rpc();
+        
+        const newFreelancer = await program.account.freelancer.fetch(newFreelancerPda);
+        const updatedProject = await program.account.project.fetch(projectPda);       
+        const escrow = await program.account.escrow.fetch(projectEscrowPda);
+        const newFreelancerProject = await program.account.freelancerProject.fetch(newFreelancerProjectPda);        
+        const newFreelancerReport = await program.account.freelancerReportCard.fetch(newFreelancerReportPda);
+        const oldFreelancerProject = await program.account.freelancerProject.fetch(freelancerProjectPda);
+        const oldFreelancerReport = await program.account.freelancerReportCard.fetch(freelancerReportPda);
+        const clientReport = await program.account.clientReportCard.fetch(clientReportPda);
+
+        expect(updatedProject.assignedFreelancer.toString()).toEqual(newFreelancerKeyPair.publicKey.toString());
+        expect(updatedProject.assignedFreelancerProjectId.toNumber()).toEqual(newFreelancer.projectCounter.toNumber());
+        expect(updatedProject.inProgress).toEqual(true);
+        expect(updatedProject.isActive).toEqual(true);
+
+        expect(escrow.receiver.toString()).toEqual(newFreelancerKeyPair.publicKey.toString());
+
+        expect(newFreelancerProject.projectName).toEqual(project.name);
+        expect(newFreelancerProject.projectClient.toString()).toEqual(client_wallet_publicKey.toString());
+        expect(newFreelancerProject.approvedTasks.toNumber()).toEqual(0);
+        expect(newFreelancerProject.rejectedTasks.toNumber()).toEqual(0);
+        expect(newFreelancerProject.isActive).toEqual(true);
+
+        expect(newFreelancerReport.totalProjects.toNumber()).toEqual(1);
+        expect(newFreelancerReport.projectsInProgress.toNumber()).toEqual(1);
+        expect(newFreelancerReport.successRate).toEqual(0);
+        expect(newFreelancerReport.riskScore).toEqual(0);
+
+        expect(oldFreelancerProject.isActive).toEqual(false);
+        
+        expect(oldFreelancerReport.rejected.toNumber()).toEqual(2);
+        expect(oldFreelancerReport.projectsInProgress.toNumber()).toEqual(0);
+        expect(oldFreelancerReport.successRate).toEqual(3333);
+        expect(oldFreelancerReport.riskScore).toEqual(6666);
+
+        expect(clientReport.totalProjects.toNumber()).toEqual(3);
+        expect(clientReport.projectsInProgress.toNumber()).toEqual(1);
+        expect(clientReport.withdrawn.toNumber()).toEqual(1);
+        expect(clientReport.transferred.toNumber()).toEqual(1);
+        expect(clientReport.successRate).toEqual(5000);
+        expect(clientReport.riskScore).toEqual(20000);
+
   });
 });

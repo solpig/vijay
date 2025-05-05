@@ -289,6 +289,36 @@ export type Vijay = {
           }
         },
         {
+          "name": "clientReport",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
@@ -417,6 +447,10 @@ export type Vijay = {
                 ]
               },
               {
+                "kind": "arg",
+                "path": "projectId"
+              },
+              {
                 "kind": "account",
                 "path": "project.name",
                 "account": "project"
@@ -443,6 +477,10 @@ export type Vijay = {
                   108,
                   116
                 ]
+              },
+              {
+                "kind": "arg",
+                "path": "projectId"
               },
               {
                 "kind": "account",
@@ -687,6 +725,7 @@ export type Vijay = {
         },
         {
           "name": "project",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -790,6 +829,10 @@ export type Vijay = {
                 ]
               },
               {
+                "kind": "arg",
+                "path": "projectId"
+              },
+              {
                 "kind": "account",
                 "path": "project.name",
                 "account": "project"
@@ -816,6 +859,10 @@ export type Vijay = {
                   108,
                   116
                 ]
+              },
+              {
+                "kind": "arg",
+                "path": "projectId"
               },
               {
                 "kind": "account",
@@ -926,6 +973,7 @@ export type Vijay = {
       "accounts": [
         {
           "name": "signer",
+          "writable": true,
           "signer": true
         },
         {
@@ -964,6 +1012,33 @@ export type Vijay = {
           }
         },
         {
+          "name": "newFreelancer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "newFreelancerKey"
+              }
+            ]
+          }
+        },
+        {
           "name": "escrow",
           "writable": true,
           "pda": {
@@ -986,6 +1061,10 @@ export type Vijay = {
                   111,
                   119
                 ]
+              },
+              {
+                "kind": "arg",
+                "path": "projectId"
               },
               {
                 "kind": "account",
@@ -1082,7 +1161,7 @@ export type Vijay = {
           }
         },
         {
-          "name": "clientReportCard",
+          "name": "clientReport",
           "writable": true,
           "pda": {
             "seeds": [
@@ -1110,16 +1189,99 @@ export type Vijay = {
               }
             ]
           }
+        },
+        {
+          "name": "newFreelancerProject",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114,
+                  95,
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.name",
+                "account": "project"
+              },
+              {
+                "kind": "account",
+                "path": "new_freelancer.project_counter.checked_add(1)",
+                "account": "freelancer"
+              },
+              {
+                "kind": "arg",
+                "path": "newFreelancerKey"
+              }
+            ]
+          }
+        },
+        {
+          "name": "newFreelancerReport",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  114,
+                  101,
+                  101,
+                  108,
+                  97,
+                  110,
+                  99,
+                  101,
+                  114,
+                  95,
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "newFreelancerKey"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
         {
-          "name": "freelancer",
-          "type": "pubkey"
+          "name": "projectId",
+          "type": "u64"
         },
         {
-          "name": "freelancerProjectId",
-          "type": "u64"
+          "name": "freelancer",
+          "type": "pubkey"
         }
       ]
     },
@@ -1201,6 +1363,10 @@ export type Vijay = {
                 ]
               },
               {
+                "kind": "arg",
+                "path": "projectId"
+              },
+              {
                 "kind": "account",
                 "path": "project.name",
                 "account": "project"
@@ -1227,6 +1393,10 @@ export type Vijay = {
                   108,
                   116
                 ]
+              },
+              {
+                "kind": "arg",
+                "path": "projectId"
               },
               {
                 "kind": "account",
@@ -1353,7 +1523,12 @@ export type Vijay = {
           }
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "projectId",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [

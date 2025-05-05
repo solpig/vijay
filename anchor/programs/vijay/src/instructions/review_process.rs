@@ -54,15 +54,21 @@ pub fn review_task_process(
                 let freelancer_report = &mut ctx.accounts.freelancer_report_card;
                 freelancer_report.completed = freelancer_report.completed.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
                 freelancer_report.projects_in_progress = freelancer_report.projects_in_progress.checked_sub(1).ok_or(ErrorCode::NumericalOverflow)?;
+                
                 let actual_total_projects = freelancer_report.total_projects.checked_sub(freelancer_report.projects_in_progress).ok_or(ErrorCode::NumericalOverflow)?;
                 freelancer_report.success_rate = ((freelancer_report.completed * 10000)/ actual_total_projects) as u16;
+                freelancer_report.risk_score = ((freelancer_report.rejected * 10000) / actual_total_projects) as u16;
 
                 let client_report_card = &mut ctx.accounts.client_report_card;
                 client_report_card.completed = client_report_card.completed.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
                 client_report_card.projects_in_progress = client_report_card.projects_in_progress.checked_sub(1).ok_or(ErrorCode::NumericalOverflow)?;
+                
                 // not considering the in progress projects for calculating success_rate
                 let actual_total_projects = client_report_card.total_projects.checked_sub(client_report_card.projects_in_progress).ok_or(ErrorCode::NumericalOverflow)?;
                 client_report_card.success_rate = ((client_report_card.completed * 10000) / actual_total_projects) as u16;
+                
+                let total_risk_points = client_report_card.withdrawn + client_report_card.transferred;
+                client_report_card.risk_score = ((total_risk_points * 10000) / actual_total_projects) as u16;
             }
 
         }
@@ -83,6 +89,7 @@ pub struct TaskReviewProcess<'info> {
     pub signer: Signer<'info>,
 
     #[account(
+        mut,
         seeds = [b"client_project", project_id.to_le_bytes().as_ref(), signer.key().as_ref()],
         bump
     )]
@@ -97,14 +104,14 @@ pub struct TaskReviewProcess<'info> {
 
     #[account(
         mut,
-        seeds = [b"project_escrow", project.name.as_bytes()[..32].as_ref(), project.owner.as_ref()],
+        seeds = [b"project_escrow", project_id.to_le_bytes().as_ref(), project.name.as_bytes()[..32].as_ref(), project.owner.as_ref()],
         bump
     )]
     pub escrow: Account<'info, Escrow>,
 
     #[account(
         mut,
-        seeds = [b"vault", project.name.as_bytes()[..32].as_ref(), project.owner.as_ref()],
+        seeds = [b"vault", project_id.to_le_bytes().as_ref(), project.name.as_bytes()[..32].as_ref(), project.owner.as_ref()],
         bump
     )]
     pub vault: Account<'info, Vault>,
