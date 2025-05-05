@@ -43,8 +43,14 @@ jobs:
       - name: Check solana config
         run: solana config get
 
-      - run: RUSTUP_TOOLCHAIN=nightly-2025-04-01 pnpm run anchor build
+      - run: pnpm run anchor build
         shell: bash
+        env:
+          RUSTUP_TOOLCHAIN: nightly-2025-04-01
+          CARGO_UNSTABLE: -Znext-lockfile-bump
 
-      - run: RUSTUP_TOOLCHAIN=nightly-2025-04-01 pnpm run anchor test
+      - run: pnpm run anchor test
         shell: bash
+        env:
+          RUSTUP_TOOLCHAIN: nightly-2025-04-01
+          CARGO_UNSTABLE: -Znext-lockfile-bump
