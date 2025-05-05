@@ -4,27 +4,25 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletButton } from '../solana/solana-provider'
 import { AppHero, ellipsify } from '../ui/ui-layout'
 import { ExplorerLink } from '../cluster/cluster-ui'
-import { useVijayProgram } from './vijay-data-access'
-import { VijayCreate, VijayList } from './vijay-ui'
+import { useProgramAccounts } from './client-data-access'
+import { CreateClient } from './client-ui'
 
-export default function VijayFeature() {
+export default function ClientFeature() {
   const { publicKey } = useWallet()
-  const { programId } = useVijayProgram()
+  const { programId } = useProgramAccounts()
 
   return publicKey ? (
     <div>
       <AppHero
         title="Vijay"
         subtitle={
-          'Create a new account by clicking the "Create" button. The state of a account is stored on-chain and can be manipulated by calling the program\'s methods (increment, decrement, set, and close).'
-        }
-      >
+          'A decentralised freelancing decentralized freelancing platform on Solana'
+        }>
         <p className="mb-6">
           <ExplorerLink path={`account/${programId}`} label={ellipsify(programId.toString())} />
         </p>
-        <VijayCreate />
+        <CreateClient address={publicKey} />
       </AppHero>
-      <VijayList />
     </div>
   ) : (
     <div className="max-w-4xl mx-auto">

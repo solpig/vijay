@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link';
 import { AppHero } from '../ui/ui-layout'
 
 const links: { label: string; href: string }[] = [
@@ -13,17 +14,12 @@ const links: { label: string; href: string }[] = [
 export default function DashboardFeature() {
   return (
     <div>
-      <AppHero title="gm" subtitle="Say hi to your new Solana dApp." />
+      <AppHero title="Vijay" subtitle="A decentralized freelancing platform that connects clients and freelancers on the Solana blockchain." />
       <div className="max-w-xl mx-auto py-6 sm:px-6 lg:px-8 text-center">
         <div className="space-y-2">
-          <p>Here are some helpful links to get you started.</p>
-          {links.map((link, index) => (
-            <div key={index}>
-              <a href={link.href} className="link" target="_blank" rel="noopener noreferrer">
-                {link.label}
-              </a>
-            </div>
-          ))}
+          <Link href={{ pathname: '/client' }} passHref className="btn btn-primary btn-outline">
+              Client Registeration
+          </Link>
         </div>
       </div>
     </div>
