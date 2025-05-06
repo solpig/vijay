@@ -19,23 +19,31 @@ export function useFreelancerAccounts({ account }: { account: PublicKey }) {
   
     const queryFreelancerAccount = useQuery({
       queryKey: ['fetch', 'freelancer', { cluster, account }],
-      queryFn: () => program.account.freelancer.fetch(account),
+      queryFn: async() => {
+        const [freelancerPDA] = await PublicKey.findProgramAddressSync(
+          [Buffer.from('freelancer'), account.toBuffer()],
+          program.programId
+        );
+        return await program.account.freelancer.fetch(freelancerPDA);
+      }
     })
   
-    const initializeFreelancerMutation  = useMutation<string, Error, initializeFreelancer>({
-      mutationKey: ['initialize','freelancer', { cluster, account }],
-      mutationFn: async ({name, domain, skills, contact}) => {
-        let signature = await program.methods.initializeFreelancer(name, domain, skills, contact).accounts({ signer: account }).rpc();
-        return signature;
-      },
-      onSuccess: (signature) => {
-        transactionToast(signature);
-        return queryFreelancerAccounts.refetch()
-      },
-      onError: (err) => {
-        toast.error(`Failed to create a freelancer account:: ${err.message}`);
-      },
-    });
+    const initializeFreelancerMutation = (onSuccessCallback?: () => void) => {
+      return useMutation<string, Error, initializeFreelancer>({
+        mutationKey: ['initialize','freelancer', { cluster, account }],
+        mutationFn: async ({name, domain, skills, contact}) => {
+          let signature = await program.methods.initializeFreelancer(name, domain, skills, contact).accounts({ signer: account }).rpc();
+          return signature;
+        },
+        onSuccess: (signature) => {
+          transactionToast(signature);
+          if (onSuccessCallback) onSuccessCallback(); 
+        },
+        onError: (err) => {
+          toast.error(`Failed to create a freelancer account:: ${err.message}`);
+        },
+      });
+    } 
   
     const taskReviewMutation = useMutation<string, Error, requestTaskReview>({
       mutationKey: ['request', 'review', { cluster }],

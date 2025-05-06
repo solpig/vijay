@@ -1,9 +1,7 @@
 'use client'
 
-import { Keypair, PublicKey } from '@solana/web3.js'
-import { useMemo, useState } from 'react'
-import { ellipsify } from '../ui/ui-layout'
-import { ExplorerLink } from '../cluster/cluster-ui'
+import { PublicKey } from '@solana/web3.js'
+import { useState } from 'react'
 import { useClientAccounts } from './client-data-access'
 import { ProgramAccount } from '@coral-xyz/anchor'
 
@@ -14,6 +12,14 @@ export function RegisterClient({ address }: { address: PublicKey }) {
   const [domain, setDomain] = useState('');
   const [requiredSkills, setRequiredSkills] = useState('');
   const [contact, setContact] = useState('');
+
+  const initializeClientMut = initializeClientMutation(() => {
+    queryClientAccount.refetch();
+    setName('');
+    setDomain('');
+    setRequiredSkills('');
+    setContact('');
+  });
 
     return (
       <div>
@@ -47,9 +53,9 @@ export function RegisterClient({ address }: { address: PublicKey }) {
         />
         <button
           className="btn btn-xs lg:btn-md btn-primary btn-outline"
-          onClick={() => initializeClientMutation.mutateAsync({name, domain, requiredSkills, contact})}
-          disabled={initializeClientMutation.isPending || queryClientAccount.data?.name !== undefined}>
-          {!queryClientAccount.data?.name ? "Create" : "Already Registered"}{initializeClientMutation.isPending && '...'}
+          onClick={() => initializeClientMut.mutateAsync({name, domain, requiredSkills, contact})}
+          disabled={initializeClientMut.isPending || queryClientAccount.data?.name !== undefined}>
+          {!queryClientAccount.data?.name ? "Create" : "Already Registered"}{initializeClientMut.isPending && '...'}
         </button>
       </div>
     )
@@ -59,7 +65,7 @@ export function ClientsList({ address }: { address: PublicKey }) {
   const { queryClientAccounts } = useClientAccounts({ account: address });
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-16xl mx-auto mr-16 mt-12">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {queryClientAccounts.data?.map((account) => (
           <ClientCard key={account.publicKey.toString()} account={account} />
@@ -78,7 +84,7 @@ function ClientCard({ key, account }: { key: string, account: ProgramAccount }) 
       <h2 className="text-2xl font-semibold text-center text-indigo-600">
         {clientDetails.name}
       </h2>
-      <div className="space-y-2 text-gray-700 text-sm">
+      <div className="space-y-2 text-gray-700 text-sm truncate overflow-hidden whitespace-nowrap">
         <p>
           <span className="font-medium text-gray-900">Domain:</span> {clientDetails.domain}
         </p>

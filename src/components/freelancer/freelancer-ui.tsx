@@ -10,7 +10,15 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
     const [domain, setDomain] = useState('');
     const [skills, setSkills] = useState('');
     const [contact, setContact] = useState('');
-  
+
+    const initializeFreelancerMut = initializeFreelancerMutation(() => {
+      queryFreelancerAccount.refetch();
+      setName('');
+      setDomain('');
+      setSkills('');
+      setContact('');
+    });
+    console.log("queryFreelancerAccount", queryFreelancerAccount);
       return (
         <div>
           <input
@@ -43,28 +51,10 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
           />
         <button
           className="btn btn-xs lg:btn-md btn-primary btn-outline"
-          onClick={() => initializeFreelancerMutation.mutateAsync({name, domain, skills, contact})}
-          disabled={initializeFreelancerMutation.isPending || queryFreelancerAccount.data?.name !== undefined}>
-          {!queryFreelancerAccount.data?.name ? "Create" : "Already Registered"}{initializeFreelancerMutation.isPending && '...'}
+          onClick={() => initializeFreelancerMut.mutateAsync({name, domain, skills, contact})}
+          disabled={initializeFreelancerMut.isPending || queryFreelancerAccount.data?.name !== undefined}>
+          {!queryFreelancerAccount.data?.name ? "Create" : "Already Registered"}{initializeFreelancerMut.isPending && '...'}
         </button>
         </div>
-      )  
-    // return (
-    //   <div className="card-body items-center text-center">
-    //     <div className="bg-white rounded-2xl shadow p-8 grid gap-2">
-    //       <h2 className="card-title justify-center text-3xl cursor-pointer" onClick={() => queryClientAccount.refetch()}>
-    //         {queryClientAccount.data?.name}
-    //       </h2>
-    //         <p className="text-base text-gray-800">
-    //           Domain: {queryClientAccount.data?.domain}
-    //         </p>
-    //         <p className="text-base text-gray-800">
-    //           Required Skills: {queryClientAccount.data?.requiredSkills}
-    //         </p>
-    //         <p className="text-base text-gray-800">
-    //           Contact: {queryClientAccount.data?.contact}
-    //         </p>
-    //     </div>
-    //   </div>
-    // )
+      )
 }

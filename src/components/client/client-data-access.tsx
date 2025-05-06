@@ -47,7 +47,7 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
   const queryClientAccount = useQuery({
     queryKey: ['fetch', 'client', { cluster, account }],
     queryFn: async() => {
-      const [clientPDA] = await PublicKey.findProgramAddress(
+      const [clientPDA] = await PublicKey.findProgramAddressSync(
         [Buffer.from('client'), account.toBuffer()],
         program.programId
       );
@@ -56,21 +56,23 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
   })
 
 
-  const initializeClientMutation = useMutation<string, Error, initializeClient>({
-    mutationKey: ['initialize','client', { cluster, account }],
-    mutationFn: async ({name, domain, requiredSkills, contact}) => {
-      console.log('account', account.toBase58())
-      let signature = await program.methods.initializeClient(name, domain, requiredSkills, contact).accounts({ signer: account }).rpc();
-      return signature;
-    },
-    onSuccess: (signature) => {
-      transactionToast(signature);
-      return queryClientAccounts.refetch()
-    },
-    onError: (err) => {
-      toast.error(`Failed to create a client account:: ${err.message}`);
-    },
-  });
+  const initializeClientMutation = (onSuccessCallback?: () => void) => {
+    return useMutation<string, Error, initializeClient>({
+            mutationKey: ['initialize','client', { cluster, account }],
+            mutationFn: async ({name, domain, requiredSkills, contact}) => {
+              console.log('account', account.toBase58())
+              let signature = await program.methods.initializeClient(name, domain, requiredSkills, contact).accounts({ signer: account }).rpc();
+              return signature;
+            },
+            onSuccess: (signature) => {
+              transactionToast(signature);
+              if (onSuccessCallback) onSuccessCallback(); 
+            },
+            onError: (err) => {
+              toast.error(`Failed to create a client account:: ${err.message}`);
+            },
+          });
+  }
 
   const newProjectMutation = useMutation<string, Error, initializeProject>({
     mutationKey: ['initialize','project', { cluster }],
