@@ -16,9 +16,12 @@ export default function DashboardFeature() {
     <div>
       <AppHero title="Vijay" subtitle="A decentralized freelancing platform that connects clients and freelancers on the Solana blockchain." />
       <div className="max-w-xl mx-auto py-6 sm:px-6 lg:px-8 text-center">
-        <div className="space-y-2">
+        <div className="space-y-2 space-x-12">
           <Link href={{ pathname: '/client' }} passHref className="btn btn-primary btn-outline">
               Client Registeration
+          </Link>
+          <Link href={{ pathname: '/freelancer' }} passHref className="btn btn-primary btn-outline">
+              Freelancer Registeration
           </Link>
         </div>
       </div>

@@ -4,9 +4,10 @@ import { Keypair, PublicKey } from '@solana/web3.js'
 import { useMemo, useState } from 'react'
 import { ellipsify } from '../ui/ui-layout'
 import { ExplorerLink } from '../cluster/cluster-ui'
-import { useClientAccounts, useFreelancerAccounts } from './client-data-access'
+import { useClientAccounts } from './client-data-access'
+import { ProgramAccount } from '@coral-xyz/anchor'
 
-export function CreateClient({ address }: { address: PublicKey }) {
+export function RegisterClient({ address }: { address: PublicKey }) {
   const { initializeClientMutation, queryClientAccount } = useClientAccounts({ account: address })
 
   const [name, setName] = useState('');
@@ -14,7 +15,6 @@ export function CreateClient({ address }: { address: PublicKey }) {
   const [requiredSkills, setRequiredSkills] = useState('');
   const [contact, setContact] = useState('');
 
-  if (!queryClientAccount.data?.name) {
     return (
       <div>
         <input
@@ -45,35 +45,52 @@ export function CreateClient({ address }: { address: PublicKey }) {
           value={contact}
           onChange={(e) => setContact(e.target.value)}
         />
-      <button
-        className="btn btn-xs lg:btn-md btn-primary btn-outline"
-        onClick={() => initializeClientMutation.mutateAsync({name, domain, requiredSkills, contact})}
-        disabled={initializeClientMutation.isPending}>
-        Create {initializeClientMutation.isPending && '...'}
-      </button>
+        <button
+          className="btn btn-xs lg:btn-md btn-primary btn-outline"
+          onClick={() => initializeClientMutation.mutateAsync({name, domain, requiredSkills, contact})}
+          disabled={initializeClientMutation.isPending || queryClientAccount.data?.name !== undefined}>
+          {!queryClientAccount.data?.name ? "Create" : "Already Registered"}{initializeClientMutation.isPending && '...'}
+        </button>
       </div>
     )
-  }
+}
+
+export function ClientsList({ address }: { address: PublicKey }) {
+  const { queryClientAccounts } = useClientAccounts({ account: address });
 
   return (
-    <div className="card-body items-center text-center">
-      <div className="bg-white rounded-2xl shadow p-8 grid gap-2">
-        <h2 className="card-title justify-center text-3xl cursor-pointer" onClick={() => queryClientAccount.refetch()}>
-          {queryClientAccount.data?.name}
-        </h2>
-          <p className="text-base text-gray-800">
-            Domain: {queryClientAccount.data?.domain}
-          </p>
-          <p className="text-base text-gray-800">
-            Required Skills: {queryClientAccount.data?.requiredSkills}
-          </p>
-          <p className="text-base text-gray-800">
-            Contact: {queryClientAccount.data?.contact}
-          </p>
+    <div className="max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {queryClientAccounts.data?.map((account) => (
+          <ClientCard key={account.publicKey.toString()} account={account} />
+        ))}
       </div>
     </div>
   )
+}
 
+function ClientCard({ key, account }: { key: string, account: ProgramAccount }) {
+
+  const  clientDetails = account.account;
+
+  return (
+    <div className="max-w-md w-full mx-auto rounded-3xl shadow-lg bg-gradient-to-br from-white to-slate-50 p-6 space-y-4 border border-gray-200">
+      <h2 className="text-2xl font-semibold text-center text-indigo-600">
+        {clientDetails.name}
+      </h2>
+      <div className="space-y-2 text-gray-700 text-sm">
+        <p>
+          <span className="font-medium text-gray-900">Domain:</span> {clientDetails.domain}
+        </p>
+        <p>
+          <span className="font-medium text-gray-900">Required Skills:</span> {clientDetails.requiredSkills}
+        </p>
+        <p>
+          <span className="font-medium text-gray-900">Contact:</span> {clientDetails.contact}
+        </p>
+      </div>
+    </div>
+  )
 }
 
 

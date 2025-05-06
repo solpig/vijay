@@ -7,20 +7,6 @@ export interface initializeClient {
     contact: string;
 } 
 
-export interface initializeFreelancer {
-    name: string;
-    domain: string;
-    skills: string;
-    contact: string;
-    keypair: Keypair;
-}
-
-export interface requestTaskReview {
-  projectID: number;
-  projectName: string;
-  taskURL: string;
-  keypair: Keypair;
-}
 
 export interface processTaskReview {
     projectID: number;

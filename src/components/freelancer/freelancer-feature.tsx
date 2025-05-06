@@ -4,10 +4,10 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletButton } from '../solana/solana-provider'
 import { AppHero, ellipsify } from '../ui/ui-layout'
 import { ExplorerLink } from '../cluster/cluster-ui'
-import { useProgramAccounts } from './client-data-access'
-import { RegisterClient } from './client-ui'
+import { useProgramAccounts } from '../client/client-data-access'
+import { RegisterFreelancer } from './freelancer-ui'
 
-export default function ClientFeature() {
+export default function FreelancerFeature() {
   const { publicKey } = useWallet()
   const { programId } = useProgramAccounts()
 
@@ -21,7 +21,7 @@ export default function ClientFeature() {
         <p className="mb-6">
           <ExplorerLink path={`account/${programId}`} label={ellipsify(programId.toString())} />
         </p>
-        <RegisterClient address={publicKey} />
+        <RegisterFreelancer address={publicKey} />
       </AppHero>
     </div>
   ) : (
