@@ -68,14 +68,14 @@ export function ClientsList({ address }: { address: PublicKey }) {
     <div className="max-w-16xl mx-auto mr-16 mt-12">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {queryClientAccounts.data?.map((account) => (
-          <ClientCard key={account.publicKey.toString()} account={account} />
+          <ClientCard account={account} />
         ))}
       </div>
     </div>
   )
 }
 
-function ClientCard({ key, account }: { key: string, account: ProgramAccount }) {
+function ClientCard({ account }: { account: ProgramAccount }) {
 
   const  clientDetails = account.account;
 

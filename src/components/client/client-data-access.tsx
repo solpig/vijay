@@ -60,7 +60,6 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
     return useMutation<string, Error, initializeClient>({
             mutationKey: ['initialize','client', { cluster, account }],
             mutationFn: async ({name, domain, requiredSkills, contact}) => {
-              console.log('account', account.toBase58())
               let signature = await program.methods.initializeClient(name, domain, requiredSkills, contact).accounts({ signer: account }).rpc();
               return signature;
             },

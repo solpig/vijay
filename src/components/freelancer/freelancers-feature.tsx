@@ -3,15 +3,15 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletButton } from '../solana/solana-provider'
 import { AppHero } from '../ui/ui-layout'
-import { ClientsList } from './client-ui'
+import { FreelancersList } from './freelancer-ui'
 
 export default function ClientsFeature() {
   const { publicKey } = useWallet()
 
   return publicKey ? (
     <div>
-      <AppHero title="Available Clients" subtitle={'Clients registered on platform'}>
-      <ClientsList address={publicKey} />
+      <AppHero title="Available Freelancers" subtitle={'Freelancers registered on platform'}>
+      <FreelancersList address={publicKey} />
       </AppHero>
     </div>
   ) : (

@@ -13,6 +13,7 @@ const links: { label: string; path: string }[] = [
   { label: 'Clusters', path: '/clusters' },
   { label: 'Account', path: '/account' },
   { label: 'Clients', path: '/client/clientsList' },
+  { label: 'Freelancers', path: '/freelancer/freelancersList' },
 ]
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

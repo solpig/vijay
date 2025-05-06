@@ -1,6 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 import { useState } from "react";
 import { useFreelancerAccounts } from "./freelancer-data-access";
+import { ProgramAccount } from "@coral-xyz/anchor";
 
 
 export function RegisterFreelancer({ address }: { address: PublicKey }) {
@@ -18,7 +19,6 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
       setSkills('');
       setContact('');
     });
-    console.log("queryFreelancerAccount", queryFreelancerAccount);
       return (
         <div>
           <input
@@ -57,4 +57,42 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
         </button>
         </div>
       )
+}
+
+export function FreelancersList({ address }: { address: PublicKey }) {
+  const { queryFreelancerAccounts } = useFreelancerAccounts({ account: address });
+
+  return (
+    <div className="max-w-16xl mx-auto mr-16 mt-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {queryFreelancerAccounts.data?.map((account) => (
+          <FreelancerCard account={account} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function FreelancerCard({ account }: { account: ProgramAccount }) {
+
+  const  freelancerDetails = account.account;
+
+  return (
+    <div className="max-w-md w-full mx-auto rounded-3xl shadow-lg bg-gradient-to-br from-white to-slate-50 p-6 space-y-4 border border-gray-200">
+      <h2 className="text-2xl font-semibold text-center text-indigo-600">
+        {freelancerDetails.name}
+      </h2>
+      <div className="space-y-2 text-gray-700 text-sm truncate overflow-hidden whitespace-nowrap">
+        <p>
+          <span className="font-medium text-gray-900">Domain:</span> {freelancerDetails.domain}
+        </p>
+        <p>
+          <span className="font-medium text-gray-900">Skills:</span> {freelancerDetails.skills}
+        </p>
+        <p>
+          <span className="font-medium text-gray-900">Contact:</span> {freelancerDetails.contact}
+        </p>
+      </div>
+    </div>
+  )
 }
