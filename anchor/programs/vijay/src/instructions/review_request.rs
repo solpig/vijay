@@ -27,7 +27,7 @@ pub struct TaskReviewInfo<'info> {
 
     #[account(
         mut,
-        seeds = [b"freelancer_project", project_name.as_bytes()[..32].as_ref(), freelancer_project_id.to_le_bytes().as_ref(), signer.key().as_ref()],
+        seeds = [b"freelancer_project", freelancer_project_id.to_le_bytes().as_ref(), signer.key().as_ref()],
         bump
     )]
     freelancer_project: Account<'info, FreelancerProject>,

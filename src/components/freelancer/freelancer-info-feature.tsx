@@ -1,5 +1,6 @@
 'use client'
 
+import { UseQueryResult } from '@tanstack/react-query';
 import { useFreelancerAccounts } from './freelancer-data-access'
 import { PublicKey } from '@solana/web3.js'
 
@@ -13,12 +14,19 @@ export default function FreelancerInfoFeature({ account }: { account: String }) 
   const freelancerDetails = queryFreelancerAccount.data;
   const freelancerPerformance = queryFreelancerPerformance.data;
   let projectCounter = freelancerDetails?.projectCounter.toNumber() || 0;
-    let projectIDs = [];
+
+  
+  let projectIDs: number[] = [];
     for (let i = 0; i < projectCounter; i++) {
         projectIDs.push(i);
     }
-//   const freelancerProject = queryFreelancerProjects(publicKey, 1, "Project A", queryFreelancerPerformance.data?.program);
-
+  console.log("projectIDs", projectIDs)
+  let freelancerProjects: UseQueryResult[] = [];
+  for (let i = 0; i < projectCounter; i++) {
+      const id = projectIDs[i];
+      freelancerProjects.push(queryFreelancerProjects(publicKey, id));
+  };
+  console.log("freelancerProjects", freelancerProjects)
   const performanceLoading = queryFreelancerPerformance.isLoading;
   const freelancerLoading = queryFreelancerAccount.isLoading;
 
@@ -48,16 +56,48 @@ export default function FreelancerInfoFeature({ account }: { account: String }) 
           <p className="mt-2">SuccessRate: {freelancerPerformance?.successRate}</p>
         </div>
       </div>
-
-      <div className="p-6 bg-gray-50">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Bio & Projects</h2>
-        <p className="text-gray-700">
-          John is a full-stack blockchain developer specializing in Solana smart contracts and DeFi apps.
-        </p>
-        <p className="mt-4 text-gray-700">
-          He maintains open-source libraries and mentors new developers in the Web3 ecosystem.
-        </p>
-      </div>
+          <div className="p-6 bg-gray-50">
+            <div className="max-w-16xl mx-auto mr-16 mt-12">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {freelancerProjects.map((result) => (
+                <FreelancerProjectCard details={result} />
+              ))}
+            </div>
+          </div>
+        </div>
     </div>
   );
+}
+
+function FreelancerProjectCard({ details }: { details: UseQueryResult }) {
+  // const router = useRouter();
+  // const  freelancerDetails = account.account;
+  // console.log("freelancerDetails", freelancerDetails)
+  // const handleClick = () => {
+  //   if (freelancerDetails?.owner) {
+  //     router.push(`/freelancer/${freelancerDetails.owner.toString()}`);
+  //   }
+  // };
+  console.log("details", details)
+  return (
+    <div></div>
+    // <div onClick={handleClick} className="max-w-md w-full mx-auto rounded-3xl shadow-lg bg-gradient-to-br 
+    //                     from-white to-slate-50 p-6 space-y-4 border border-gray-200
+    //                     cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-2xl">
+    //   <h2 className="text-2xl font-semibold text-center text-indigo-600">
+    //     {freelancerDetails.name}
+    //   </h2>
+    //   <div className="space-y-2 text-gray-700 text-sm truncate overflow-hidden whitespace-nowrap">
+    //     <p>
+    //       <span className="font-medium text-gray-900">Domain:</span> {freelancerDetails.domain}
+    //     </p>
+    //     <p>
+    //       <span className="font-medium text-gray-900">Skills:</span> {freelancerDetails.skills}
+    //     </p>
+    //     <p>
+    //       <span className="font-medium text-gray-900">Contact:</span> {freelancerDetails.contact}
+    //     </p>
+    //   </div>
+    // </div>
+  )
 }

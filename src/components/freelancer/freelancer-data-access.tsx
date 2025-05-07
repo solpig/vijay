@@ -28,13 +28,13 @@ export function useFreelancerAccounts({ account }: { account: PublicKey }) {
       }
     })
 
-    const queryFreelancerProjects = (account: PublicKey, projectID: number, projectName: string, program: any) => {
+    const queryFreelancerProjects = (account: PublicKey, projectID: number) => {
       return useQuery({
-      queryKey: ['fetch-freelancer-projects', projectID, projectName] as const,
-      queryFn: async(context: QueryFunctionContext<['fetch-freelancer-projects', number, string]>) => {
-        const [_, projectID, projectName] = context.queryKey;
+      queryKey: ['fetch-freelancer-projects', projectID] as const,
+      queryFn: async(context: QueryFunctionContext<['fetch-freelancer-projects', number]>) => {
+        const [_, projectID] = context.queryKey;
         const [freelancerPDA] = await PublicKey.findProgramAddressSync(
-          [Buffer.from('freelancer_project'), Buffer.from(projectName).subarray(0, 32), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
+          [Buffer.from('freelancer_project'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
           program.programId
         );
         return await program.account.freelancerProject.fetch(freelancerPDA);

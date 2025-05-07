@@ -99,7 +99,7 @@ pub struct TransferInfo<'info> {
 
     #[account(
         mut,
-        seeds = [b"freelancer_project", project.name.as_bytes()[..32].as_ref(), project.assigned_freelancer_project_id.to_le_bytes().as_ref(), project.assigned_freelancer.as_ref()],
+        seeds = [b"freelancer_project", project.assigned_freelancer_project_id.to_le_bytes().as_ref(), project.assigned_freelancer.as_ref()],
         bump
     )]
     pub freelancer_project: Account<'info, FreelancerProject>,
@@ -122,7 +122,7 @@ pub struct TransferInfo<'info> {
         init,
         payer = signer,
         space = 8 + Freelancer::INIT_SPACE,
-        seeds = [b"freelancer_project", project.name.as_bytes()[..32].as_ref(), new_freelancer.project_counter.checked_add(1).unwrap().to_le_bytes().as_ref(), new_freelancer_key.as_ref()],
+        seeds = [b"freelancer_project", new_freelancer.project_counter.checked_add(1).unwrap().to_le_bytes().as_ref(), new_freelancer_key.as_ref()],
         bump
     )]
     pub new_freelancer_project: Account<'info, FreelancerProject>,

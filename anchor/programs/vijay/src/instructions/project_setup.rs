@@ -114,7 +114,7 @@ pub struct ProjectSetupInfo<'info> {
         init,
         space = 8 + Freelancer::INIT_SPACE,
         payer = signer,
-        seeds = [b"freelancer_project", project.name.as_bytes()[..32].as_ref(), freelancer.project_counter.checked_add(1).unwrap().to_le_bytes().as_ref(), freelancer.owner.as_ref()],
+        seeds = [b"freelancer_project", freelancer.project_counter.checked_add(1).unwrap().to_le_bytes().as_ref(), freelancer.owner.as_ref()],
         bump
     )]
     pub freelancer_project: Account<'info, FreelancerProject>,

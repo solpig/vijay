@@ -246,7 +246,7 @@ describe('vijay', () => {
     );
    
     const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("freelancer_project"), Buffer.from(firstProject.name).subarray(0,32), new anchor.BN(1).toArrayLike(Buffer, "le", 8),  freelancer.owner.toBuffer()],
+      [Buffer.from("freelancer_project"), new anchor.BN(1).toArrayLike(Buffer, "le", 8),  freelancer.owner.toBuffer()],
       program.programId
     );
 
@@ -356,7 +356,7 @@ describe('vijay', () => {
       );
      
       const [secondFreelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("freelancer_project"), Buffer.from(secondProject.name).subarray(0,32), secondProjectCounter,  freelancer.owner.toBuffer()],
+        [Buffer.from("freelancer_project"), secondProjectCounter,  freelancer.owner.toBuffer()],
         program.programId
       );
 
@@ -394,7 +394,7 @@ describe('vijay', () => {
     };
     
     const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("freelancer_project"), Buffer.from(taskDetails.projectName).subarray(0,32), new anchor.BN(1).toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
+      [Buffer.from("freelancer_project"), new anchor.BN(1).toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
       program.programId
     );
 
@@ -428,7 +428,7 @@ describe('vijay', () => {
     const clientProject = await program.account.project.fetch(clientProjectPda);
 
     const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("freelancer_project"), Buffer.from(projectName).subarray(0,32), freelancerProjectId.toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
+      [Buffer.from("freelancer_project"), freelancerProjectId.toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
       program.programId
     );
 
@@ -548,7 +548,7 @@ describe('vijay', () => {
     };
     
     const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("freelancer_project"), Buffer.from(taskDetails.projectName).subarray(0,32),freelancerProjectId.toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
+      [Buffer.from("freelancer_project"),freelancerProjectId.toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
       program.programId
     );
 
@@ -641,7 +641,7 @@ describe('vijay', () => {
     );
 
     const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("freelancer_project"), Buffer.from(clientProject.name).subarray(0,32), projectID.toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
+      [Buffer.from("freelancer_project"), projectID.toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
       program.programId
     );
 
@@ -737,7 +737,7 @@ describe('vijay', () => {
     );
    
     const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("freelancer_project"), Buffer.from(project.name).subarray(0,32), projectCounter,  freelancer.owner.toBuffer()],
+      [Buffer.from("freelancer_project"), projectCounter,  freelancer.owner.toBuffer()],
       program.programId
     );
 
@@ -822,7 +822,7 @@ describe('vijay', () => {
       );
       
       const [newFreelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("freelancer_project"), Buffer.from(project.name).subarray(0,32), new anchor.BN(1).toArrayLike(Buffer, "le", 8), newFreelancerKeyPair.publicKey.toBuffer()],
+        [Buffer.from("freelancer_project"), new anchor.BN(1).toArrayLike(Buffer, "le", 8), newFreelancerKeyPair.publicKey.toBuffer()],
         program.programId
       );
 

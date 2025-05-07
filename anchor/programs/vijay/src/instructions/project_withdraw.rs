@@ -82,7 +82,7 @@ pub struct WithdrawInfo<'info> {
 
     #[account(
         mut,
-        seeds = [b"freelancer_project", project.name.as_bytes()[..32].as_ref(), project.assigned_freelancer_project_id.to_le_bytes().as_ref(), project.assigned_freelancer.as_ref()],
+        seeds = [b"freelancer_project", project.assigned_freelancer_project_id.to_le_bytes().as_ref(), project.assigned_freelancer.as_ref()],
         bump
     )]
     pub freelancer_project: Account<'info, FreelancerProject>,
