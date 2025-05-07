@@ -2,6 +2,7 @@ import { PublicKey } from "@solana/web3.js";
 import { useState } from "react";
 import { useFreelancerAccounts } from "./freelancer-data-access";
 import { ProgramAccount } from "@coral-xyz/anchor";
+import { useRouter } from 'next/navigation';
 
 
 export function RegisterFreelancer({ address }: { address: PublicKey }) {
@@ -74,11 +75,19 @@ export function FreelancersList({ address }: { address: PublicKey }) {
 }
 
 function FreelancerCard({ account }: { account: ProgramAccount }) {
-
+  const router = useRouter();
   const  freelancerDetails = account.account;
-
+  console.log("freelancerDetails", freelancerDetails)
+  const handleClick = () => {
+    if (freelancerDetails?.owner) {
+      router.push(`/freelancer/${freelancerDetails.owner.toString()}`);
+    }
+  };
+  
   return (
-    <div className="max-w-md w-full mx-auto rounded-3xl shadow-lg bg-gradient-to-br from-white to-slate-50 p-6 space-y-4 border border-gray-200">
+    <div onClick={handleClick} className="max-w-md w-full mx-auto rounded-3xl shadow-lg bg-gradient-to-br 
+                        from-white to-slate-50 p-6 space-y-4 border border-gray-200
+                        cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-2xl">
       <h2 className="text-2xl font-semibold text-center text-indigo-600">
         {freelancerDetails.name}
       </h2>

@@ -1,7 +1,7 @@
 import { useProgramAccounts } from "../client/client-data-access"
 import { useCluster } from "../cluster/cluster-data-access"
 import { useTransactionToast } from "../ui/ui-layout"
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useMutation, useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { PublicKey } from '@solana/web3.js'
 import { initializeFreelancer, requestTaskReview } from "./freelancer-data-model"
@@ -25,6 +25,31 @@ export function useFreelancerAccounts({ account }: { account: PublicKey }) {
           program.programId
         );
         return await program.account.freelancer.fetch(freelancerPDA);
+      }
+    })
+
+    const queryFreelancerProjects = (account: PublicKey, projectID: number, projectName: string, program: any) => {
+      return useQuery({
+      queryKey: ['fetch-freelancer-projects', projectID, projectName] as const,
+      queryFn: async(context: QueryFunctionContext<['fetch-freelancer-projects', number, string]>) => {
+        const [_, projectID, projectName] = context.queryKey;
+        const [freelancerPDA] = await PublicKey.findProgramAddressSync(
+          [Buffer.from('freelancer_project'), Buffer.from(projectName).subarray(0, 32), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
+          program.programId
+        );
+        return await program.account.freelancerProject.fetch(freelancerPDA);
+      }
+    })
+  }
+
+    const queryFreelancerPerformance = useQuery({
+      queryKey: ['fetch', 'freelancer', 'performance', { cluster, account }],
+      queryFn: async() => {
+        const [freelancerReportPDA] = await PublicKey.findProgramAddressSync(
+          [Buffer.from('freelancer_report'), account.toBuffer()],
+          program.programId
+        );
+        return await program.account.freelancerReportCard.fetch(freelancerReportPDA);
       }
     })
   
@@ -63,7 +88,9 @@ export function useFreelancerAccounts({ account }: { account: PublicKey }) {
       queryFreelancerAccounts,
       queryFreelancerAccount,
       initializeFreelancerMutation,
-      taskReviewMutation
+      taskReviewMutation,
+      queryFreelancerPerformance,
+      queryFreelancerProjects
     }
   }
   
