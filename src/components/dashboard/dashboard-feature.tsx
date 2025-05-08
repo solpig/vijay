@@ -18,10 +18,10 @@ export default function DashboardFeature() {
       <div className="max-w-xl mx-auto py-6 sm:px-6 lg:px-8 text-center">
         <div className="space-y-2 space-x-12">
           <Link href={{ pathname: '/client' }} passHref className="btn btn-primary btn-outline">
-              Client Registeration
+              Client
           </Link>
           <Link href={{ pathname: '/freelancer' }} passHref className="btn btn-primary btn-outline">
-              Freelancer Registeration
+              Freelancer
           </Link>
         </div>
       </div>

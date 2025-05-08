@@ -4,16 +4,22 @@ import { PublicKey } from '@solana/web3.js'
 import { useState } from 'react'
 import { useClientAccounts } from './client-data-access'
 import { ProgramAccount } from '@coral-xyz/anchor'
+import { useRouter } from 'next/navigation';
 
 export function RegisterClient({ address }: { address: PublicKey }) {
-  const { initializeClientMutation, queryClientAccount } = useClientAccounts({ account: address })
+  const { useInitializeClientMutation, queryClientAccount, newProjectMutation } = useClientAccounts({ account: address })
 
   const [name, setName] = useState('');
   const [domain, setDomain] = useState('');
   const [requiredSkills, setRequiredSkills] = useState('');
   const [contact, setContact] = useState('');
 
-  const initializeClientMut = initializeClientMutation(() => {
+  const [projectName, setProjectName] = useState('');
+  const [projectDescription, setProjectDescription] = useState('');
+  const [projectURL, setProjectURL] = useState('');
+  const [projectBudget, setprojectBudget] = useState(0);
+
+  const initializeClientMut = useInitializeClientMutation(() => {
     queryClientAccount.refetch();
     setName('');
     setDomain('');
@@ -23,6 +29,7 @@ export function RegisterClient({ address }: { address: PublicKey }) {
 
     return (
       <div>
+        <p>Client Registeration</p>
         <input
           type="text"
           placeholder="Name"
@@ -57,9 +64,55 @@ export function RegisterClient({ address }: { address: PublicKey }) {
           disabled={initializeClientMut.isPending || queryClientAccount.data?.name !== undefined}>
           {!queryClientAccount.data?.name ? "Create" : "Already Registered"}{initializeClientMut.isPending && '...'}
         </button>
+        {queryClientAccount.data?.name && (
+          <div className="mt-4">
+            <p className="text-sm text-gray-500">
+              Publish a job to get started!
+            </p>
+            <input
+              type="text"
+              placeholder="Project name"
+              className="input input-bordered w-full mb-4"
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Description"
+              className="input input-bordered w-full mb-4"
+              value={projectDescription}
+              onChange={(e) => setProjectDescription(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="URL"
+              className="input input-bordered w-full mb-4"
+              value={projectURL}
+              onChange={(e) => setProjectURL(e.target.value)}
+            />
+            <input
+              type="number"
+              min="0"
+              step="1"
+              placeholder="Budget (in SOL)"
+              className="input input-bordered w-full mb-4"
+              value={projectBudget}
+              onChange={(e) => setprojectBudget(Number(e.target.value))}
+            />
+            <button
+              className="btn btn-xs lg:btn-md btn-primary btn-outline"
+              onClick={() => newProjectMutation.mutateAsync({name, description: projectDescription, url: projectURL, budget: projectBudget})} 
+              disabled={newProjectMutation.isPending}>
+              Publish{newProjectMutation.isPending && '...'}
+            </button>
+          </div>
+        )}
+
       </div>
     )
 }
+
+
 
 export function ClientsList({ address }: { address: PublicKey }) {
   const { queryClientAccounts } = useClientAccounts({ account: address });
@@ -67,8 +120,8 @@ export function ClientsList({ address }: { address: PublicKey }) {
   return (
     <div className="max-w-16xl mx-auto mr-16 mt-12">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {queryClientAccounts.data?.map((account) => (
-          <ClientCard account={account} />
+        {queryClientAccounts.data?.map((account, i) => (
+          <ClientCard key={i} account={account} />
         ))}
       </div>
     </div>
@@ -76,11 +129,16 @@ export function ClientsList({ address }: { address: PublicKey }) {
 }
 
 function ClientCard({ account }: { account: ProgramAccount }) {
-
+  const router = useRouter();
   const  clientDetails = account.account;
+  const handleClick = () => {
+    if (clientDetails?.owner) {
+      router.push(`/client/${clientDetails.owner.toString()}`);
+    }
+  };
 
   return (
-    <div className="max-w-md w-full mx-auto rounded-3xl shadow-lg bg-gradient-to-br 
+    <div onClick={handleClick} className="max-w-md w-full mx-auto rounded-3xl shadow-lg bg-gradient-to-br 
                     from-white to-slate-50 p-6 space-y-4 border border-gray-200
                     cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-2xl">
       <h2 className="text-2xl font-semibold text-center text-indigo-600">
@@ -100,72 +158,3 @@ function ClientCard({ account }: { account: ProgramAccount }) {
     </div>
   )
 }
-
-
-// function VijayCard({ account }: { account: PublicKey }) {
-//   const { queryFreelancerAccount: accountQuery, incrementMutation, setMutation, decrementMutation, closeMutation } = useFreelancerAccounts({
-//     account,
-//   })
-
-//   const count = useMemo(() => accountQuery.data?.count ?? 0, [accountQuery.data?.count])
-
-//   return accountQuery.isLoading ? (
-//     <span className="loading loading-spinner loading-lg"></span>
-//   ) : (
-//     <div className="card card-bordered border-base-300 border-4 text-neutral-content">
-//       <div className="card-body items-center text-center">
-//         <div className="space-y-6">
-//           <h2 className="card-title justify-center text-3xl cursor-pointer" onClick={() => accountQuery.refetch()}>
-//             {count}
-//           </h2>
-//           <div className="card-actions justify-around">
-//             <button
-//               className="btn btn-xs lg:btn-md btn-outline"
-//               onClick={() => incrementMutation.mutateAsync()}
-//               disabled={incrementMutation.isPending}
-//             >
-//               Increment
-//             </button>
-//             <button
-//               className="btn btn-xs lg:btn-md btn-outline"
-//               onClick={() => {
-//                 const value = window.prompt('Set value to:', count.toString() ?? '0')
-//                 if (!value || parseInt(value) === count || isNaN(parseInt(value))) {
-//                   return
-//                 }
-//                 return setMutation.mutateAsync(parseInt(value))
-//               }}
-//               disabled={setMutation.isPending}
-//             >
-//               Set
-//             </button>
-//             <button
-//               className="btn btn-xs lg:btn-md btn-outline"
-//               onClick={() => decrementMutation.mutateAsync()}
-//               disabled={decrementMutation.isPending}
-//             >
-//               Decrement
-//             </button>
-//           </div>
-//           <div className="text-center space-y-4">
-//             <p>
-//               <ExplorerLink path={`account/${account}`} label={ellipsify(account.toString())} />
-//             </p>
-//             <button
-//               className="btn btn-xs btn-secondary btn-outline"
-//               onClick={() => {
-//                 if (!window.confirm('Are you sure you want to close this account?')) {
-//                   return
-//                 }
-//                 return closeMutation.mutateAsync()
-//               }}
-//               disabled={closeMutation.isPending}
-//             >
-//               Close
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }

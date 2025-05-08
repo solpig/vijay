@@ -2,7 +2,7 @@
 
 import { getVijayProgram, getVijayProgramId } from '@project/anchor'
 import { useConnection } from '@solana/wallet-adapter-react'
-import { Cluster, PublicKey } from '@solana/web3.js'
+import { Cluster, PublicKey, SystemProgram } from '@solana/web3.js'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import toast from 'react-hot-toast'
@@ -55,8 +55,27 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
     }
   })
 
+  const queryClientPerformance = useQuery({
+    queryKey: ['fetch', 'client', 'performance', { cluster, account }],
+    queryFn: async() => {
+      const [clientReportPDA] = await PublicKey.findProgramAddressSync(
+        [Buffer.from('client_report'), account.toBuffer()],
+        program.programId
+      );
+      return await program.account.clientReportCard.fetch(clientReportPDA);
+    }
+  })
 
-  const initializeClientMutation = (onSuccessCallback?: () => void) => {
+  const fetchClientProjects = async (account: PublicKey, projectID: number) => {
+    const [freelancerPDA] = PublicKey.findProgramAddressSync(
+      [Buffer.from('client_project'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
+      program.programId
+    );
+    return await program.account.project.fetch(freelancerPDA);
+  }
+  
+
+  const useInitializeClientMutation = (onSuccessCallback?: () => void) => {
     return useMutation<string, Error, initializeClient>({
             mutationKey: ['initialize','client', { cluster, account }],
             mutationFn: async ({name, domain, requiredSkills, contact}) => {
@@ -74,9 +93,29 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
   }
 
   const newProjectMutation = useMutation<string, Error, initializeProject>({
-    mutationKey: ['initialize','project', { cluster }],
-    mutationFn: async ({name, description, url, budget, keypair}) => {
-      let signature = await program.methods.initializeProject(name, description, url, new BN(budget)).accounts({ signer: keypair.publicKey }).signers([keypair]).rpc();
+    mutationKey: ['initialize','project', { cluster, account }],
+    mutationFn: async ({name, description, url, budget}) => {
+      let [clientPDA] = await PublicKey.findProgramAddressSync(
+        [Buffer.from('client'), account.toBuffer()],
+        program.programId
+      );
+
+      const client = await program.account.client.fetch(clientPDA);
+      const projectID = client.projectCounter.toNumber() + 1;
+      const [projectPDA] = await PublicKey.findProgramAddressSync(
+        [Buffer.from('client_project'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
+        program.programId
+      );
+      
+      let signature = await program.methods
+                      .initializeProject(name, description, url, new BN(budget))
+                      .accountsPartial(
+                        { 
+                          signer: account,
+                          client: clientPDA,
+                          project: projectPDA,
+                          systemProgram: SystemProgram.programId,
+                        }).rpc();
       return signature;
     },
     onSuccess: (signature) => {
@@ -148,7 +187,9 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
   return {
     queryClientAccount,
     queryClientAccounts,
-    initializeClientMutation,
+    queryClientPerformance,
+    fetchClientProjects,
+    useInitializeClientMutation,
     newProjectMutation,
     projectEscrowSetupMutation,
     reviewTaskProcessMutation,

@@ -5,7 +5,7 @@ import { WalletButton } from '../solana/solana-provider'
 import { AppHero } from '../ui/ui-layout'
 import { FreelancersList } from './freelancer-ui'
 
-export default function ClientsFeature() {
+export default function FreelancersFeature() {
   const { publicKey } = useWallet()
 
   return publicKey ? (

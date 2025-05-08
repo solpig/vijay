@@ -1,3 +1,5 @@
+`use client`
+
 import { useProgramAccounts } from "../client/client-data-access"
 import { useCluster } from "../cluster/cluster-data-access"
 import { useTransactionToast } from "../ui/ui-layout"
@@ -28,7 +30,7 @@ export function useFreelancerAccounts({ account }: { account: PublicKey }) {
       }
     })
 
-    const queryFreelancerProjects = (account: PublicKey, projectID: number) => {
+    const QueryFreelancerProjects = (account: PublicKey, projectID: number) => {
       return useQuery({
       queryKey: ['fetch-freelancer-projects', projectID] as const,
       queryFn: async(context: QueryFunctionContext<['fetch-freelancer-projects', number]>) => {
@@ -42,7 +44,7 @@ export function useFreelancerAccounts({ account }: { account: PublicKey }) {
     })
   }
 
-    const queryFreelancerPerformance = useQuery({
+    const QueryFreelancerPerformance = useQuery({
       queryKey: ['fetch', 'freelancer', 'performance', { cluster, account }],
       queryFn: async() => {
         const [freelancerReportPDA] = await PublicKey.findProgramAddressSync(
@@ -53,7 +55,7 @@ export function useFreelancerAccounts({ account }: { account: PublicKey }) {
       }
     })
   
-    const initializeFreelancerMutation = (onSuccessCallback?: () => void) => {
+    const InitializeFreelancerMutation = (onSuccessCallback?: () => void) => {
       return useMutation<string, Error, initializeFreelancer>({
         mutationKey: ['initialize','freelancer', { cluster, account }],
         mutationFn: async ({name, domain, skills, contact}) => {
@@ -87,10 +89,10 @@ export function useFreelancerAccounts({ account }: { account: PublicKey }) {
     return {
       queryFreelancerAccounts,
       queryFreelancerAccount,
-      initializeFreelancerMutation,
+      initializeFreelancerMutation: InitializeFreelancerMutation,
       taskReviewMutation,
-      queryFreelancerPerformance,
-      queryFreelancerProjects
+      queryFreelancerPerformance: QueryFreelancerPerformance,
+      queryFreelancerProjects: QueryFreelancerProjects
     }
   }
   

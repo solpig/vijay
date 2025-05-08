@@ -1,4 +1,4 @@
-import FreelancerInfoFeature from '@/components/freelancer/freelancer-info-feature';
+import ClientInfoFeature from '@/components/client/client-info-feature';
 
 interface Params {
   params: { publicKey: string };
@@ -6,5 +6,5 @@ interface Params {
 
 export default function FreelancerDetailPage({ params }: Params) {
   const { publicKey } = params;
-  return <FreelancerInfoFeature account={publicKey} />;
+  return <ClientInfoFeature account={publicKey} />;
 }

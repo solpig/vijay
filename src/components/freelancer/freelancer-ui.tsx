@@ -1,3 +1,5 @@
+'use client'
+
 import { PublicKey } from "@solana/web3.js";
 import { useState } from "react";
 import { useFreelancerAccounts } from "./freelancer-data-access";
@@ -22,6 +24,7 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
     });
       return (
         <div>
+          <p>Freelancer Registeration</p>
           <input
             type="text"
             placeholder="Name"
@@ -66,8 +69,8 @@ export function FreelancersList({ address }: { address: PublicKey }) {
   return (
     <div className="max-w-16xl mx-auto mr-16 mt-12">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {queryFreelancerAccounts.data?.map((account) => (
-          <FreelancerCard account={account} />
+        {queryFreelancerAccounts.data?.map((account, i) => (
+          <FreelancerCard key={i} account={account} />
         ))}
       </div>
     </div>
@@ -77,7 +80,6 @@ export function FreelancersList({ address }: { address: PublicKey }) {
 function FreelancerCard({ account }: { account: ProgramAccount }) {
   const router = useRouter();
   const  freelancerDetails = account.account;
-  console.log("freelancerDetails", freelancerDetails)
   const handleClick = () => {
     if (freelancerDetails?.owner) {
       router.push(`/freelancer/${freelancerDetails.owner.toString()}`);

@@ -1,3 +1,5 @@
+'use client'
+
 import { Keypair } from "@solana/web3.js";
 
 export interface initializeFreelancer {
