@@ -519,11 +519,6 @@
               },
               {
                 "kind": "account",
-                "path": "project.name",
-                "account": "Project"
-              },
-              {
-                "kind": "account",
                 "path": "freelancer.project_counter.checked_add(1)",
                 "account": "Freelancer"
               },
@@ -671,10 +666,6 @@
               },
               {
                 "kind": "arg",
-                "path": "project_name"
-              },
-              {
-                "kind": "arg",
                 "path": "freelancer_project_id"
               },
               {
@@ -779,11 +770,6 @@
                   99,
                   116
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "project.name",
-                "account": "Project"
               },
               {
                 "kind": "account",
@@ -1103,11 +1089,6 @@
               },
               {
                 "kind": "account",
-                "path": "project.name",
-                "account": "Project"
-              },
-              {
-                "kind": "account",
                 "path": "project.assigned_freelancer_project_id",
                 "account": "Project"
               },
@@ -1211,11 +1192,6 @@
                   99,
                   116
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "project.name",
-                "account": "Project"
               },
               {
                 "kind": "account",
@@ -1432,11 +1408,6 @@
                   99,
                   116
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "project.name",
-                "account": "Project"
               },
               {
                 "kind": "account",
@@ -1836,6 +1807,10 @@
         "kind": "struct",
         "fields": [
           {
+            "name": "id",
+            "type": "u64"
+          },
+          {
             "name": "completed_task_url",
             "type": "string"
           },
@@ -1899,6 +1874,10 @@
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "id",
+            "type": "u64"
+          },
           {
             "name": "name",
             "type": "string"

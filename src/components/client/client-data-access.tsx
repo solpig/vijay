@@ -66,7 +66,8 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
     }
   })
 
-  const newProjectMutation = useMutation<string, Error, initializeProject>({
+  const NewProjectMutation = (onSuccessCallback?: () => void) => {
+   return useMutation<string, Error, initializeProject>({
     mutationKey: ['initialize','project', { cluster, account }],
     mutationFn: async ({name, description, url, budget}) => {
       let [clientPDA] = await PublicKey.findProgramAddressSync(
@@ -94,32 +95,18 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
     },
     onSuccess: (signature) => {
       transactionToast(signature);
-      return queryClientAccounts.refetch()
+      if (onSuccessCallback) onSuccessCallback(); 
     },
     onError: (err) => {
       toast.error(`Failed to setup a new project:: ${err.message}`);
     },
   });
-
-  const projectEscrowSetupMutation = useMutation<string, Error, projectEscrowSetup>({
-    mutationKey: ['setup', 'project', { cluster }],
-    mutationFn: async ({projectID, freelancer, budget, totalTasks, keypair}) => {
-      let signature = await program.methods.projectEscrowSetup(new BN(projectID), freelancer.publicKey, new BN(budget), new BN(totalTasks)).accounts({ signer: keypair.publicKey }).signers([keypair]).rpc();
-      return signature;
-    },
-    onSuccess: (signature) => {
-      transactionToast(signature);
-      return queryClientAccounts.refetch()
-    },
-    onError: (err) => {
-      toast.error(`Failed to setup escrow for the project:: ${err.message}`);
-    },
-  });
+}
 
   const reviewTaskProcessMutation = useMutation<string, Error, processTaskReview>({
     mutationKey: ['process', 'review', { cluster }],
-    mutationFn: async ({projectID, approval, keypair}) => {
-      const signature = await program.methods.reviewTaskProcess(new BN(projectID), approval).signers([keypair]).rpc();
+    mutationFn: async ({projectID, approval}) => {
+      const signature = await program.methods.reviewTaskProcess(new BN(projectID), approval).rpc();
       return signature
     },
     onSuccess: (tx) => {
@@ -165,6 +152,77 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
     );
     return await program.account.project.fetch(freelancerPDA);
   }
+
+  const useProjectEscrowSetupMutation = (onSuccessCallback?: () => void) => {
+    return useMutation<string, Error, projectEscrowSetup>({
+      mutationKey: ['setup', 'project', { cluster, account }],
+      mutationFn: async ({projectID, projectName, freelancer, budget, totalTasks}) => {
+        
+        if(projectName.length < 32) {
+          projectName = projectName.padEnd(32, '//');
+        }
+        console.log("projectName", projectName)
+        console.log("projectLength", projectName.length)
+
+        let [clientProjectPDA] = await PublicKey.findProgramAddressSync(
+          [Buffer.from('client_project'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
+          program.programId
+        );
+
+        let [freelancerPDA] = await PublicKey.findProgramAddressSync(
+          [Buffer.from('freelancer'),freelancer.toBuffer()],
+          program.programId
+        );
+        console.log("projectName", projectName)
+        let [escrowPDA] = await PublicKey.findProgramAddressSync(
+          [Buffer.from('project_escrow'), new BN(projectID).toArrayLike(Buffer, 'le', 8), Buffer.from(projectName).subarray(0,32),  account.toBuffer()],
+          program.programId 
+        );
+        
+        let [vaultPDA] = await PublicKey.findProgramAddressSync([Buffer.from('vault'), new BN(projectID).toArrayLike(Buffer, 'le', 8), Buffer.from(projectName).subarray(0,32), account.toBuffer()],
+         program.programId
+        );
+
+        const freelancerDetails = await program.account.freelancer.fetch(freelancerPDA);
+        let freelancerProjectCounter = freelancerDetails.projectCounter.add(new BN(1));
+        let [freelancerProjectPDA] = await PublicKey.findProgramAddressSync(
+          [Buffer.from('freelancer_project'), freelancerProjectCounter.toArrayLike(Buffer, 'le', 8), freelancer.toBuffer()],
+          program.programId
+         );
+
+         let [freelancerReportPDA] = await PublicKey.findProgramAddressSync(
+          [Buffer.from('freelancer_report'), freelancer.toBuffer()],
+          program.programId
+         );
+
+        let [clientReportPDA] = await PublicKey.findProgramAddressSync(
+          [Buffer.from('client_report'), account.toBuffer()],
+          program.programId
+        );
+
+        let signature = await program.methods.projectEscrowSetup(new BN(projectID), freelancer, new BN(budget), new BN(totalTasks))
+        .accountsPartial({
+           signer: account,
+           project: clientProjectPDA,
+           freelancer: freelancerPDA, 
+           escrow: escrowPDA,
+           vault: vaultPDA,
+           freelancerProject: freelancerProjectPDA,
+           freelancerReportCard: freelancerReportPDA,
+           clientReportCard: clientReportPDA,
+           systemProgram: SystemProgram.programId,
+          }).rpc();
+        return signature;
+      },
+      onSuccess: (signature) => {
+        transactionToast(signature);
+        if (onSuccessCallback) onSuccessCallback(); 
+      },
+      onError: (err) => {
+        toast.error(`Failed to setup escrow for the project:: ${err.message}`);
+      },
+    });
+  };
   
   const useInitializeClientMutation = (onSuccessCallback?: () => void) => {
     return useMutation<string, Error, initializeClient>({
@@ -188,13 +246,13 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
     queryClientAccount,
     queryClientAccounts,
     queryClientPerformance,
-    newProjectMutation,
-    projectEscrowSetupMutation,
     reviewTaskProcessMutation,
     cancelProjectMutation,
     transferProjectMutation,
     // custom functions
+    NewProjectMutation,
     fetchClientProjects,
+    useProjectEscrowSetupMutation,
     useInitializeClientMutation,
   }
 }

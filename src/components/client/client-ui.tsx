@@ -7,7 +7,7 @@ import { ProgramAccount } from '@coral-xyz/anchor'
 import { useRouter } from 'next/navigation';
 
 export function RegisterClient({ address }: { address: PublicKey }) {
-  const { useInitializeClientMutation, queryClientAccount, newProjectMutation } = useClientAccounts({ account: address })
+  const { useInitializeClientMutation, queryClientAccount, NewProjectMutation } = useClientAccounts({ account: address })
 
   const [name, setName] = useState('');
   const [domain, setDomain] = useState('');
@@ -27,9 +27,17 @@ export function RegisterClient({ address }: { address: PublicKey }) {
     setContact('');
   });
 
+  const newProjectMut = NewProjectMutation(() => {
+    queryClientAccount.refetch();
+    setProjectName('');
+    setProjectDescription('');
+    setProjectURL('');
+    setprojectBudget(0);
+  });
+
     return (
       <div>
-        <p>Client Registeration</p>
+        <p className="mb-4" >Client Registeration</p>
         <input
           type="text"
           placeholder="Name"
@@ -94,16 +102,16 @@ export function RegisterClient({ address }: { address: PublicKey }) {
               type="number"
               min="0"
               step="1"
-              placeholder="Budget (in SOL)"
+              placeholder="Estimated Budget (in SOL)"
               className="input input-bordered w-full mb-4"
-              value={projectBudget}
+              value={projectBudget === 0 ? '' : projectBudget}
               onChange={(e) => setprojectBudget(Number(e.target.value))}
             />
             <button
               className="btn btn-xs lg:btn-md btn-primary btn-outline"
-              onClick={() => newProjectMutation.mutateAsync({name, description: projectDescription, url: projectURL, budget: projectBudget})} 
-              disabled={newProjectMutation.isPending}>
-              Publish{newProjectMutation.isPending && '...'}
+              onClick={() => newProjectMut.mutateAsync({name: projectName, description: projectDescription, url: projectURL, budget: projectBudget})} 
+              disabled={newProjectMut.isPending}>
+              Publish{newProjectMut.isPending && '...'}
             </button>
           </div>
         )}

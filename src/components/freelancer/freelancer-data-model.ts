@@ -13,7 +13,6 @@ export interface requestTaskReview {
     projectID: number;
     projectName: string;
     taskURL: string;
-    keypair: Keypair;
 }
 
   

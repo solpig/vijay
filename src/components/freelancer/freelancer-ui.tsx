@@ -24,7 +24,7 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
     });
       return (
         <div>
-          <p>Freelancer Registeration</p>
+          <p className="mb-4" >Freelancer Registeration</p>
           <input
             type="text"
             placeholder="Name"

@@ -41,19 +41,30 @@ export function useFreelancerAccounts({ account }: { account: PublicKey }) {
       }
     })
 
-    const taskReviewMutation = useMutation<string, Error, requestTaskReview>({
-      mutationKey: ['request', 'review', { cluster }],
-      mutationFn: async ({projectID, projectName, taskURL, keypair}) => {
-        const signature = await program.methods.requestTaskReview(projectName, new BN(projectID), taskURL).accounts({ signer: keypair.publicKey }).signers([keypair]).rpc();
-        return signature
-      },
-      onSuccess: (tx) => {
-        transactionToast(tx)
-      },
-      onError: (err) => {
-        toast.error(`Failed to request the task review:: ${err.message}`);
-      },
-    })
+    const TaskReviewMutation = (onSuccessCallback?: () => void) => {
+     return useMutation<string, Error, requestTaskReview>({
+        mutationKey: ['request', 'review', { cluster }],
+        mutationFn: async ({projectID, projectName, taskURL}) => {
+          const [freelancerProjectPDA] = PublicKey.findProgramAddressSync(
+            [Buffer.from('freelancer_project'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
+            program.programId
+          );
+          const signature = await program.methods.requestTaskReview(projectName, new BN(projectID), taskURL)
+          .accountsPartial({ 
+            signer: account, 
+            freelancerProject: freelancerProjectPDA,
+          }).rpc();
+          return signature
+        },
+        onSuccess: (tx) => {
+          transactionToast(tx);
+          if (onSuccessCallback) onSuccessCallback(); 
+        },
+        onError: (err) => {
+          toast.error(`Failed to request the task review:: ${err.message}`);
+        },
+      })
+    }
   
     const InitializeFreelancerMutation = (onSuccessCallback?: () => void) => {
       return useMutation<string, Error, initializeFreelancer>({
@@ -72,29 +83,23 @@ export function useFreelancerAccounts({ account }: { account: PublicKey }) {
       });
     } 
 
-    const QueryFreelancerProjects = (account: PublicKey, projectID: number) => {
-      return useQuery({
-      queryKey: ['fetch-freelancer-projects', projectID] as const,
-      queryFn: async(context: QueryFunctionContext<['fetch-freelancer-projects', number]>) => {
-        const [_, projectID] = context.queryKey;
-        const [freelancerPDA] = await PublicKey.findProgramAddressSync(
-          [Buffer.from('freelancer_project'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
-          program.programId
-        );
-        return await program.account.freelancerProject.fetch(freelancerPDA);
-      }
-    })
+    const fetchFreelancerProjects = async (account: PublicKey, projectID: number) => {
+      const [freelancerPDA] = PublicKey.findProgramAddressSync(
+        [Buffer.from('freelancer_project'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
+        program.programId
+      );
+      return await program.account.freelancerProject.fetch(freelancerPDA);
     }
   
     return {
       // custom hooks
       queryFreelancerAccounts,
       queryFreelancerAccount,
-      taskReviewMutation,
       QueryFreelancerPerformance,
       // custom functions
+      TaskReviewMutation,
       InitializeFreelancerMutation,
-      QueryFreelancerProjects
+      fetchFreelancerProjects
     }
   }
   

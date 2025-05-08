@@ -28,6 +28,8 @@ pub fn project_escrow_setup(
     project.in_progress = true;
     project.assigned_freelancer = ctx.accounts.freelancer.owner;
     project.assigned_freelancer_project_id = counter_increment;
+    // change the estimated budget with the finalized budget
+    project.budget = amount;
 
     // set up the escrow account
     let escrow = &mut ctx.accounts.escrow;
@@ -55,6 +57,7 @@ pub fn project_escrow_setup(
     
     // set up the freelancer project
     let freelancer_project = &mut ctx.accounts.freelancer_project;
+    freelancer_project.id = counter_increment;
     freelancer_project.project_name = ctx.accounts.project.name.clone();
     freelancer_project.project_client = ctx.accounts.project.owner;
     freelancer_project.completed_task_url = "".to_string();
@@ -151,6 +154,7 @@ pub struct Escrow {
 #[account]
 #[derive(InitSpace)]
 pub struct FreelancerProject {
+    id: u64,
     #[max_len(50)]
     pub completed_task_url: String,
     #[max_len(50)]

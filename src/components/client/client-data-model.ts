@@ -1,6 +1,6 @@
 'use client'
 
-import { Keypair } from "@solana/web3.js";
+import { Keypair, PublicKey } from "@solana/web3.js";
 
 export interface initializeClient {
     name: string;
@@ -13,7 +13,6 @@ export interface initializeClient {
 export interface processTaskReview {
     projectID: number;
     approval: boolean;
-    keypair: Keypair;
 }
 
 export interface initializeProject {
@@ -25,10 +24,10 @@ export interface initializeProject {
 
 export interface projectEscrowSetup {
     projectID: number;
-    freelancer: Keypair;
+    projectName: string;
+    freelancer: PublicKey;
     budget: number;
     totalTasks: number;
-    keypair: Keypair;
 }
 
 export interface cancelProject {

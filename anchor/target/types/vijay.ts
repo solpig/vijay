@@ -525,11 +525,6 @@ export type Vijay = {
               },
               {
                 "kind": "account",
-                "path": "project.name",
-                "account": "project"
-              },
-              {
-                "kind": "account",
                 "path": "freelancer.project_counter.checked_add(1)",
                 "account": "freelancer"
               },
@@ -677,10 +672,6 @@ export type Vijay = {
               },
               {
                 "kind": "arg",
-                "path": "projectName"
-              },
-              {
-                "kind": "arg",
                 "path": "freelancerProjectId"
               },
               {
@@ -785,11 +776,6 @@ export type Vijay = {
                   99,
                   116
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "project.name",
-                "account": "project"
               },
               {
                 "kind": "account",
@@ -1109,11 +1095,6 @@ export type Vijay = {
               },
               {
                 "kind": "account",
-                "path": "project.name",
-                "account": "project"
-              },
-              {
-                "kind": "account",
                 "path": "project.assigned_freelancer_project_id",
                 "account": "project"
               },
@@ -1217,11 +1198,6 @@ export type Vijay = {
                   99,
                   116
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "project.name",
-                "account": "project"
               },
               {
                 "kind": "account",
@@ -1438,11 +1414,6 @@ export type Vijay = {
                   99,
                   116
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "project.name",
-                "account": "project"
               },
               {
                 "kind": "account",
@@ -1842,6 +1813,10 @@ export type Vijay = {
         "kind": "struct",
         "fields": [
           {
+            "name": "id",
+            "type": "u64"
+          },
+          {
             "name": "completedTaskUrl",
             "type": "string"
           },
@@ -1905,6 +1880,10 @@ export type Vijay = {
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "id",
+            "type": "u64"
+          },
           {
             "name": "name",
             "type": "string"

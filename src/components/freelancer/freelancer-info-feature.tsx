@@ -1,36 +1,41 @@
 'use client'
 
-import { UseQueryResult } from '@tanstack/react-query';
+import { useQueries } from '@tanstack/react-query';
 import { useFreelancerAccounts } from './freelancer-data-access'
 import { PublicKey } from '@solana/web3.js'
+import { useMemo } from 'react';
 
 export default function FreelancerInfoFeature({ account }: { account: String }) {
   if (!account) {
         throw new Error('account is undefined');
   }
   const  publicKey  = new PublicKey(account)
-  const { queryFreelancerAccount, QueryFreelancerPerformance: queryFreelancerPerformance, QueryFreelancerProjects: queryFreelancerProjects } = useFreelancerAccounts({ account: publicKey });
+  const { queryFreelancerAccount, QueryFreelancerPerformance: queryFreelancerPerformance, fetchFreelancerProjects: queryFreelancerProjects } = useFreelancerAccounts({ account: publicKey });
 
   const freelancerDetails = queryFreelancerAccount.data;
-  const freelancerPerformance = queryFreelancerPerformance.data;
-  let projectCounter = freelancerDetails?.projectCounter.toNumber() || 0;
-
-  
-  let projectIDs: number[] = [];
-    for (let i = 0; i < projectCounter; i++) {
-        projectIDs.push(i);
-    }
-  console.log("projectIDs", projectIDs)
-  let freelancerProjects: UseQueryResult[] = [];
-  for (let i = 0; i < projectCounter; i++) {
-      const id = projectIDs[i];
-      freelancerProjects.push(queryFreelancerProjects(publicKey, id));
-  };
-  console.log("freelancerProjects", freelancerProjects)
-  const performanceLoading = queryFreelancerPerformance.isLoading;
   const freelancerLoading = queryFreelancerAccount.isLoading;
 
-  if (freelancerLoading || performanceLoading) {
+  const freelancerPerformance = queryFreelancerPerformance.data;
+  const performanceLoading = queryFreelancerPerformance.isLoading;
+
+  let projectCounter = freelancerDetails?.projectCounter.toNumber() || 0;
+
+  const projectQueries = useQueries({
+    queries: useMemo(() => {
+      if (!projectCounter) return [];
+      return Array.from({ length: projectCounter }, (_, i) => {
+        return {
+          queryKey: ['fetch-freelancer-project', i + 1],
+          queryFn: () => queryFreelancerProjects(publicKey, i + 1),
+        };
+      });
+    }, [projectCounter, publicKey]),
+  });
+
+  const projectsLoading = projectQueries.some(q => q.isLoading)
+  const freelancerProjects = projectQueries.map(q => q.data).filter(Boolean)
+
+  if (freelancerLoading || performanceLoading || projectsLoading) {
         return <div className="text-center">Loading...</div>;
   } 
 
@@ -57,10 +62,11 @@ export default function FreelancerInfoFeature({ account }: { account: String }) 
         </div>
       </div>
           <div className="p-6 bg-gray-50">
+           <h2 className="text-xl font-semibold text-indigo-800 mb-10">Assigned projects</h2>
             <div className="max-w-16xl mx-auto mr-16 mt-12">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {freelancerProjects.map((result, i) => (
-                <FreelancerProjectCard key={i} details={result} />
+                  <FreelancerProjectCard key={i} details={result} />
               ))}
             </div>
           </div>
@@ -69,35 +75,30 @@ export default function FreelancerInfoFeature({ account }: { account: String }) 
   );
 }
 
-function FreelancerProjectCard({ details }: { details: UseQueryResult }) {
-  // const router = useRouter();
-  // const  freelancerDetails = account.account;
-  // console.log("freelancerDetails", freelancerDetails)
-  // const handleClick = () => {
-  //   if (freelancerDetails?.owner) {
-  //     router.push(`/freelancer/${freelancerDetails.owner.toString()}`);
-  //   }
-  // };
-  console.log("details", details)
+function FreelancerProjectCard({ details }: { details: any }) {
   return (
-    <div></div>
-    // <div onClick={handleClick} className="max-w-md w-full mx-auto rounded-3xl shadow-lg bg-gradient-to-br 
-    //                     from-white to-slate-50 p-6 space-y-4 border border-gray-200
-    //                     cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-2xl">
-    //   <h2 className="text-2xl font-semibold text-center text-indigo-600">
-    //     {freelancerDetails.name}
-    //   </h2>
-    //   <div className="space-y-2 text-gray-700 text-sm truncate overflow-hidden whitespace-nowrap">
-    //     <p>
-    //       <span className="font-medium text-gray-900">Domain:</span> {freelancerDetails.domain}
-    //     </p>
-    //     <p>
-    //       <span className="font-medium text-gray-900">Skills:</span> {freelancerDetails.skills}
-    //     </p>
-    //     <p>
-    //       <span className="font-medium text-gray-900">Contact:</span> {freelancerDetails.contact}
-    //     </p>
-    //   </div>
-    // </div>
+    <div>
+    <div className="max-w-md w-full mx-auto rounded-3xl shadow-lg bg-gradient-to-br 
+                        from-white to-slate-50 p-6 space-y-4 border border-gray-200
+                        cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-2xl">
+      <h2 className="text-2xl font-semibold text-center text-indigo-600">
+        {details?.name}
+      </h2>
+      <div className="space-y-2 text-gray-700 text-sm truncate overflow-hidden whitespace-nowrap">
+          <p>
+            <span className="font-medium text-gray-900">Project Name:</span> {details?.projectName}
+          </p>
+          <p>
+            <span className="font-medium text-gray-900">Project Owner:</span> {details?.projectClient.toBase58()}
+          </p>
+          <p>
+            <span className="font-medium text-gray-900">Tasks Approved:</span> {details?.approvedTasks.toNumber()}
+          </p>
+          <p>
+            <span className="font-medium text-gray-900">Rejected Attempts:</span> {details?.rejectedAttempts.toNumber()}
+          </p>
+        </div>
+      </div>
+    </div>
   )
 }

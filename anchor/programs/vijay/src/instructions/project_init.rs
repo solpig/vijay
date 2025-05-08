@@ -13,6 +13,8 @@ pub fn initialize_project(
 
     require!(ctx.accounts.client.owner == ctx.accounts.signer.key(), ErrorCode::NotAnOwner);
 
+    let name = pad_to_32_string(&name);
+
     let client = &mut ctx.accounts.client;
     let client_report = &mut ctx.accounts.client_report;
 
@@ -25,6 +27,7 @@ pub fn initialize_project(
     client_report.total_projects = project_counter;
 
     let project = &mut ctx.accounts.project;
+    project.id = project_counter;
     project.name = name;
     project.description = description;
     project.url = url;
@@ -72,6 +75,7 @@ pub struct ProjectInfo<'info> {
 #[account]
 #[derive(InitSpace)]
 pub struct Project {
+    pub id: u64,
     #[max_len(50)]
     pub name: String,
     #[max_len(280)]
@@ -84,4 +88,12 @@ pub struct Project {
     pub owner: Pubkey,
     pub assigned_freelancer: Pubkey,
     pub assigned_freelancer_project_id: u64,
+}
+
+fn pad_to_32_string(input: &str) -> String {
+    let mut trimmed = input.chars().take(32).collect::<String>();
+    while trimmed.len() < 32 {
+        trimmed.push(' ');
+    }
+    trimmed
 }
