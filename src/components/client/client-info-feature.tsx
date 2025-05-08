@@ -13,11 +13,10 @@ export default function ClientInfoFeature({ account }: { account: String }) {
   const { queryClientAccount, queryClientPerformance, fetchClientProjects } = useClientAccounts({ account: publicKey });
 
   const clientDetails = queryClientAccount.data;
+  const clientLoading = queryClientAccount.isLoading;
+ 
   const clientPerformance = queryClientPerformance.data;
   const performanceLoading = queryClientPerformance.isLoading;
-  const clientLoading = queryClientPerformance.isLoading;
-
-
 
   const projectCounter = clientDetails?.projectCounter.toNumber() || 0;
 

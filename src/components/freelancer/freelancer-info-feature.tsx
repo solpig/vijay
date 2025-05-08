@@ -9,7 +9,7 @@ export default function FreelancerInfoFeature({ account }: { account: String }) 
         throw new Error('account is undefined');
   }
   const  publicKey  = new PublicKey(account)
-  const { queryFreelancerAccount, queryFreelancerPerformance, queryFreelancerProjects } = useFreelancerAccounts({ account: publicKey });
+  const { queryFreelancerAccount, QueryFreelancerPerformance: queryFreelancerPerformance, QueryFreelancerProjects: queryFreelancerProjects } = useFreelancerAccounts({ account: publicKey });
 
   const freelancerDetails = queryFreelancerAccount.data;
   const freelancerPerformance = queryFreelancerPerformance.data;

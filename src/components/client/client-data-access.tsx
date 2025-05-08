@@ -66,32 +66,6 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
     }
   })
 
-  const fetchClientProjects = async (account: PublicKey, projectID: number) => {
-    const [freelancerPDA] = PublicKey.findProgramAddressSync(
-      [Buffer.from('client_project'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
-      program.programId
-    );
-    return await program.account.project.fetch(freelancerPDA);
-  }
-  
-
-  const useInitializeClientMutation = (onSuccessCallback?: () => void) => {
-    return useMutation<string, Error, initializeClient>({
-            mutationKey: ['initialize','client', { cluster, account }],
-            mutationFn: async ({name, domain, requiredSkills, contact}) => {
-              let signature = await program.methods.initializeClient(name, domain, requiredSkills, contact).accounts({ signer: account }).rpc();
-              return signature;
-            },
-            onSuccess: (signature) => {
-              transactionToast(signature);
-              if (onSuccessCallback) onSuccessCallback(); 
-            },
-            onError: (err) => {
-              toast.error(`Failed to create a client account:: ${err.message}`);
-            },
-          });
-  }
-
   const newProjectMutation = useMutation<string, Error, initializeProject>({
     mutationKey: ['initialize','project', { cluster, account }],
     mutationFn: async ({name, description, url, budget}) => {
@@ -184,17 +158,44 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
     },
   })
 
+  const fetchClientProjects = async (account: PublicKey, projectID: number) => {
+    const [freelancerPDA] = PublicKey.findProgramAddressSync(
+      [Buffer.from('client_project'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
+      program.programId
+    );
+    return await program.account.project.fetch(freelancerPDA);
+  }
+  
+  const useInitializeClientMutation = (onSuccessCallback?: () => void) => {
+    return useMutation<string, Error, initializeClient>({
+            mutationKey: ['initialize','client', { cluster, account }],
+            mutationFn: async ({name, domain, requiredSkills, contact}) => {
+              let signature = await program.methods.initializeClient(name, domain, requiredSkills, contact).accounts({ signer: account }).rpc();
+              return signature;
+            },
+            onSuccess: (signature) => {
+              transactionToast(signature);
+              if (onSuccessCallback) onSuccessCallback(); 
+            },
+            onError: (err) => {
+              toast.error(`Failed to create a client account:: ${err.message}`);
+            },
+          });
+  }
+
   return {
+    // custom hooks
     queryClientAccount,
     queryClientAccounts,
     queryClientPerformance,
-    fetchClientProjects,
-    useInitializeClientMutation,
     newProjectMutation,
     projectEscrowSetupMutation,
     reviewTaskProcessMutation,
     cancelProjectMutation,
-    transferProjectMutation
+    transferProjectMutation,
+    // custom functions
+    fetchClientProjects,
+    useInitializeClientMutation,
   }
 }
 

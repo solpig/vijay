@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 
 
 export function RegisterFreelancer({ address }: { address: PublicKey }) {
-    const { initializeFreelancerMutation, queryFreelancerAccount } = useFreelancerAccounts({ account: address })
+    const { InitializeFreelancerMutation: initializeFreelancerMutation, queryFreelancerAccount } = useFreelancerAccounts({ account: address })
   
     const [name, setName] = useState('');
     const [domain, setDomain] = useState('');
