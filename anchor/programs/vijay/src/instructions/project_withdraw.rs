@@ -66,7 +66,7 @@ pub struct WithdrawInfo<'info> {
 
     #[account(
         mut,
-        seeds = [b"project_escrow", project_id.to_le_bytes().as_ref(), project.name.as_bytes()[..32].as_ref(), project.owner.as_ref()],
+        seeds = [b"project_escrow", project_id.to_le_bytes().as_ref(), project.owner.as_ref()],
         bump,
         close = signer
     )]
@@ -74,7 +74,7 @@ pub struct WithdrawInfo<'info> {
 
     #[account(
         mut,
-        seeds = [b"vault", project_id.to_le_bytes().as_ref(), project.name.as_bytes()[..32].as_ref(), project.owner.as_ref()],
+        seeds = [b"vault", project_id.to_le_bytes().as_ref(), project.owner.as_ref()],
         bump
     )]
     pub vault: Account<'info, Vault>,

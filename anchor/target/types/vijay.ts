@@ -452,11 +452,6 @@ export type Vijay = {
               },
               {
                 "kind": "account",
-                "path": "project.name",
-                "account": "project"
-              },
-              {
-                "kind": "account",
                 "path": "project.owner",
                 "account": "project"
               }
@@ -481,11 +476,6 @@ export type Vijay = {
               {
                 "kind": "arg",
                 "path": "projectId"
-              },
-              {
-                "kind": "account",
-                "path": "project.name",
-                "account": "project"
               },
               {
                 "kind": "account",
@@ -857,11 +847,6 @@ export type Vijay = {
               },
               {
                 "kind": "account",
-                "path": "project.name",
-                "account": "project"
-              },
-              {
-                "kind": "account",
                 "path": "project.owner",
                 "account": "project"
               }
@@ -886,11 +871,6 @@ export type Vijay = {
               {
                 "kind": "arg",
                 "path": "projectId"
-              },
-              {
-                "kind": "account",
-                "path": "project.name",
-                "account": "project"
               },
               {
                 "kind": "account",
@@ -1088,11 +1068,6 @@ export type Vijay = {
               {
                 "kind": "arg",
                 "path": "projectId"
-              },
-              {
-                "kind": "account",
-                "path": "project.name",
-                "account": "project"
               },
               {
                 "kind": "account",
@@ -1381,11 +1356,6 @@ export type Vijay = {
               },
               {
                 "kind": "account",
-                "path": "project.name",
-                "account": "project"
-              },
-              {
-                "kind": "account",
                 "path": "project.owner",
                 "account": "project"
               }
@@ -1410,11 +1380,6 @@ export type Vijay = {
               {
                 "kind": "arg",
                 "path": "projectId"
-              },
-              {
-                "kind": "account",
-                "path": "project.name",
-                "account": "project"
               },
               {
                 "kind": "account",

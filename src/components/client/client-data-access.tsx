@@ -55,6 +55,14 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
     }
   })
 
+  const fetchEscrowAccount = async (account: PublicKey, projectID: number) => {
+    const [freelancerPDA] = PublicKey.findProgramAddressSync(
+      [Buffer.from('project_escrow'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
+      program.programId
+    );
+    return await program.account.escrow.fetch(freelancerPDA);
+  }
+
   const queryClientPerformance = useQuery({
     queryKey: ['fetch', 'client', 'performance', { cluster, account }],
     queryFn: async() => {
@@ -161,8 +169,6 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
         if(projectName.length < 32) {
           projectName = projectName.padEnd(32, ' ');
         }
-        console.log("projectName", projectName)
-        console.log("projectLength=======", projectName.length)
 
         let [clientProjectPDA] = await PublicKey.findProgramAddressSync(
           [Buffer.from('client_project'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
@@ -174,13 +180,12 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
           program.programId
         );
         
-        console.log("projectName", projectName)
         let [escrowPDA] = await PublicKey.findProgramAddressSync(
-          [Buffer.from('project_escrow'), new BN(projectID).toArrayLike(Buffer, 'le', 8), Buffer.from(projectName).subarray(0,32),  account.toBuffer()],
+          [Buffer.from('project_escrow'), new BN(projectID).toArrayLike(Buffer, 'le', 8),  account.toBuffer()],
           program.programId 
         );
         
-        let [vaultPDA] = await PublicKey.findProgramAddressSync([Buffer.from('vault'), new BN(projectID).toArrayLike(Buffer, 'le', 8), Buffer.from(projectName).subarray(0,32), account.toBuffer()],
+        let [vaultPDA] = await PublicKey.findProgramAddressSync([Buffer.from('vault'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
          program.programId
         );
 
@@ -253,6 +258,7 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
     // custom functions
     NewProjectMutation,
     fetchClientProjects,
+    fetchEscrowAccount,
     useProjectEscrowSetupMutation,
     useInitializeClientMutation,
   }

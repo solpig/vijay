@@ -30,6 +30,7 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
             placeholder="Name"
             className="input input-bordered w-full mb-4"
             value={name}
+            disabled={queryFreelancerAccount.data?.name !== undefined}
             onChange={(e) => setName(e.target.value)}
           />
           <input
@@ -37,6 +38,7 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
             placeholder="Domain"
             className="input input-bordered w-full mb-4"
             value={domain}
+            disabled={queryFreelancerAccount.data?.name !== undefined}
             onChange={(e) => setDomain(e.target.value)}
           />
           <input
@@ -44,6 +46,7 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
             placeholder="Skills"
             className="input input-bordered w-full mb-4"
             value={skills}
+            disabled={queryFreelancerAccount.data?.name !== undefined}
             onChange={(e) => setSkills(e.target.value)}
           />
           <input
@@ -51,6 +54,7 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
             placeholder="Contact Details"
             className="input input-bordered w-full mb-4"
             value={contact}
+            disabled={queryFreelancerAccount.data?.name !== undefined}
             onChange={(e) => setContact(e.target.value)}
           />
         <button

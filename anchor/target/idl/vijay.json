@@ -446,11 +446,6 @@
               },
               {
                 "kind": "account",
-                "path": "project.name",
-                "account": "Project"
-              },
-              {
-                "kind": "account",
                 "path": "project.owner",
                 "account": "Project"
               }
@@ -475,11 +470,6 @@
               {
                 "kind": "arg",
                 "path": "project_id"
-              },
-              {
-                "kind": "account",
-                "path": "project.name",
-                "account": "Project"
               },
               {
                 "kind": "account",
@@ -851,11 +841,6 @@
               },
               {
                 "kind": "account",
-                "path": "project.name",
-                "account": "Project"
-              },
-              {
-                "kind": "account",
                 "path": "project.owner",
                 "account": "Project"
               }
@@ -880,11 +865,6 @@
               {
                 "kind": "arg",
                 "path": "project_id"
-              },
-              {
-                "kind": "account",
-                "path": "project.name",
-                "account": "Project"
               },
               {
                 "kind": "account",
@@ -1082,11 +1062,6 @@
               {
                 "kind": "arg",
                 "path": "project_id"
-              },
-              {
-                "kind": "account",
-                "path": "project.name",
-                "account": "Project"
               },
               {
                 "kind": "account",
@@ -1375,11 +1350,6 @@
               },
               {
                 "kind": "account",
-                "path": "project.name",
-                "account": "Project"
-              },
-              {
-                "kind": "account",
                 "path": "project.owner",
                 "account": "Project"
               }
@@ -1404,11 +1374,6 @@
               {
                 "kind": "arg",
                 "path": "project_id"
-              },
-              {
-                "kind": "account",
-                "path": "project.name",
-                "account": "Project"
               },
               {
                 "kind": "account",

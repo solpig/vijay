@@ -227,7 +227,7 @@ describe('vijay', () => {
     );
 
     const [firstProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("client_project"),firstProjectCounter, client_wallet_publicKey.toBuffer()],
+      [Buffer.from("client_project"), firstProjectCounter, client_wallet_publicKey.toBuffer()],
       program.programId
     );
 
@@ -236,17 +236,17 @@ describe('vijay', () => {
     const firstProject = await program.account.project.fetch(firstProjectPda);
 
     const [projectEscrowPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("project_escrow"), firstProjectCounter, Buffer.from(firstProject.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      [Buffer.from("project_escrow"), firstProjectCounter, client_wallet_publicKey.toBuffer()],
       program.programId
     );
     
     const [escrowVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("vault"), firstProjectCounter, Buffer.from(firstProject.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      [Buffer.from("vault"), firstProjectCounter, client_wallet_publicKey.toBuffer()],
       program.programId
     );
    
     const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("freelancer_project"), new anchor.BN(1).toArrayLike(Buffer, "le", 8),  freelancer.owner.toBuffer()],
+      [Buffer.from("freelancer_project"), firstProjectCounter,  freelancer.owner.toBuffer()],
       program.programId
     );
 
@@ -346,12 +346,12 @@ describe('vijay', () => {
       const secondProject = await program.account.project.fetch(secondProjectPda);
 
       const [secondProjectEscrowPda] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("project_escrow"), secondProjectCounter, Buffer.from(secondProject.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+        [Buffer.from("project_escrow"), secondProjectCounter, client_wallet_publicKey.toBuffer()],
         program.programId
       );
       
       const [secondEscrowVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("vault"), secondProjectCounter, Buffer.from(secondProject.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+        [Buffer.from("vault"), secondProjectCounter, client_wallet_publicKey.toBuffer()],
         program.programId
       );
      
@@ -394,7 +394,7 @@ describe('vijay', () => {
     };
     
     const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("freelancer_project"), new anchor.BN(1).toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
+      [Buffer.from("freelancer_project"), freelancerProjectId.toArrayLike(Buffer, "le", 8),  freelancer_wallet.publicKey.toBuffer()],
       program.programId
     );
 
@@ -434,12 +434,12 @@ describe('vijay', () => {
 
 
     const [projectEscrowPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("project_escrow"), freelancerProjectId.toArrayLike(Buffer, "le", 8), Buffer.from(projectName).subarray(0,32), clientProject.owner.toBuffer()],
+      [Buffer.from("project_escrow"), freelancerProjectId.toArrayLike(Buffer, "le", 8), clientProject.owner.toBuffer()],
       program.programId
     );
 
     const [escrowVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("vault"), freelancerProjectId.toArrayLike(Buffer, "le", 8), Buffer.from(projectName).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      [Buffer.from("vault"), freelancerProjectId.toArrayLike(Buffer, "le", 8), client_wallet_publicKey.toBuffer()],
       program.programId
     );
 
@@ -572,12 +572,12 @@ describe('vijay', () => {
     );
 
     const [projectEscrowPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("project_escrow"), freelancerProjectId.toArrayLike(Buffer, "le", 8), Buffer.from(taskDetails.projectName).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      [Buffer.from("project_escrow"), freelancerProjectId.toArrayLike(Buffer, "le", 8), client_wallet_publicKey.toBuffer()],
       program.programId
     );
 
     const [escrowVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("vault"), freelancerProjectId.toArrayLike(Buffer, "le", 8), Buffer.from(taskDetails.projectName).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      [Buffer.from("vault"), freelancerProjectId.toArrayLike(Buffer, "le", 8), client_wallet_publicKey.toBuffer()],
       program.programId
     );
 
@@ -621,12 +621,12 @@ describe('vijay', () => {
     const clientProject = await program.account.project.fetch(clientProjectPda);
 
     const [escrowVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("vault"), projectID.toArrayLike(Buffer, "le", 8), Buffer.from(clientProject.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      [Buffer.from("vault"), projectID.toArrayLike(Buffer, "le", 8), client_wallet_publicKey.toBuffer()],
       program.programId
     );
 
     const [projectEscrowPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("project_escrow"), projectID.toArrayLike(Buffer, "le", 8), Buffer.from(clientProject.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      [Buffer.from("project_escrow"), projectID.toArrayLike(Buffer, "le", 8), client_wallet_publicKey.toBuffer()],
       program.programId
     );
 
@@ -727,12 +727,12 @@ describe('vijay', () => {
     const project = await program.account.project.fetch(projectPda);
 
     const [projectEscrowPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("project_escrow"), projectCounter, Buffer.from(project.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      [Buffer.from("project_escrow"), projectCounter, client_wallet_publicKey.toBuffer()],
       program.programId
     );
     
     const [escrowVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("vault"), projectCounter, Buffer.from(project.name).subarray(0,32), client_wallet_publicKey.toBuffer()],
+      [Buffer.from("vault"), projectCounter, client_wallet_publicKey.toBuffer()],
       program.programId
     );
    

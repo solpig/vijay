@@ -3,9 +3,10 @@
 import { PublicKey } from "@solana/web3.js";
 import { useEffect, useMemo, useState } from "react";
 import { useFreelancerAccounts } from "../freelancer/freelancer-data-access";
-import { useClientAccounts } from "../client/client-data-access";
-import { useQueries } from "@tanstack/react-query";
+import { useClientAccounts, useProgramAccounts } from "../client/client-data-access";
+import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Modal } from "../modal/modal";
+import { BN } from "@coral-xyz/anchor";
 
 
 export function MyProjects({ address }: { address: PublicKey }) {
@@ -92,9 +93,52 @@ export function MyProjects({ address }: { address: PublicKey }) {
     )
 }
 
+type EscrowAccount = {
+  depositor: PublicKey;
+  receiver: PublicKey;
+  vault: PublicKey;
+  budget: BN;
+  totalTasks: BN;
+  tasksCompleted: BN;
+  isActive: boolean;
+};
+
 function ClientProjectCard({ address, details }: { address: PublicKey, details: any; }) {
 
-  const { useProjectEscrowSetupMutation } = useClientAccounts({ account: address });
+  const queryClient = useQueryClient();
+  const { useProjectEscrowSetupMutation, fetchEscrowAccount } = useClientAccounts({ account: address });
+  
+  const [escrowAccount, setEscrowAccount] = useState<EscrowAccount | null>(null);
+
+    useEffect(() => {
+      const loadEscrowAccount = async () => {
+        if (!address || !details?.id) return;
+
+        try {
+          const data = await fetchEscrowAccount(address, details?.id);
+          setEscrowAccount(data);
+        } catch (err) {
+          console.error('Error fetching escrow account:', err);
+        }
+      };
+
+      loadEscrowAccount();
+    }, [address, details?.id]);
+
+    console.log('Escrow Account:', escrowAccount);
+
+  // const { fetchFreelancerProjects } = useFreelancerAccounts({ account: details?.assignedFreelancer });
+  // const freelancerProjectQuery = useQuery({
+  //   queryKey: ['freelancer-project', details?.assignedFreelancer, details?.assignedFreelancerProjectId?.toNumber()],
+  //   queryFn: () =>
+  //     fetchFreelancerProjects(
+  //       details.assignedFreelancer,
+  //       details.assignedFreelancerProjectId.toNumber()
+  //     ),
+  //   enabled: !!details?.assignedFreelancer && !!details?.assignedFreelancerProjectId,
+  // });
+
+  // console.log('freelancerProjectQuery', freelancerProjectQuery.data);
 
   const [isOpen, setIsOpen] = useState(false)
   const [freelancerAccount, setFreelancerAccount] = useState('')
@@ -126,6 +170,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
   const projectSetupMut = useProjectEscrowSetupMutation(() => {
     setIsOpen(false);
     setFreelancerAccount('');
+    queryClient.invalidateQueries({ queryKey: ['fetch-client-project'] });
   });
 
   return (
@@ -197,9 +242,33 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                   required
                   onChange={(e) => setBudget(Number(e.target.value))}
               />
+              {escrowAccount && (
+                <div>
+                  <label htmlFor="total-tasks">Total Tasks</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    placeholder="Total Tasks"
+                    className="input input-bordered w-full mb-4"
+                    value={escrowAccount?.totalTasks.toNumber()}
+                    disabled={true}
+                  />
+                  <label htmlFor="tasks-completed">Tasks Completed</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    placeholder="Tasks Completed"
+                    className="input input-bordered w-full mb-4"
+                    value={escrowAccount?.tasksCompleted.toNumber()}
+                    disabled={true}
+                  />
+                </div>
+              )}
               {details?.assignedFreelancerProjectId.toNumber() === 0 ? 
               ( 
-                <div>
+                <div className="flex flex-col">
                  <label htmlFor="total-tasks">Total Tasks</label>
                  <input
                    type="number"
@@ -276,6 +345,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
 function FreelancerProjectCard({ address, details }: { address: PublicKey, details: any; }) {
   const { TaskReviewMutation } = useFreelancerAccounts({ account: address });
 
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false)
   const [taskURL, setTaskURL] = useState('')
 
@@ -294,6 +364,7 @@ function FreelancerProjectCard({ address, details }: { address: PublicKey, detai
   const taskReviewMut = TaskReviewMutation(() => {
     setIsOpen(false);
     setTaskURL('');
+    queryClient.invalidateQueries({ queryKey: ['fetch-freelancer-project'] });
   });
 
   return (
