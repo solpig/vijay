@@ -674,6 +674,43 @@
               }
             ]
           }
+        },
+        {
+          "name": "client_project",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "freelancer_project.project_id",
+                "account": "FreelancerProject"
+              },
+              {
+                "kind": "account",
+                "path": "freelancer_project.project_client",
+                "account": "FreelancerProject"
+              }
+            ]
+          }
         }
       ],
       "args": [
@@ -1662,6 +1699,11 @@
       "code": 6008,
       "name": "TaskReviewNotRequested",
       "msg": "Task review not yet requested"
+    },
+    {
+      "code": 6009,
+      "name": "TooLong",
+      "msg": "Bad request::Too long"
     }
   ],
   "types": [
@@ -1815,6 +1857,10 @@
             "type": "string"
           },
           {
+            "name": "project_id",
+            "type": "u64"
+          },
+          {
             "name": "project_name",
             "type": "string"
           },
@@ -1888,6 +1934,10 @@
           },
           {
             "name": "url",
+            "type": "string"
+          },
+          {
+            "name": "task_in_review",
             "type": "string"
           },
           {

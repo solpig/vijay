@@ -19,5 +19,7 @@ pub enum ErrorCode {
     #[msg("Only owner is allowed to proceed with this operation")]
     NotAnOwner,
     #[msg("Task review not yet requested")]
-    TaskReviewNotRequested
+    TaskReviewNotRequested,
+    #[msg("Bad request::Too long")]
+    TooLong
 }

@@ -35,6 +35,20 @@ export function RegisterClient({ address }: { address: PublicKey }) {
     setprojectBudget(0);
   });
 
+  const isProjectFormValid = () => {
+    if (projectName.length < 1 || projectDescription.length < 1 || projectURL.length < 1 || projectBudget <= 0) {
+      return false;
+    }
+    return true;
+  }
+
+  const isClientFormValid = () => {
+    if (name.length < 1 || domain.length < 1 || requiredSkills.length < 1 || contact.length < 1) {
+      return false;
+    }
+    return true;
+  }
+
     return (
       <div>
         <p className="mb-4" >Client Registeration</p>
@@ -43,50 +57,66 @@ export function RegisterClient({ address }: { address: PublicKey }) {
           placeholder="Name"
           className="input input-bordered w-full mb-4"
           value={name}
+          maxLength={50}
+          required
+          disabled={queryClientAccount.data?.name !== undefined}
           onChange={(e) => setName(e.target.value)}
         />
         <input
           type="text"
           placeholder="Domain"
           className="input input-bordered w-full mb-4"
+          maxLength={50}
+          required
           value={domain}
+          disabled={queryClientAccount.data?.name !== undefined}
           onChange={(e) => setDomain(e.target.value)}
         />
         <input
           type="text"
           placeholder="Required Skills"
           className="input input-bordered w-full mb-4"
+          maxLength={240}
+          required
           value={requiredSkills}
+          disabled={queryClientAccount.data?.name !== undefined}
           onChange={(e) => setRequiredSkills(e.target.value)}
         />
         <input
           type="text"
           placeholder="Contact"
           className="input input-bordered w-full mb-4"
+          maxLength={50}
+          required
           value={contact}
+          disabled={queryClientAccount.data?.name !== undefined}
           onChange={(e) => setContact(e.target.value)}
         />
         <button
           className="btn btn-xs lg:btn-md btn-primary btn-outline"
           onClick={() => initializeClientMut.mutateAsync({name, domain, requiredSkills, contact})}
-          disabled={initializeClientMut.isPending || queryClientAccount.data?.name !== undefined}>
+          disabled={initializeClientMut.isPending || queryClientAccount.data?.name !== undefined || !isClientFormValid()}>
           {!queryClientAccount.data?.name ? "Create" : "Already Registered"}{initializeClientMut.isPending && '...'}
         </button>
         {queryClientAccount.data?.name && (
           <div className="mt-4">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 mb-4 mt-12">
               Publish a job to get started!
             </p>
             <input
               type="text"
               placeholder="Project name"
               className="input input-bordered w-full mb-4"
+              maxLength={32}
+              required
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
             />
             <input
               type="text"
               placeholder="Description"
+              maxLength={280}
+              required
               className="input input-bordered w-full mb-4"
               value={projectDescription}
               onChange={(e) => setProjectDescription(e.target.value)}
@@ -96,6 +126,8 @@ export function RegisterClient({ address }: { address: PublicKey }) {
               placeholder="URL"
               className="input input-bordered w-full mb-4"
               value={projectURL}
+              maxLength={50}
+              required
               onChange={(e) => setProjectURL(e.target.value)}
             />
             <input
@@ -110,7 +142,7 @@ export function RegisterClient({ address }: { address: PublicKey }) {
             <button
               className="btn btn-xs lg:btn-md btn-primary btn-outline"
               onClick={() => newProjectMut.mutateAsync({name: projectName, description: projectDescription, url: projectURL, budget: projectBudget})} 
-              disabled={newProjectMut.isPending}>
+              disabled={newProjectMut.isPending || !isProjectFormValid()}>
               Publish{newProjectMut.isPending && '...'}
             </button>
           </div>

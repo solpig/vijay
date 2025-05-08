@@ -153,14 +153,14 @@ describe('vijay', () => {
     );
 
     const projectDetailsOne = {
-      name: "Freelancing on Solana - Project 1",
+      name: "Freelancing on Solana - Project1",
       description: "A decentralized application using Solana",
       url: "some_url.com",
       budget: new anchor.BN(1000),
     };
 
     const projectDetailsTwo = {
-      name: "Freelancing on Solana - Project 2",
+      name: "Freelancing on Solana - Project2",
       description: "A decentralized application using Solana",
       url: "some_url.com",
       budget: new anchor.BN(1000),
@@ -390,7 +390,7 @@ describe('vijay', () => {
     const freelancerProjectId = new anchor.BN(1);  
     const taskDetails = {
       taskUrl: "some_url.com",
-      projectName: "Freelancing on Solana - Project 1"
+      projectName: "Freelancing on Solana - Project1"
     };
     
     const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
@@ -416,7 +416,7 @@ describe('vijay', () => {
 
   test('Client approving a task review', async () => {
     const freelancerProjectId = new anchor.BN(1);
-    const projectName = "Freelancing on Solana - Project 1";
+    const projectName = "Freelancing on Solana - Project1";
     const taskUrl = "some_other_url.com";
 
     // get all the PDAs
@@ -544,7 +544,7 @@ describe('vijay', () => {
     const freelancerProjectId = new anchor.BN(2);  
     const taskDetails = {
       taskUrl: "some_url.com",
-      projectName: "Freelancing on Solana - Project 2"
+      projectName: "Freelancing on Solana - Project2"
     };
     
     const [freelancerProjectPda] = anchor.web3.PublicKey.findProgramAddressSync(
@@ -702,7 +702,7 @@ describe('vijay', () => {
     );
 
     const projectDetails = {
-      name: "Freelancing on Solana - Project 3",
+      name: "Freelancing on Solana - Project3",
       description: "A decentralized application using Solana",
       url: "some_url.com",
       budget: new anchor.BN(1000),
@@ -900,7 +900,7 @@ describe('vijay', () => {
     );
 
     const projectDetails = {
-      name: "Freelancing on Solana - Project 4",
+      name: "Freelancing on Solana - Project4",
       description: "A decentralized application using Solana",
       url: "some_url.com",
       budget: new anchor.BN(1000),

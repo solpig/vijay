@@ -112,8 +112,11 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
     }
   }, [details]);
 
+  console.log(`details---${details?.id}`, details);
+  console.log(`Details---${details?.assignedFreelancer.toString()}`);
+  console.log("Prohect lenghr-----",details?.name.length);
 
-  let cardColor = details?.inprogress
+  let cardColor = details?.inProgress
   ? 'from-yellow-100 to-yellow-200'
   : 'from-red-100 to-red-200';
 
@@ -128,7 +131,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
   return (
   <div>
     <div onClick={() => setIsOpen(true)} className={`rounded-3xl shadow-lg bg-gradient-to-br ${cardColor}
-                        from-white to-slate-50 p-6 space-y-4 border border-gray-200
+                        p-6 space-y-4 border
                         cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-2xl`}>
       
       <h2 className="text-2xl font-semibold text-center text-indigo-600">
@@ -143,14 +146,13 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
           <span className="font-medium text-gray-900">Job URL:</span> {details?.url}
         </p>
         <p>
-          <span className="font-medium text-gray-900">Budget(in SOL):</span> {details?.budget.toNumber()}
+          <span className="font-medium text-gray-900">Expected Budget(in SOL):</span> {details?.budget.toNumber()}
         </p>
       </div>
     </div>
     {isOpen && (
         <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>  
-          {!details?.inprogress ? (
-            <div>
+            <div className="flex flex-col">
               <label htmlFor="project-id">Project ID</label>
               <input
                 type="number"
@@ -167,7 +169,14 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                 value={details?.name}
                 disabled={true}
               />
-              <label htmlFor="freelancer-account">Freelancer Account</label>
+              {
+                details?.assignedFreelancerProjectId.toNumber() === 0 ? 
+                (
+                  <label htmlFor="freelancer-account">Freelancer Account</label>
+                ): (
+                  <label htmlFor="freelancer-account">Assigned Freelancer</label>
+                )
+              }
               <input
                 type="text"
                 placeholder="Freelancer Account Address"
@@ -176,18 +185,20 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                 required
                 onChange={(e) => setFreelancerAccount(e.target.value)}
               />
-              <label htmlFor="budget">Budget</label>
+              <label htmlFor="budget">Finalized Budget (in SOL)</label>
               <input
                   type="number"
                   min="0"
                   step="1"
                   placeholder="Budget (in SOL)"
                   className="input input-bordered w-full mb-4"
-                  value={budget === 0 ? '' : budget}
+                  disabled={details?.assignedFreelancerProjectId.toNumber() !== 0}
+                  value={budget === 0 ? `` : budget}
                   required
                   onChange={(e) => setBudget(Number(e.target.value))}
               />
-              {details?.assignedFreelancerProjectId.toNumber() === 0 && (
+              {details?.assignedFreelancerProjectId.toNumber() === 0 ? 
+              ( 
                 <div>
                  <label htmlFor="total-tasks">Total Tasks</label>
                  <input
@@ -201,20 +212,61 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                    onChange={(e) => setTotalTasks(Number(e.target.value))}
                  />
                  <button
-                    className="btn btn-xs lg:btn-md btn-primary btn-outline text-blue-500"
+                    className="btn btn-xs lg:btn-md btn-primary btn-outline text-blue-500 ml-auto"
                     onClick={() => projectSetupMut.mutateAsync({projectID: details?.id, projectName: details?.name, freelancer: new PublicKey(freelancerAccount), budget: details?.budget, totalTasks: details?.totalTasks})} 
                     disabled={projectSetupMut.isPending}>
                     Assign Freelancer{projectSetupMut.isPending && '...'}
                 </button>
                 </div>
-              )}
+              ): (
+                    <div>
+                        { details?.taskInReview && 
+                            <div>
+                                <label htmlFor="task-url">Requested Task Review</label>
+                                <input
+                                  type="text"
+                                  placeholder="Task URL"
+                                  className="input input-bordered w-full mb-4"
+                                  value={details?.taskInReview}
+                                  disabled={true}
+                                />
+                                <div className="flex space-x-4 mb-12">
+                                  <div className="ml-auto flex space-x-4">
+                                    <label className="cursor-pointer">
+                                          <input type="radio" name="taskStatus" value="approve" className="peer hidden" />
+                                          <div className="px-4 py-2 rounded-full border border-green-500 text-green-500 peer-checked:bg-green-500 peer-checked:text-white transition">
+                                            Approve
+                                          </div>
+                                        </label>
+                                        <label className="cursor-pointer">
+                                          <input type="radio" name="taskStatus" value="reject" className="peer hidden" />
+                                          <div className="px-4 py-2 rounded-full border border-red-500 text-red-500 peer-checked:bg-red-500 peer-checked:text-white transition">
+                                            Reject
+                                          </div>
+                                    </label>
+                                  </div>
+                                </div>
+                            </div>
+                        }
+
+                    <div className="flex justify-between space-x-4">
+                      <button
+                          className="btn btn-xs lg:btn-md btn-outline text-orange-500"
+                          onClick={() => projectSetupMut.mutateAsync({projectID: details?.id, projectName: details?.name, freelancer: new PublicKey(freelancerAccount), budget: details?.budget, totalTasks: details?.totalTasks})} 
+                          disabled={projectSetupMut.isPending}>
+                          Transfer Project{projectSetupMut.isPending && '...'}
+                      </button>
+                      <button
+                          className="btn btn-xs lg:btn-md btn-outline text-red-500"
+                          onClick={() => projectSetupMut.mutateAsync({projectID: details?.id, projectName: details?.name, freelancer: new PublicKey(freelancerAccount), budget: details?.budget, totalTasks: details?.totalTasks})} 
+                          disabled={projectSetupMut.isPending}>
+                          Withdraw Project{projectSetupMut.isPending && '...'}
+                      </button>
+                    </div>
+                </div>
+              )
+            }
             </div>
-          ):
-          (
-             <div>
-             </div>
-          )     
-        }
         </Modal>
     )}
   </div>
@@ -232,6 +284,8 @@ function FreelancerProjectCard({ address, details }: { address: PublicKey, detai
       setTaskURL(details?.completedTaskUrl);
     }
   },[details?.completedTaskUrl]);
+
+  console.log('details', details);
 
   let cardColor = details?.isActive
   ? 'from-green-100 to-green-200'
@@ -266,7 +320,6 @@ function FreelancerProjectCard({ address, details }: { address: PublicKey, detai
     </div>
     {isOpen && (
         <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>  
-          {!details?.inprogress ? (
             <div className="flex flex-col">
               <label htmlFor="project-id">Project ID</label>
               <input
@@ -300,12 +353,6 @@ function FreelancerProjectCard({ address, details }: { address: PublicKey, detai
                     Request Task Review{taskReviewMut.isPending && '...'}
               </button>
             </div>
-          ):
-          (
-             <div>
-             </div>
-          )     
-        }
         </Modal>
     )}
   </div>

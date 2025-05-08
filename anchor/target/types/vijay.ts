@@ -680,6 +680,43 @@ export type Vijay = {
               }
             ]
           }
+        },
+        {
+          "name": "clientProject",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  101,
+                  110,
+                  116,
+                  95,
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "freelancer_project.project_id",
+                "account": "freelancerProject"
+              },
+              {
+                "kind": "account",
+                "path": "freelancer_project.project_client",
+                "account": "freelancerProject"
+              }
+            ]
+          }
         }
       ],
       "args": [
@@ -1668,6 +1705,11 @@ export type Vijay = {
       "code": 6008,
       "name": "taskReviewNotRequested",
       "msg": "Task review not yet requested"
+    },
+    {
+      "code": 6009,
+      "name": "tooLong",
+      "msg": "Bad request::Too long"
     }
   ],
   "types": [
@@ -1821,6 +1863,10 @@ export type Vijay = {
             "type": "string"
           },
           {
+            "name": "projectId",
+            "type": "u64"
+          },
+          {
             "name": "projectName",
             "type": "string"
           },
@@ -1894,6 +1940,10 @@ export type Vijay = {
           },
           {
             "name": "url",
+            "type": "string"
+          },
+          {
+            "name": "taskInReview",
             "type": "string"
           },
           {

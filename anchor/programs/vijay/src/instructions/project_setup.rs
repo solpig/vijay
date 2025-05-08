@@ -58,6 +58,7 @@ pub fn project_escrow_setup(
     // set up the freelancer project
     let freelancer_project = &mut ctx.accounts.freelancer_project;
     freelancer_project.id = counter_increment;
+    freelancer_project.project_id = ctx.accounts.project.id;
     freelancer_project.project_name = ctx.accounts.project.name.clone();
     freelancer_project.project_client = ctx.accounts.project.owner;
     freelancer_project.completed_task_url = "".to_string();
@@ -157,6 +158,7 @@ pub struct FreelancerProject {
     id: u64,
     #[max_len(50)]
     pub completed_task_url: String,
+    pub project_id: u64,
     #[max_len(50)]
     pub project_name: String,
     pub project_client: Pubkey,

@@ -12,7 +12,9 @@ pub fn initialize_project(
 ) -> Result<()> {
 
     require!(ctx.accounts.client.owner == ctx.accounts.signer.key(), ErrorCode::NotAnOwner);
-
+    require!(name.len() <= 32, ErrorCode::TooLong);
+    require!(description.len() <= 280, ErrorCode::TooLong);
+    require!(url.len() <= 50, ErrorCode::TooLong);
     let name = pad_to_32_string(&name);
 
     let client = &mut ctx.accounts.client;
@@ -34,6 +36,7 @@ pub fn initialize_project(
     project.budget = budget;
     project.is_active = true;
     project.in_progress = false;
+    project.task_in_review = String::new();
     project.owner = ctx.accounts.signer.key();
     project.assigned_freelancer = Pubkey::default();
     project.assigned_freelancer_project_id = 0;
@@ -76,12 +79,14 @@ pub struct ProjectInfo<'info> {
 #[derive(InitSpace)]
 pub struct Project {
     pub id: u64,
-    #[max_len(50)]
+    #[max_len(32)]
     pub name: String,
     #[max_len(280)]
     pub description: String,
     #[max_len(50)]
     pub url: String,
+    #[max_len(50)]
+    pub task_in_review: String,
     pub budget: u64,
     pub is_active: bool,
     pub in_progress: bool,

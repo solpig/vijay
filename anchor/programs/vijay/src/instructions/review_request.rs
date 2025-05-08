@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use super::FreelancerProject;
+use super::{FreelancerProject, Project};
 
 pub fn request_task_review(
     ctx: Context<TaskReviewInfo>,
@@ -9,7 +9,10 @@ pub fn request_task_review(
     url: String,
 ) -> Result<()> {
     let freelancer_project = &mut ctx.accounts.freelancer_project;
-    freelancer_project.completed_task_url = url;
+    freelancer_project.completed_task_url = url.clone();
+    
+    let client_project = &mut ctx.accounts.client_project;
+    client_project.task_in_review = url;    
     
     emit!(
       ReviewRequested {
@@ -31,6 +34,13 @@ pub struct TaskReviewInfo<'info> {
         bump
     )]
     freelancer_project: Account<'info, FreelancerProject>,
+
+    #[account(
+        mut,
+        seeds = [b"client_project", freelancer_project.project_id.to_le_bytes().as_ref(), freelancer_project.project_client.as_ref()],
+        bump
+    )]
+    client_project: Account<'info, Project>
 }
 
 #[event]

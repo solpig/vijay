@@ -117,7 +117,7 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
     },
   })
 
-  const cancelProjectMutation = useMutation<string, Error, cancelProject>({
+  const withdrawProjectMutation = useMutation<string, Error, cancelProject>({
     mutationKey: ['cancel', 'project', { cluster }],
     mutationFn: async ({projectID, keypair}) => {
       const signature = await program.methods.withdrawProject(new BN(projectID)).accounts({ signer: keypair.publicKey }).signers([keypair]).rpc();
@@ -159,10 +159,10 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
       mutationFn: async ({projectID, projectName, freelancer, budget, totalTasks}) => {
         
         if(projectName.length < 32) {
-          projectName = projectName.padEnd(32, '//');
+          projectName = projectName.padEnd(32, ' ');
         }
         console.log("projectName", projectName)
-        console.log("projectLength", projectName.length)
+        console.log("projectLength=======", projectName.length)
 
         let [clientProjectPDA] = await PublicKey.findProgramAddressSync(
           [Buffer.from('client_project'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
@@ -173,6 +173,7 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
           [Buffer.from('freelancer'),freelancer.toBuffer()],
           program.programId
         );
+        
         console.log("projectName", projectName)
         let [escrowPDA] = await PublicKey.findProgramAddressSync(
           [Buffer.from('project_escrow'), new BN(projectID).toArrayLike(Buffer, 'le', 8), Buffer.from(projectName).subarray(0,32),  account.toBuffer()],
@@ -247,7 +248,7 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
     queryClientAccounts,
     queryClientPerformance,
     reviewTaskProcessMutation,
-    cancelProjectMutation,
+    withdrawProjectMutation,
     transferProjectMutation,
     // custom functions
     NewProjectMutation,
