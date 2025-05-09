@@ -56,11 +56,11 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
   })
 
   const fetchEscrowAccount = async (account: PublicKey, projectID: number) => {
-    const [freelancerPDA] = PublicKey.findProgramAddressSync(
+    const [escrowPDA] = PublicKey.findProgramAddressSync(
       [Buffer.from('project_escrow'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
       program.programId
     );
-    return await program.account.escrow.fetch(freelancerPDA);
+    return await program.account.escrow.fetch(escrowPDA);
   }
 
   const queryClientPerformance = useQuery({
@@ -111,19 +111,22 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
   });
 }
 
-  const reviewTaskProcessMutation = useMutation<string, Error, processTaskReview>({
-    mutationKey: ['process', 'review', { cluster }],
-    mutationFn: async ({projectID, approval}) => {
-      const signature = await program.methods.reviewTaskProcess(new BN(projectID), approval).rpc();
-      return signature
-    },
-    onSuccess: (tx) => {
-      transactionToast(tx)
-    },
-    onError: (err) => {
-      toast.error(`Failed to process the task review:: ${err.message}`);
-    },
-  })
+  const reviewTaskProcessMutation = (onSuccessCallback?: () => void) => {
+   return useMutation<string, Error, processTaskReview>({
+        mutationKey: ['process', 'review', { cluster }],
+        mutationFn: async ({projectID, approval}) => {
+          const signature = await program.methods.reviewTaskProcess(new BN(projectID), approval).rpc();
+          return signature
+        },
+        onSuccess: (tx) => {
+          transactionToast(tx);
+          if (onSuccessCallback) onSuccessCallback(); 
+        },
+        onError: (err) => {
+          toast.error(`Failed to process the task review:: ${err.message}`);
+        },
+   });
+  }
 
   const withdrawProjectMutation = useMutation<string, Error, cancelProject>({
     mutationKey: ['cancel', 'project', { cluster }],

@@ -1762,6 +1762,10 @@
             "type": "u64"
           },
           {
+            "name": "amount_paid",
+            "type": "u64"
+          },
+          {
             "name": "total_tasks",
             "type": "u64"
           },

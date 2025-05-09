@@ -1768,6 +1768,10 @@ export type Vijay = {
             "type": "u64"
           },
           {
+            "name": "amountPaid",
+            "type": "u64"
+          },
+          {
             "name": "totalTasks",
             "type": "u64"
           },

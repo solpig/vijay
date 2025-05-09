@@ -28,14 +28,13 @@ pub fn project_escrow_setup(
     project.in_progress = true;
     project.assigned_freelancer = ctx.accounts.freelancer.owner;
     project.assigned_freelancer_project_id = counter_increment;
-    // change the estimated budget with the finalized budget
-    project.budget = amount;
 
     // set up the escrow account
     let escrow = &mut ctx.accounts.escrow;
     escrow.depositor = ctx.accounts.signer.key();
     escrow.receiver = ctx.accounts.freelancer.owner;
     escrow.budget = amount;
+    escrow.amount_paid = 0;
     escrow.total_tasks = total_tasks;
     escrow.tasks_completed = 0;
     escrow.vault = ctx.accounts.vault.key();
@@ -147,6 +146,7 @@ pub struct Escrow {
     pub receiver: Pubkey,
     pub vault: Pubkey,
     pub budget: u64,
+    pub amount_paid: u64,
     pub total_tasks: u64,
     pub tasks_completed: u64,
     pub is_active: bool,

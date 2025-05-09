@@ -129,7 +129,7 @@ export function ClusterUiModal({ hideModal, show }: { hideModal: () => void; sho
 export function ClusterUiTable() {
   const { clusters, setCluster, deleteCluster } = useCluster()
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto max-w-4xl mx-auto px-4">
       <table className="table border-4 border-separate border-base-300">
         <thead>
           <tr>

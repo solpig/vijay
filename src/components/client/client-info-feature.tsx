@@ -63,7 +63,7 @@ export default function ClientInfoFeature({ account }: { account: String }) {
           <p className="mt-2">SuccessRate: {clientPerformance?.successRate}</p>
         </div>
       </div>
-          <div className="p-6 bg-gray-50">
+          <div className="p-6 bg-gray-50 h-[500px] overflow-y-auto space-y-4 p-4">
           <h2 className="text-xl font-semibold text-indigo-800 mb-10">Published projects</h2>
             <div className="max-w-16xl mx-auto mr-16 mt-12">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

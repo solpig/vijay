@@ -505,7 +505,7 @@ describe('vijay', () => {
     .signers([freelancer_wallet])
     .rpc();
 
-    // // approve the second review
+    // approve the second review
     await program.methods
             .reviewTaskProcess(freelancerProjectId, true)
             .accountsPartial({
@@ -530,6 +530,7 @@ describe('vijay', () => {
    
     expect(updatedProjectAccount.inProgress).toEqual(false);
     expect(updatedProjectAccount.isActive).toEqual(false);
+    expect(updatedProjectAccount.taskInReview).toEqual("");
    
     expect(updatedFreelancerReport.completed.toNumber()).toEqual(1);
     expect(updatedFreelancerReport.projectsInProgress.toNumber()).toEqual(1);

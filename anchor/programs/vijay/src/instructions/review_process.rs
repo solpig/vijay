@@ -19,8 +19,12 @@ pub fn review_task_process(
         ErrorCode::TaskReviewNotRequested
     );
 
+    let client_project = &mut ctx.accounts.project;
+    client_project.task_in_review = String::new();
+
     let freelancer_project = &mut ctx.accounts.freelancer_project;
-    freelancer_project.completed_task_url = "".to_string();
+    freelancer_project.completed_task_url = String::new();
+
     match approve {
         true => {
             // make the payment from vault account
@@ -33,6 +37,7 @@ pub fn review_task_process(
             **ctx.accounts.vault.to_account_info().try_borrow_mut_lamports()? = ctx.accounts.vault.to_account_info().lamports().checked_sub(amount_per_task).ok_or(ErrorCode::NumericalOverflow)?;
             **ctx.accounts.receiver.to_account_info().try_borrow_mut_lamports()? = ctx.accounts.receiver.to_account_info().lamports().checked_add(amount_per_task).ok_or(ErrorCode::NumericalOverflow)?;
 
+            escrow.amount_paid = escrow.amount_paid.checked_add(amount_per_task).ok_or(ErrorCode::NumericalOverflow)?;
             escrow.tasks_completed = escrow.tasks_completed.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
 
             let approved_tasks = freelancer_project
