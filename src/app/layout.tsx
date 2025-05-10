@@ -11,7 +11,7 @@ const links: { label: string; path: string }[] = [
   { label: 'Account', path: '/account' },
   { label: 'Clients', path: '/client/clientsList' },
   { label: 'Freelancers', path: '/freelancer/freelancersList' },
-  { label: 'Projects', path: '/myprojects' },
+  { label: 'My Projects', path: '/myprojects' },
 ]
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

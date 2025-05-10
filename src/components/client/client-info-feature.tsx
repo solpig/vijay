@@ -47,10 +47,10 @@ export default function ClientInfoFeature({ account }: { account: String }) {
       <div className="grid grid-cols-2 border-b">
         <div className="p-6 bg-white border-r border-gray-200">
           <h1 className="text-2xl font-bold text-indigo-600 mb-10">Client Info</h1>
-          <p className="text-gray-700 mt-2"><span className="font-semibold">Public Key:</span> {publicKey.toBase58()}</p>
+          <p className="text-gray-700 mt-2"><span className="font-semibold">Account Address:</span> {publicKey.toBase58()}</p>
           <p className="text-gray-700 mt-2"><span className="font-semibold">Name:</span> {clientDetails?.name}</p>
           <p className="text-gray-700 mt-2"><span className="font-semibold">Domain:</span> {clientDetails?.domain}</p>
-          <p className="text-gray-700 mt-2"><span className="font-semibold">Skills:</span> {clientDetails?.requiredSkills}</p>
+          <p className="text-gray-700 mt-2"><span className="font-semibold">Skills Required:</span> {clientDetails?.requiredSkills}</p>
           <p className="text-gray-700 mt-2"><span className="font-semibold">Contact:</span> {clientDetails?.contact}</p>
         </div>
 

@@ -30,21 +30,21 @@ export function Modal({
   
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300">
-        <div className="relative bg-white p-8 rounded-2xl shadow-2xl max-w-xl w-full mx-4 animate-fadeIn">
-          {/* Close Button */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors duration-200 text-2xl"
-            aria-label="Close modal"
-          >
-            &times;
-          </button>
-    
-          {/* Modal Content */}
-          <div className="mt-2 space-y-4">
-            {children}
+          <div className="relative bg-white p-8 rounded-2xl shadow-2xl max-w-xl w-full mx-4 animate-fadeIn">
+            {/* Close Button */}
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors duration-200 text-2xl"
+              aria-label="Close modal"
+            >
+              &times;
+            </button>
+      
+            {/* Modal Content */}
+            <div className="mt-2 space-y-4 max-h-[90vh] overflow-y-auto">
+              {children}
+            </div>
           </div>
         </div>
-      </div>
     );
   }

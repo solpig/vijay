@@ -151,11 +151,11 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
 
 
   let cardColor = details?.inProgress
-  ? 'from-yellow-100 to-yellow-200'
+  ? 'from-orange-100 to-orange-200'
   : 'from-red-100 to-red-200';
 
   if (details?.taskInReview) {
-    cardColor = 'from-blue-100 to-blue-200';
+    cardColor = 'from-pink-100 to-pink-200';
   }
 
   if (!details?.isActive) {
@@ -188,7 +188,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
   <div>
     <div onClick={() => setIsOpen(true)} className={`rounded-3xl shadow-lg bg-gradient-to-br ${cardColor}
                         p-6 space-y-4 border
-                        cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-2xl`}>
+                        cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden h-60`}>
       
       <h2 className="text-2xl font-semibold text-center text-indigo-600">
         {details?.name}
@@ -204,6 +204,13 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
         <p>
           <span className="font-medium text-gray-900">Expected Budget(in SOL):</span> {details?.budget.toNumber()}
         </p>
+        {
+          details?.taskInReview !== '' && (
+            <p>
+              <span className="font-medium text-red-900">Task Review Requested:</span> {details?.taskInReview}
+            </p>
+          )
+        }
       </div>
     </div>
     {
@@ -371,12 +378,12 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                       { details?.isActive &&
                           <div className="flex justify-between space-x-4">
                             <button
-                                className="btn btn-xs lg:btn-md btn-outline text-orange-500"
+                                className="btn btn-xs lg:btn-md btn-outline text-orange-500 hover:bg-orange-500 hover:text-white transition-colors duration-300"
                                 onClick={() => setIsOpenSubModal(true)}>
                                 Transfer Project{projectSetupMut.isPending && '...'}
                             </button>
                             <button
-                                className="btn btn-xs lg:btn-md btn-outline text-red-500"
+                                className="btn btn-xs lg:btn-md btn-outline text-red-500 hover:bg-red-500 hover:text-white transition-colors duration-300"
                                 onClick={() => withdrawProjectMut.mutateAsync({projectID: details?.id})} 
                                 disabled={withdrawProjectMut.isPending}>
                                 Withdraw Project{withdrawProjectMut.isPending && '...'}
@@ -454,7 +461,7 @@ function FreelancerProjectCard({ address, details }: { address: PublicKey, detai
   <div>
     <div onClick={() => setIsOpen(true)} className={`rounded-3xl shadow-lg bg-gradient-to-br ${cardColor}
                         to-slate-50 p-6 space-y-4 border border-gray-200
-                        cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-2xl`}>
+                        cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden h-60`}>
       
       <h2 className="text-2xl font-semibold text-center text-indigo-600">
         {details?.projectName}
