@@ -11,20 +11,25 @@ describe('vijay', () => {
 
   const program = anchor.workspace.Vijay as Program<Vijay>;
 
-  const client_wallet_publicKey = anchor.AnchorProvider.local().wallet.publicKey;
+  const client_wallet = anchor.AnchorProvider.local().wallet;
+  const client_wallet_publicKey = client_wallet.publicKey;
 
   const freelancer_wallet: anchor.web3.Keypair = anchor.web3.Keypair.generate();
  
-
   beforeAll(async () => {
-    await provider.connection.requestAirdrop(freelancer_wallet.publicKey, 2 * LAMPORTS_PER_SOL);
+    await provider.connection.confirmTransaction(
+      await provider.connection.requestAirdrop(freelancer_wallet.publicKey, 2 * LAMPORTS_PER_SOL),
+      "confirmed"
+    );
+    console.log(`Freelancer wallet ${freelancer_wallet.publicKey.toString()} airdropped with 2 SOL`);
 
     // Wait for confirmation
     await provider.connection.confirmTransaction(
-      await provider.connection.requestAirdrop(freelancer_wallet.publicKey, 1000 * LAMPORTS_PER_SOL),
+      await provider.connection.requestAirdrop(client_wallet.publicKey, 1000 * LAMPORTS_PER_SOL),
       "confirmed"
     );
-    console.log(`Freelancer wallet ${freelancer_wallet.publicKey.toString()} airdropped with 1000 SOL`);
+    console.log(`Client wallet ${client_wallet.publicKey.toString()} airdropped with 1000 SOL`);
+    console.log(`Client wallet balance: ${await provider.connection.getBalance(client_wallet.publicKey)}`);
   });
 
   test('Initialize the client', async () => {
@@ -156,14 +161,14 @@ describe('vijay', () => {
       name: "Freelancing on Solana - Project1",
       description: "A decentralized application using Solana",
       url: "some_url.com",
-      budget: new anchor.BN(1000),
+      budget: new anchor.BN(10),
     };
 
     const projectDetailsTwo = {
       name: "Freelancing on Solana - Project2",
       description: "A decentralized application using Solana",
       url: "some_url.com",
-      budget: new anchor.BN(1000),
+      budget: new anchor.BN(10),
     };
 
     await program.methods
@@ -260,7 +265,7 @@ describe('vijay', () => {
       program.programId
     );
 
-    const amount = 2 * anchor.web3.LAMPORTS_PER_SOL;
+    const amount = 2;
 
     const projectDetails = {
       projectID: new anchor.BN(1),
@@ -324,7 +329,7 @@ describe('vijay', () => {
       expect(freelancerProject.isActive).toEqual(true);
 
       // assert if the client report card has been updated
-      expect(clientReport.totalProjects.toNumber()).toEqual(2);
+      expect(clientReport.totalProjects.toNumber()).toEqual(1);
       expect(clientReport.projectsInProgress.toNumber()).toEqual(1);
 
       // assert if the freelancer report card has been updated
@@ -343,7 +348,6 @@ describe('vijay', () => {
         [Buffer.from("client_project"), secondProjectCounter, client_wallet_publicKey.toBuffer()],
         program.programId
       );
-      const secondProject = await program.account.project.fetch(secondProjectPda);
 
       const [secondProjectEscrowPda] = anchor.web3.PublicKey.findProgramAddressSync(
         [Buffer.from("project_escrow"), secondProjectCounter, client_wallet_publicKey.toBuffer()],
@@ -437,6 +441,9 @@ describe('vijay', () => {
       [Buffer.from("project_escrow"), freelancerProjectId.toArrayLike(Buffer, "le", 8), clientProject.owner.toBuffer()],
       program.programId
     );
+
+    const escrowAcc = await program.account.escrow.fetch(projectEscrowPda);
+    console.log(`Escrow account: ${escrowAcc.budget.toNumber()}, ${escrowAcc.totalTasks.toNumber()}`);
 
     const [escrowVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
       [Buffer.from("vault"), freelancerProjectId.toArrayLike(Buffer, "le", 8), client_wallet_publicKey.toBuffer()],
@@ -619,7 +626,6 @@ describe('vijay', () => {
       [Buffer.from("client_project"), projectID.toArrayLike(Buffer, "le", 8), client_wallet_publicKey.toBuffer()],
       program.programId
     );
-    const clientProject = await program.account.project.fetch(clientProjectPda);
 
     const [escrowVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
       [Buffer.from("vault"), projectID.toArrayLike(Buffer, "le", 8), client_wallet_publicKey.toBuffer()],
@@ -752,7 +758,7 @@ describe('vijay', () => {
       program.programId
     );
 
-    const amount = 2 * anchor.web3.LAMPORTS_PER_SOL;
+    const amount = 2;
 
     const projectMetaInfo = {
       projectID: new anchor.BN(3),

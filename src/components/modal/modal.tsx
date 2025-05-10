@@ -11,6 +11,7 @@ export function Modal({
   }) {
 
     useEffect(() => {
+      console.log("Effect triggered");
       const handleEsc = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
           onClose();

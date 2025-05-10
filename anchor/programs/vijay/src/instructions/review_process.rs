@@ -1,4 +1,4 @@
-use anchor_lang::prelude::*;
+use anchor_lang::{prelude::*, solana_program::native_token::LAMPORTS_PER_SOL};
 
 use crate::error_codes::ErrorCode;
 
@@ -32,13 +32,23 @@ pub fn review_task_process(
             require!(escrow.is_active, ErrorCode::EscrowInActive);
             require!(escrow.tasks_completed < escrow.total_tasks, ErrorCode::TasksCompleted);
 
-            let amount_per_task = escrow.budget / escrow.total_tasks;
+            let budget_lamport = escrow.budget * LAMPORTS_PER_SOL;
+            let amount_per_task = budget_lamport / escrow.total_tasks;
 
-            **ctx.accounts.vault.to_account_info().try_borrow_mut_lamports()? = ctx.accounts.vault.to_account_info().lamports().checked_sub(amount_per_task).ok_or(ErrorCode::NumericalOverflow)?;
-            **ctx.accounts.receiver.to_account_info().try_borrow_mut_lamports()? = ctx.accounts.receiver.to_account_info().lamports().checked_add(amount_per_task).ok_or(ErrorCode::NumericalOverflow)?;
+            let remainder = amount_per_task % escrow.total_tasks;
+            let amount_to_transfer = amount_per_task + remainder;
 
-            escrow.amount_paid = escrow.amount_paid.checked_add(amount_per_task).ok_or(ErrorCode::NumericalOverflow)?;
+            msg!("Amount to transfer: {amount_to_transfer}");
+
+            let vault_lamports = ctx.accounts.vault.to_account_info().lamports();
+            require!(vault_lamports >= amount_to_transfer, ErrorCode::InsufficientFunds);
+            **ctx.accounts.vault.to_account_info().try_borrow_mut_lamports()? = ctx.accounts.vault.to_account_info().lamports().checked_sub(amount_to_transfer).ok_or(ErrorCode::AmountOverflow)?;
+            **ctx.accounts.receiver.to_account_info().try_borrow_mut_lamports()? = ctx.accounts.receiver.to_account_info().lamports().checked_add(amount_to_transfer).ok_or(ErrorCode::AmountOverflow)?;
+
+            escrow.amount_paid = escrow.amount_paid.checked_add(amount_to_transfer).ok_or(ErrorCode::NumericalOverflow)?;
             escrow.tasks_completed = escrow.tasks_completed.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
+
+            freelancer_project.amount_paid = freelancer_project.amount_paid.checked_add(amount_to_transfer).ok_or(ErrorCode::NumericalOverflow)?;
 
             let approved_tasks = freelancer_project
             .approved_tasks

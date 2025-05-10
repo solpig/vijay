@@ -4,6 +4,8 @@ use anchor_lang::prelude::*;
 pub enum ErrorCode {
     #[msg("Overflow occurred during math operation")]
     NumericalOverflow,
+    #[msg("Amount overflow occurred during math operation")]
+    AmountOverflow,
     #[msg("Only project owner allowed to setup the escrow")]
     UnAuthorizedSetup,
     #[msg("Only project owner allowed to review the project")]
@@ -18,6 +20,8 @@ pub enum ErrorCode {
     TasksCompleted,
     #[msg("Only owner is allowed to proceed with this operation")]
     NotAnOwner,
+    #[msg("Insufficient funds")]
+    InsufficientFunds,
     #[msg("Task review not yet requested")]
     TaskReviewNotRequested,
     #[msg("Bad request::Too long")]

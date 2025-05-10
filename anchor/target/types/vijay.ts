@@ -289,36 +289,6 @@ export type Vijay = {
           }
         },
         {
-          "name": "clientReport",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  108,
-                  105,
-                  101,
-                  110,
-                  116,
-                  95,
-                  114,
-                  101,
-                  112,
-                  111,
-                  114,
-                  116
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "signer"
-              }
-            ]
-          }
-        },
-        {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
@@ -1633,46 +1603,56 @@ export type Vijay = {
     },
     {
       "code": 6001,
+      "name": "amountOverflow",
+      "msg": "Amount overflow occurred during math operation"
+    },
+    {
+      "code": 6002,
       "name": "unAuthorizedSetup",
       "msg": "Only project owner allowed to setup the escrow"
     },
     {
-      "code": 6002,
+      "code": 6003,
       "name": "unAuthorizedReviewer",
       "msg": "Only project owner allowed to review the project"
     },
     {
-      "code": 6003,
+      "code": 6004,
       "name": "escrowInActive",
       "msg": "Escrow account is inactive"
     },
     {
-      "code": 6004,
+      "code": 6005,
       "name": "projectInActive",
       "msg": "Project is inactive"
     },
     {
-      "code": 6005,
+      "code": 6006,
       "name": "freelancerProjectInActive",
       "msg": "Freelancer project is inactive"
     },
     {
-      "code": 6006,
+      "code": 6007,
       "name": "tasksCompleted",
       "msg": "All the tasks have been completed"
     },
     {
-      "code": 6007,
+      "code": 6008,
       "name": "notAnOwner",
       "msg": "Only owner is allowed to proceed with this operation"
     },
     {
-      "code": 6008,
+      "code": 6009,
+      "name": "insufficientFunds",
+      "msg": "Insufficient funds"
+    },
+    {
+      "code": 6010,
       "name": "taskReviewNotRequested",
       "msg": "Task review not yet requested"
     },
     {
-      "code": 6009,
+      "code": 6011,
       "name": "tooLong",
       "msg": "Bad request::Too long"
     }
@@ -1849,6 +1829,10 @@ export type Vijay = {
           },
           {
             "name": "rejectedAttempts",
+            "type": "u64"
+          },
+          {
+            "name": "amountPaid",
             "type": "u64"
           },
           {

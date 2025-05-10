@@ -7,7 +7,7 @@ import { ProgramAccount } from '@coral-xyz/anchor'
 import { useRouter } from 'next/navigation';
 
 export function RegisterClient({ address }: { address: PublicKey }) {
-  const { useInitializeClientMutation, queryClientAccount, NewProjectMutation } = useClientAccounts({ account: address })
+  const { InitializeClientMutation, queryClientAccount, NewProjectMutation } = useClientAccounts({ account: address })
 
   const [name, setName] = useState('');
   const [domain, setDomain] = useState('');
@@ -19,7 +19,7 @@ export function RegisterClient({ address }: { address: PublicKey }) {
   const [projectURL, setProjectURL] = useState('');
   const [projectBudget, setprojectBudget] = useState(0);
 
-  const initializeClientMut = useInitializeClientMutation(() => {
+  const initializeClientMut = InitializeClientMutation(() => {
     queryClientAccount.refetch();
     setName('');
     setDomain('');

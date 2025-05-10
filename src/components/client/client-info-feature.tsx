@@ -9,7 +9,7 @@ export default function ClientInfoFeature({ account }: { account: String }) {
   if (!account) {
         throw new Error('account is undefined');
   }
-  const  publicKey  = new PublicKey(account)
+  const publicKey = useMemo(() => new PublicKey(account), [account]);
   const { queryClientAccount, queryClientPerformance, fetchClientProjects } = useClientAccounts({ account: publicKey });
 
   const clientDetails = queryClientAccount.data;
@@ -22,6 +22,7 @@ export default function ClientInfoFeature({ account }: { account: String }) {
 
   const projectQueries = useQueries({
     queries: useMemo(() => {
+      console.log("Query Client Projects");
       if (!projectCounter) return [];
       return Array.from({ length: projectCounter }, (_, i) => {
         return {
@@ -29,6 +30,7 @@ export default function ClientInfoFeature({ account }: { account: String }) {
           queryFn: () => fetchClientProjects(publicKey, i + 1),
         };
       });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [projectCounter, publicKey]),
   });
 
@@ -58,9 +60,9 @@ export default function ClientInfoFeature({ account }: { account: String }) {
           <p className="mt-2">Completed: {clientPerformance?.completed.toNumber()}</p>
           <p className="mt-2">In-Progress: {clientPerformance?.projectsInProgress.toNumber()}</p>
           <p className="mt-2">Withdrawn: {clientPerformance?.withdrawn.toNumber()}</p>
-          <p className="mt-2">Withdrawn: {clientPerformance?.transferred.toNumber()}</p>
-          <p className="mt-2">RiskScore: {clientPerformance?.riskScore}</p>
-          <p className="mt-2">SuccessRate: {clientPerformance?.successRate}</p>
+          <p className="mt-2">Transferred: {clientPerformance?.transferred.toNumber()}</p>
+          <p className="mt-2">RiskScore: {(clientPerformance && clientPerformance?.riskScore) ?  clientPerformance?.riskScore / 100 : 0}</p>
+          <p className="mt-2">SuccessRate: {(clientPerformance && clientPerformance?.successRate) ? clientPerformance?.successRate / 100 : 0}</p>
         </div>
       </div>
           <div className="p-6 bg-gray-50 h-[500px] overflow-y-auto space-y-4 p-4">
@@ -98,7 +100,7 @@ function ClientProjectCard({ details }: { details: any }) {
           <span className="font-medium text-gray-900">Job URL:</span> {details?.url}
         </p>
         <p>
-          <span className="font-medium text-gray-900">Contact:</span> {details?.budget.toNumber()}
+          <span className="font-medium text-gray-900">Estimated Budget (in SOL):</span> {details?.budget.toNumber()}
         </p>
       </div>
     </div>

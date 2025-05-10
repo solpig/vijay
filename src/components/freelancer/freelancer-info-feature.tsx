@@ -9,7 +9,7 @@ export default function FreelancerInfoFeature({ account }: { account: String }) 
   if (!account) {
         throw new Error('account is undefined');
   }
-  const  publicKey  = new PublicKey(account)
+  const publicKey = useMemo(() => new PublicKey(account), [account]);
   const { queryFreelancerAccount, QueryFreelancerPerformance: queryFreelancerPerformance, fetchFreelancerProjects: queryFreelancerProjects } = useFreelancerAccounts({ account: publicKey });
 
   const freelancerDetails = queryFreelancerAccount.data;
@@ -23,12 +23,14 @@ export default function FreelancerInfoFeature({ account }: { account: String }) 
   const projectQueries = useQueries({
     queries: useMemo(() => {
       if (!projectCounter) return [];
+      console.log("Query Freelancer Projects");
       return Array.from({ length: projectCounter }, (_, i) => {
         return {
           queryKey: ['fetch-freelancer-project', i + 1],
           queryFn: () => queryFreelancerProjects(publicKey, i + 1),
         };
       });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [projectCounter, publicKey]),
   });
 
@@ -57,8 +59,8 @@ export default function FreelancerInfoFeature({ account }: { account: String }) 
           <p className="mt-2">Completed: {freelancerPerformance?.completed.toNumber()}</p>
           <p className="mt-2">In-Progress: {freelancerPerformance?.projectsInProgress.toNumber()}</p>
           <p className="mt-2">Cancelled: {freelancerPerformance?.rejected.toNumber()}</p>
-          <p className="mt-2">RiskScore: {freelancerPerformance?.riskScore}</p>
-          <p className="mt-2">SuccessRate: {freelancerPerformance?.successRate}</p>
+          <p className="mt-2">RiskScore: {(freelancerPerformance && freelancerPerformance?.riskScore) ? freelancerPerformance?.riskScore / 100 : 0}</p>
+          <p className="mt-2">SuccessRate: {(freelancerPerformance && freelancerPerformance?.successRate) ? freelancerPerformance.successRate / 100 : 0}</p>
         </div>
       </div>
           <div className="p-6 bg-gray-50 h-[500px] overflow-y-auto space-y-4 p-4">

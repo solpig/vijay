@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
 
+use crate::error_codes;
+
 use super::{FreelancerProject, Project};
 
 pub fn request_task_review(
@@ -9,6 +11,7 @@ pub fn request_task_review(
     url: String,
 ) -> Result<()> {
     let freelancer_project = &mut ctx.accounts.freelancer_project;
+    require!(freelancer_project.is_active, error_codes::ErrorCode::ProjectInActive);
     freelancer_project.completed_task_url = url.clone();
     
     let client_project = &mut ctx.accounts.client_project;

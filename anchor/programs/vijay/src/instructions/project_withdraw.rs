@@ -1,4 +1,4 @@
-use anchor_lang:: prelude::*;
+use anchor_lang::prelude::*;
 
 use crate::error_codes::ErrorCode;
 
@@ -18,6 +18,9 @@ pub fn withdraw_project(ctx: Context<WithdrawInfo>, _project_id: u64) -> Result<
     let freelancer_project = &mut ctx.accounts.freelancer_project;
     require!(freelancer_project.is_active, ErrorCode::FreelancerProjectInActive);
     freelancer_project.is_active = false;
+    // close the task reviews if any
+    freelancer_project.completed_task_url = String::new();
+    project.task_in_review = String::new();
     
     // transfer the SOL and close the vault account
     let remaining_lamports = ctx.accounts.vault.to_account_info().lamports();

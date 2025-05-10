@@ -1,4 +1,4 @@
-use anchor_lang::{prelude::*, solana_program::{program::invoke, system_instruction}};
+use anchor_lang::{prelude::*, solana_program::{native_token::LAMPORTS_PER_SOL, program::invoke, system_instruction}};
 
 use crate::error_codes::{self, ErrorCode};
 
@@ -43,7 +43,7 @@ pub fn project_escrow_setup(
     let sys_ins = system_instruction::transfer(
         &ctx.accounts.signer.key(),
         &ctx.accounts.vault.key(),
-        amount,
+        amount * LAMPORTS_PER_SOL as f64 as u64,
     );
 
     invoke(
@@ -60,8 +60,9 @@ pub fn project_escrow_setup(
     freelancer_project.project_id = ctx.accounts.project.id;
     freelancer_project.project_name = ctx.accounts.project.name.clone();
     freelancer_project.project_client = ctx.accounts.project.owner;
-    freelancer_project.completed_task_url = "".to_string();
+    freelancer_project.completed_task_url = String::new();
     freelancer_project.approved_tasks = 0;
+    freelancer_project.amount_paid = 0;
     freelancer_project.rejected_attempts = 0;
     freelancer_project.is_active = true;
 
@@ -71,6 +72,7 @@ pub fn project_escrow_setup(
 
     let client_report_card = &mut ctx.accounts.client_report_card;
     client_report_card.projects_in_progress = client_report_card.projects_in_progress.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
+    client_report_card.total_projects = client_report_card.total_projects.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
 
     Ok(())
 }
@@ -155,7 +157,7 @@ pub struct Escrow {
 #[account]
 #[derive(InitSpace)]
 pub struct FreelancerProject {
-    id: u64,
+    pub id: u64,
     #[max_len(50)]
     pub completed_task_url: String,
     pub project_id: u64,
@@ -164,6 +166,7 @@ pub struct FreelancerProject {
     pub project_client: Pubkey,
     pub approved_tasks: u64,
     pub rejected_attempts: u64,
+    pub amount_paid: u64,
     pub is_active: bool,
 }
 

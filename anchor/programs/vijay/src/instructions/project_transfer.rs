@@ -23,6 +23,8 @@ pub fn transfer_project(ctx: Context<TransferInfo>, _project_id: u64, new_freela
     let project = &mut ctx.accounts.project;
     project.assigned_freelancer = new_freelancer_key;
     project.assigned_freelancer_project_id = counter_increment;
+    // close the task review if any
+    project.task_in_review = String::new();
     
     // update the escrow receiver to transfer the budget on task completion to newly assigned freelancer
     let escrow = &mut ctx.accounts.escrow;
@@ -30,9 +32,12 @@ pub fn transfer_project(ctx: Context<TransferInfo>, _project_id: u64, new_freela
 
     // setup the new freelancer project
      let new_freelancer_project = &mut ctx.accounts.new_freelancer_project;
-     new_freelancer_project.project_name = ctx.accounts.project.name.clone();
-     new_freelancer_project.project_client = ctx.accounts.project.owner;
-     new_freelancer_project.completed_task_url = "".to_string();
+     new_freelancer_project.id = counter_increment;
+     new_freelancer_project.project_id = project.id;
+     new_freelancer_project.amount_paid = 0;
+     new_freelancer_project.project_name = project.name.clone();
+     new_freelancer_project.project_client = project.owner;
+     new_freelancer_project.completed_task_url = String::new();
      new_freelancer_project.approved_tasks = 0;
      new_freelancer_project.rejected_attempts = 0;
      new_freelancer_project.is_active = true;
@@ -45,6 +50,8 @@ pub fn transfer_project(ctx: Context<TransferInfo>, _project_id: u64, new_freela
     // set the last freelancer project account as inactive
     let freelancer_project = &mut ctx.accounts.freelancer_project;
     freelancer_project.is_active = false;
+    // close the task review if any
+    freelancer_project.completed_task_url = String::new();
 
     // update the last freelancer's performance
     let freelancer_report = &mut ctx.accounts.freelancer_report;

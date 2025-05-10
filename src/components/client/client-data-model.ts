@@ -13,6 +13,8 @@ export interface initializeClient {
 export interface processTaskReview {
     projectID: number;
     approval: boolean;
+    assignedFreelancer: PublicKey;
+    assignedFreelancerProjectID: number;
 }
 
 export interface initializeProject {
@@ -32,11 +34,9 @@ export interface projectEscrowSetup {
 
 export interface cancelProject {
     projectID: number;
-    keypair: Keypair;
 }
 
 export interface transferProject {
     projectID: number;
-    newFreelancer: Keypair;
-    keypair: Keypair;
+    newFreelancer: PublicKey;
 }
