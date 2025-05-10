@@ -30,6 +30,51 @@ describe('vijay', () => {
     );
     console.log(`Client wallet ${client_wallet.publicKey.toString()} airdropped with 1000 SOL`);
     console.log(`Client wallet balance: ${await provider.connection.getBalance(client_wallet.publicKey)}`);
+
+    await program.methods.initializeState().rpc();
+    console.log(`State account initialized`);
+    const [statePDA] = await anchor.web3.PublicKey.findProgramAddressSync(
+      [utf8.encode('owner')],
+      program.programId
+    );
+    const state = await program.account.state.fetch(statePDA);
+    console.log(`State account owner: ${state.owner.toString()}`);
+    expect(state.owner.toString()).toEqual(client_wallet_publicKey.toString());
+    expect(state.balance.toNumber()).toEqual(0);
+  });
+
+  afterAll(async () => {
+    const [statePDA] = await anchor.web3.PublicKey.findProgramAddressSync(
+      [utf8.encode('owner')],
+      program.programId
+    );
+    const state = await program.account.state.fetch(statePDA);
+    console.log(`State account owner: ${state.owner.toString()}`)
+    console.log(`State account payable balance: ${state.balance.toNumber()}`);
+   
+    const stateBalance = await provider.connection.getBalance(statePDA);
+    console.log(`State account balance before wirthdraw: ${stateBalance}`);
+   
+    const ownerBalance = await provider.connection.getBalance(client_wallet_publicKey);
+    console.log(`Owner balance before withdraw: ${ownerBalance}`);
+
+    await program.methods.withdrawBalance()
+      .accountsPartial({
+        owner: client_wallet_publicKey,
+        state: statePDA,
+      }).rpc();
+    const newState = await program.account.state.fetch(statePDA);
+    console.log(`State account payable balance after withdraw: ${newState.balance.toNumber()}`);
+    
+    const updatedOwnerBalance = await provider.connection.getBalance(client_wallet_publicKey);
+    console.log(`Owner balance after withdraw: ${updatedOwnerBalance}`);
+
+    const updatedStateBalance = await provider.connection.getBalance(statePDA);
+    console.log(`State account balance after wirthdraw: ${updatedStateBalance}`);
+
+    expect(newState.balance.toNumber()).toEqual(0);
+    expect(updatedOwnerBalance).toBeGreaterThan(ownerBalance);
+    expect(updatedStateBalance).toBeLessThan(stateBalance);
   });
 
   test('Initialize the client', async () => {
@@ -72,6 +117,59 @@ describe('vijay', () => {
     expect(client.contact).toEqual(clientDetails.contact);
     expect(client.projectCounter.toNumber()).toEqual(0);
     expect(client.owner.toString()).toEqual(client_wallet_publicKey.toString());
+
+    expect(clientReport.totalProjects.toNumber()).toEqual(0);
+    expect(clientReport.projectsInProgress.toNumber()).toEqual(0);
+    expect(clientReport.completed.toNumber()).toEqual(0);
+    expect(clientReport.withdrawn.toNumber()).toEqual(0);
+    expect(clientReport.transferred.toNumber()).toEqual(0);
+    expect(clientReport.successRate).toEqual(0);
+    expect(clientReport.riskScore).toEqual(0);
+  });
+
+  test('Initialize another client', async () => {
+    const clientDetails = {
+      name: "Sol Wallet Ltd.",
+      domain: "web3, blockchain, defi",
+      requiredSkills: "Rust, React, Solana",
+      contact: "123-456-7890"
+    };
+    
+    await program.methods
+      .initializeClient(
+        clientDetails.name,
+        clientDetails.domain,
+        clientDetails.requiredSkills,
+        clientDetails.contact
+      ).accounts({
+        signer: freelancer_wallet.publicKey,
+      })
+      .signers([freelancer_wallet])
+      .rpc();
+
+    const [clientPDA] = await anchor.web3.PublicKey.findProgramAddressSync([
+        utf8.encode('client'),
+        freelancer_wallet.publicKey.toBuffer(), 
+      ],
+      program.programId
+    );
+
+    const [clientReportPDA] = await anchor.web3.PublicKey.findProgramAddressSync([
+        utf8.encode('client_report'),
+        freelancer_wallet.publicKey.toBuffer(), 
+      ],
+      program.programId
+    );
+
+    const client = await program.account.client.fetch(clientPDA);
+    const clientReport = await program.account.clientReportCard.fetch(clientReportPDA);
+
+    expect(client.name).toEqual(clientDetails.name);
+    expect(client.domain).toEqual(clientDetails.domain);
+    expect(client.requiredSkills).toEqual(clientDetails.requiredSkills);
+    expect(client.contact).toEqual(clientDetails.contact);
+    expect(client.projectCounter.toNumber()).toEqual(0);
+    expect(client.owner.toString()).toEqual(freelancer_wallet.publicKey.toString());
 
     expect(clientReport.totalProjects.toNumber()).toEqual(0);
     expect(clientReport.projectsInProgress.toNumber()).toEqual(0);

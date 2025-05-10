@@ -85,6 +85,24 @@ export type Vijay = {
           }
         },
         {
+          "name": "state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  119,
+                  110,
+                  101,
+                  114
+                ]
+              }
+            ]
+          }
+        },
+        {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
@@ -311,6 +329,49 @@ export type Vijay = {
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "initializeState",
+      "discriminator": [
+        190,
+        171,
+        224,
+        219,
+        217,
+        72,
+        199,
+        176
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  119,
+                  110,
+                  101,
+                  114
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
     },
     {
       "name": "projectEscrowSetup",
@@ -1244,6 +1305,34 @@ export type Vijay = {
       ]
     },
     {
+      "name": "withdrawBalance",
+      "discriminator": [
+        140,
+        79,
+        65,
+        53,
+        68,
+        73,
+        241,
+        211
+      ],
+      "accounts": [
+        {
+          "name": "state",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "state"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "withdrawProject",
       "discriminator": [
         8,
@@ -1567,6 +1656,19 @@ export type Vijay = {
       ]
     },
     {
+      "name": "state",
+      "discriminator": [
+        216,
+        146,
+        107,
+        94,
+        104,
+        75,
+        182,
+        177
+      ]
+    },
+    {
       "name": "vault",
       "discriminator": [
         211,
@@ -1603,56 +1705,66 @@ export type Vijay = {
     },
     {
       "code": 6001,
+      "name": "alreadyInitialized",
+      "msg": "Owner has already been initialized"
+    },
+    {
+      "code": 6002,
       "name": "amountOverflow",
       "msg": "Amount overflow occurred during math operation"
     },
     {
-      "code": 6002,
+      "code": 6003,
       "name": "unAuthorizedSetup",
       "msg": "Only project owner allowed to setup the escrow"
     },
     {
-      "code": 6003,
+      "code": 6004,
+      "name": "unAuthorizedOwner",
+      "msg": "Only owner allowed this operation"
+    },
+    {
+      "code": 6005,
       "name": "unAuthorizedReviewer",
       "msg": "Only project owner allowed to review the project"
     },
     {
-      "code": 6004,
+      "code": 6006,
       "name": "escrowInActive",
       "msg": "Escrow account is inactive"
     },
     {
-      "code": 6005,
+      "code": 6007,
       "name": "projectInActive",
       "msg": "Project is inactive"
     },
     {
-      "code": 6006,
+      "code": 6008,
       "name": "freelancerProjectInActive",
       "msg": "Freelancer project is inactive"
     },
     {
-      "code": 6007,
+      "code": 6009,
       "name": "tasksCompleted",
       "msg": "All the tasks have been completed"
     },
     {
-      "code": 6008,
+      "code": 6010,
       "name": "notAnOwner",
       "msg": "Only owner is allowed to proceed with this operation"
     },
     {
-      "code": 6009,
+      "code": 6011,
       "name": "insufficientFunds",
       "msg": "Insufficient funds"
     },
     {
-      "code": 6010,
+      "code": 6012,
       "name": "taskReviewNotRequested",
       "msg": "Task review not yet requested"
     },
     {
-      "code": 6011,
+      "code": 6013,
       "name": "tooLong",
       "msg": "Bad request::Too long"
     }
@@ -1938,6 +2050,22 @@ export type Vijay = {
           {
             "name": "projectOwner",
             "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "state",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "balance",
+            "type": "u64"
           }
         ]
       }

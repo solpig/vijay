@@ -4,10 +4,14 @@ use anchor_lang::prelude::*;
 pub enum ErrorCode {
     #[msg("Overflow occurred during math operation")]
     NumericalOverflow,
+    #[msg("Owner has already been initialized")]
+    AlreadyInitialized,
     #[msg("Amount overflow occurred during math operation")]
     AmountOverflow,
     #[msg("Only project owner allowed to setup the escrow")]
     UnAuthorizedSetup,
+    #[msg("Only owner allowed this operation")]
+    UnAuthorizedOwner,
     #[msg("Only project owner allowed to review the project")]
     UnAuthorizedReviewer,
     #[msg("Escrow account is inactive")]

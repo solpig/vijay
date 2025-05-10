@@ -14,6 +14,18 @@ use instructions::*;
 pub mod vijay {
     use super::*;
 
+    pub fn initialize_state(
+        ctx: Context<StateInfo>,
+    ) -> Result<()> {
+        instructions::initialize_state(ctx)
+    }
+
+    pub fn withdraw_balance(
+        ctx: Context<Withdraw>,
+    ) -> Result<()> {
+        instructions::withdraw_balance(ctx)
+    }
+
     pub fn initialize_client(
         ctx: Context<ClientInfo>,
         name: String,

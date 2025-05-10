@@ -52,6 +52,9 @@ export function RegisterClient({ address }: { address: PublicKey }) {
     return (
       <div>
         <p className="mb-4" >Client Registeration</p>
+        <p className="text-sm text-gray-500 mb-4">
+          Register as a client to publish jobs and hire freelancers. Registeration fees is 1 SOL to be paid in the form of a transaction fee.
+        </p>
         <input
           type="text"
           placeholder="Name"

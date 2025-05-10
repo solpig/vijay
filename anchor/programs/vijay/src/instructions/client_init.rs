@@ -1,4 +1,7 @@
-use anchor_lang::prelude::*;
+use anchor_lang::{prelude::*, solana_program::{native_token::LAMPORTS_PER_SOL, program::invoke, system_instruction}};
+use crate::error_codes::ErrorCode;
+
+use super::State;
 
 pub fn initialize_client(
     ctx: Context<ClientInfo>,
@@ -7,6 +10,29 @@ pub fn initialize_client(
     required_skills: String,
     contact_details: String,
 ) -> Result<()> {
+
+    let subscription_amount = 1 * LAMPORTS_PER_SOL;
+    let signer_bal = ctx.accounts.signer.to_account_info().lamports();
+
+    require!(signer_bal >= subscription_amount, ErrorCode::InsufficientFunds);
+
+    let sys_ins = system_instruction::transfer(
+        &ctx.accounts.signer.key(),
+        &ctx.accounts.state.key(),
+        1 * LAMPORTS_PER_SOL as f64 as u64,
+    );
+
+    invoke(
+        &sys_ins,
+        &[
+            ctx.accounts.signer.to_account_info(),
+            ctx.accounts.state.to_account_info(),
+        ],
+    )?;
+
+    let state = &mut ctx.accounts.state;
+    state.balance = state.balance.checked_add(subscription_amount).ok_or(ErrorCode::NumericalOverflow)?;
+
     // creating custom client account
     let client = &mut ctx.accounts.client;
     client.name = name;
@@ -50,6 +76,13 @@ pub struct ClientInfo<'info> {
         payer = signer,
     )]
     pub client_report_card: Account<'info, ClientReportCard>,
+
+    #[account(
+        mut,
+        seeds = [b"owner"],
+        bump
+    )]
+    pub state: Account<'info, State>,
 
     pub system_program: Program<'info, System>,
 }

@@ -6,6 +6,7 @@ pub mod review_process;
 pub mod review_request;
 pub mod project_withdraw;
 pub mod project_transfer;
+pub mod state;
 
 pub use client_init::*;
 pub use freelancer_init::*;
@@ -15,3 +16,4 @@ pub use review_process::*;
 pub use review_request::*;
 pub use project_withdraw::*;
 pub use project_transfer::*;
+pub use state::*;
