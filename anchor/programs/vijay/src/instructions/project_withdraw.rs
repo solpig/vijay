@@ -47,7 +47,7 @@ pub fn withdraw_project(ctx: Context<WithdrawInfo>, _project_id: u64) -> Result<
     client_report_card.success_rate = ((client_report_card.completed * 10000) / actual_total_projects) as u16;
     
     let total_risk_points = client_report_card.withdrawn + client_report_card.transferred;
-    client_report_card.risk_score = ((total_risk_points * 10000) / actual_total_projects) as u16;
+    client_report_card.risk_score = ((total_risk_points * 10000) / client_report_card.completed) as u16;
     
     Ok(())
 }

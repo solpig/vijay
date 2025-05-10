@@ -404,7 +404,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                                   onChange={(e) => setNewFreelancerAccount(e.target.value)}
                               />
                               <button
-                                    className="btn btn-xs lg:btn-md btn-outline text-blue-500 ml-auto"
+                                    className="btn btn-xs lg:btn-md btn-outline text-blue-500 hover:bg-blue-500 hover:text-white transition-colors duration-300 ml-auto"
                                     onClick={() => transferProjectMut.mutateAsync({projectID: details?.id, newFreelancer: new PublicKey(newFreelancerAccount)})} 
                                     disabled={transferProjectMut.isPending}>
                                     Transfer Project{transferProjectMut.isPending && '...'}
@@ -516,7 +516,7 @@ function FreelancerProjectCard({ address, details }: { address: PublicKey, detai
                     onChange={(e) => setTaskURL(e.target.value)}
                   />
                   <button
-                        className="btn btn-xs lg:btn-md btn-outline text-green-500 ml-auto"
+                        className="btn btn-xs lg:btn-md btn-outline text-green-500  ml-auto hover:bg-green-500 hover:text-white transition-colors duration-300"
                         onClick={() => taskReviewMut.mutateAsync({projectID: details?.id, projectName: details?.projectName, taskURL: taskURL })} 
                         disabled={taskReviewMut.isPending || details?.completedTaskUrl !== '' || details?.isActive === false || !isRequestFormValid()}>
                         {details?.completedTaskUrl !== '' ? <b>Review requested</b> : 'Request Task Review'}{taskReviewMut.isPending && '...'}

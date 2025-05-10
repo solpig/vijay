@@ -62,7 +62,7 @@ export default function ClientInfoFeature({ account }: { account: String }) {
           <p className="mt-2">Withdrawn: {clientPerformance?.withdrawn.toNumber()}</p>
           <p className="mt-2">Transferred: {clientPerformance?.transferred.toNumber()}</p>
           <p className="mt-2">RiskScore: {(clientPerformance && clientPerformance?.riskScore) ?  clientPerformance?.riskScore / 100 : 0}</p>
-          <p className="mt-2">SuccessRate: {(clientPerformance && clientPerformance?.successRate) ? clientPerformance?.successRate / 100 : 0}</p>
+          <p className="mt-2">SuccessRate: {(clientPerformance && clientPerformance?.successRate) ? clientPerformance?.successRate / 100 : 0} %</p>
         </div>
       </div>
           <div className="p-6 bg-gray-50 h-[500px] overflow-y-auto space-y-4 p-4">

@@ -59,8 +59,8 @@ export default function FreelancerInfoFeature({ account }: { account: String }) 
           <p className="mt-2">Completed: {freelancerPerformance?.completed.toNumber()}</p>
           <p className="mt-2">In-Progress: {freelancerPerformance?.projectsInProgress.toNumber()}</p>
           <p className="mt-2">Cancelled: {freelancerPerformance?.rejected.toNumber()}</p>
-          <p className="mt-2">RiskScore: {(freelancerPerformance && freelancerPerformance?.riskScore) ? freelancerPerformance?.riskScore / 100 : 0}</p>
-          <p className="mt-2">SuccessRate: {(freelancerPerformance && freelancerPerformance?.successRate) ? freelancerPerformance.successRate / 100 : 0}</p>
+          <p className="mt-2">RiskRate: {(freelancerPerformance && freelancerPerformance?.riskScore) ? freelancerPerformance?.riskScore / 100 : 0} %</p>
+          <p className="mt-2">SuccessRate: {(freelancerPerformance && freelancerPerformance?.successRate) ? freelancerPerformance.successRate / 100 : 0} %</p>
         </div>
       </div>
           <div className="p-6 bg-gray-50 h-[500px] overflow-y-auto space-y-4 p-4">

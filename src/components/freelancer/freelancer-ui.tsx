@@ -15,6 +15,13 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
     const [skills, setSkills] = useState('');
     const [contact, setContact] = useState('');
 
+    const isFreelanceFormValid = () => {
+      if (name.length < 1 || domain.length < 1 || skills.length < 1 || contact.length < 1) {
+        return false;
+      }
+      return true;
+    }
+
     const initializeFreelancerMut = initializeFreelancerMutation(() => {
       queryFreelancerAccount.refetch();
       setName('');
@@ -30,6 +37,8 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
             placeholder="Name"
             className="input input-bordered w-full mb-4"
             value={name}
+            maxLength={50}
+            required
             disabled={queryFreelancerAccount.data?.name !== undefined}
             onChange={(e) => setName(e.target.value)}
           />
@@ -38,6 +47,8 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
             placeholder="Domain"
             className="input input-bordered w-full mb-4"
             value={domain}
+            maxLength={50}
+            required
             disabled={queryFreelancerAccount.data?.name !== undefined}
             onChange={(e) => setDomain(e.target.value)}
           />
@@ -46,6 +57,8 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
             placeholder="Skills"
             className="input input-bordered w-full mb-4"
             value={skills}
+            maxLength={100}
+            required
             disabled={queryFreelancerAccount.data?.name !== undefined}
             onChange={(e) => setSkills(e.target.value)}
           />
@@ -54,13 +67,15 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
             placeholder="Contact Details"
             className="input input-bordered w-full mb-4"
             value={contact}
+            maxLength={50}
+            required
             disabled={queryFreelancerAccount.data?.name !== undefined}
             onChange={(e) => setContact(e.target.value)}
           />
         <button
           className="btn btn-xs lg:btn-md btn-primary btn-outline"
           onClick={() => initializeFreelancerMut.mutateAsync({name, domain, skills, contact})}
-          disabled={initializeFreelancerMut.isPending || queryFreelancerAccount.data?.name !== undefined}>
+          disabled={initializeFreelancerMut.isPending || queryFreelancerAccount.data?.name !== undefined || !isFreelanceFormValid()}>
           {!queryFreelancerAccount.data?.name ? "Create" : "Already Registered"}{initializeFreelancerMut.isPending && '...'}
         </button>
         </div>

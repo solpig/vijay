@@ -680,7 +680,7 @@ describe('vijay', () => {
     const clientReport = await program.account.clientReportCard.fetch(clientReportPda);
     expect(clientReport.withdrawn.toNumber()).toEqual(1);
     expect(clientReport.successRate).toEqual(5000);
-    expect(clientReport.riskScore).toEqual(5000);
+    expect(clientReport.riskScore).toEqual(10000);
 
     const updatedClientProject = await program.account.project.fetch(clientProjectPda);
     expect(updatedClientProject.isActive).toEqual(false);
