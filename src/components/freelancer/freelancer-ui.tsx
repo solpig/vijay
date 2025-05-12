@@ -32,6 +32,9 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
       return (
         <div>
           <p className="mb-4" >Freelancer Registeration</p>
+          <p className="text-sm text-gray-500 mb-4">
+          Register as a freelancer to apply for jobs and get hired. Registeration is free!
+          </p>
           <input
             id='freelancer-name'
             type="text"

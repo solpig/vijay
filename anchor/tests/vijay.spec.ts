@@ -18,10 +18,10 @@ describe('vijay', () => {
  
   beforeAll(async () => {
     await provider.connection.confirmTransaction(
-      await provider.connection.requestAirdrop(freelancer_wallet.publicKey, 2 * LAMPORTS_PER_SOL),
+      await provider.connection.requestAirdrop(freelancer_wallet.publicKey, 20 * LAMPORTS_PER_SOL),
       "confirmed"
     );
-    console.log(`Freelancer wallet ${freelancer_wallet.publicKey.toString()} airdropped with 2 SOL`);
+    console.log(`Freelancer wallet ${freelancer_wallet.publicKey.toString()} airdropped with 20 SOL`);
 
     // Wait for confirmation
     await provider.connection.confirmTransaction(
