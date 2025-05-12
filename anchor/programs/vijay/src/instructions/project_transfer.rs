@@ -60,7 +60,10 @@ pub fn transfer_project(ctx: Context<TransferInfo>, _project_id: u64, new_freela
     freelancer_report.projects_in_progress = freelancer_report.projects_in_progress.checked_sub(1).ok_or(ErrorCode::NumericalOverflow)?;
    
     // skipping the in progress projects for risk_score calculation
-    let completed_projects = freelancer_report.total_projects.checked_sub(freelancer_report.projects_in_progress).ok_or(ErrorCode::NumericalOverflow)?;
+    let mut completed_projects = freelancer_report.total_projects.checked_sub(freelancer_report.projects_in_progress).ok_or(ErrorCode::NumericalOverflow)?;
+    if completed_projects == 0 {
+        completed_projects = 1;
+    } 
     freelancer_report.success_rate = ((freelancer_report.completed * 10000)/ completed_projects) as u16;
     freelancer_report.risk_score = ((freelancer_report.rejected * 10000) / completed_projects) as u16;
 
@@ -68,7 +71,10 @@ pub fn transfer_project(ctx: Context<TransferInfo>, _project_id: u64, new_freela
      let client_report = &mut ctx.accounts.client_report;
      client_report.transferred = client_report.transferred.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
      
-     let actual_total_projects = client_report.total_projects.checked_sub(client_report.projects_in_progress).ok_or(ErrorCode::NumericalOverflow)?;
+     let mut actual_total_projects = client_report.total_projects.checked_sub(client_report.projects_in_progress).ok_or(ErrorCode::NumericalOverflow)?;
+     if actual_total_projects == 0 {
+        actual_total_projects = 1;
+     } 
      client_report.success_rate = ((client_report.completed * 10000) / actual_total_projects) as u16;
 
      let total_risk_points = client_report.transferred + client_report.withdrawn;

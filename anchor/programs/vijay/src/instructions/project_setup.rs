@@ -72,7 +72,6 @@ pub fn project_escrow_setup(
 
     let client_report_card = &mut ctx.accounts.client_report_card;
     client_report_card.projects_in_progress = client_report_card.projects_in_progress.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
-    client_report_card.total_projects = client_report_card.total_projects.checked_add(1).ok_or(ErrorCode::NumericalOverflow)?;
 
     Ok(())
 }
@@ -104,7 +103,7 @@ pub struct ProjectSetupInfo<'info> {
         seeds = [b"project_escrow", project_id.to_le_bytes().as_ref(), project.owner.as_ref()],
         bump
     )]
-    pub escrow: Account<'info, Escrow>,
+    pub escrow: Box<Account<'info, Escrow>>,
 
     #[account(
         init,
@@ -113,7 +112,7 @@ pub struct ProjectSetupInfo<'info> {
         seeds = [b"vault", project_id.to_le_bytes().as_ref(), project.owner.as_ref()],
         bump
     )]
-    pub vault: Account<'info, Vault>,
+    pub vault: Box<Account<'info, Vault>>,
 
     #[account(
         init,
@@ -122,7 +121,7 @@ pub struct ProjectSetupInfo<'info> {
         seeds = [b"freelancer_project", freelancer.project_counter.checked_add(1).unwrap().to_le_bytes().as_ref(), freelancer.owner.as_ref()],
         bump
     )]
-    pub freelancer_project: Account<'info, FreelancerProject>,
+    pub freelancer_project: Box<Account<'info, FreelancerProject>>,
 
     #[account(
         mut,

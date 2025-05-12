@@ -118,6 +118,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
   const { ProjectEscrowSetupMutation, fetchEscrowAccount, ReviewTaskProcessMutation, fetchVaultAccountBalance, WithdrawProjectMutation, TransferProjectMutation } = useClientAccounts({ account: address });
   
   const [escrowAccount, setEscrowAccount] = useState<EscrowAccount | null>(null);
+  const [reloadCounter, setReloadCounter] = useState(0);
 
 
   useEffect(() => {
@@ -135,12 +136,14 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
           }
         } catch (err) {
           console.log(`Error fetching escrow account: ${details?.id}`, err);
+          setEscrowAccount(null);
+          setVaultBalance(0);
         }
       };
 
       loadEscrowAccount();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, details, setEscrowAccount]);
+  }, [address, details, reloadCounter]);
 
 
 
@@ -169,6 +172,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
   const withdrawProjectMut = WithdrawProjectMutation(() => {
     setIsOpen(false);
     queryClient.invalidateQueries({ queryKey: ['fetch-client-project'] });
+    setReloadCounter((prev) => prev + 1);
   });
 
   const transferProjectMut = TransferProjectMutation(() => {

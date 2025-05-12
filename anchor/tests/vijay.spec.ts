@@ -299,6 +299,15 @@ describe('vijay', () => {
 
     const projectTwo = await program.account.project.fetch(projectPdaTwo);
 
+    const [clientReportPda] = await anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("client_report"), client_wallet_publicKey.toBuffer()],
+      program.programId
+    );
+
+    const clientReport = await program.account.clientReportCard.fetch(clientReportPda);
+
+    expect(clientReport.totalProjects.toNumber()).toEqual(2);
+
     expect(projectOne.name).toEqual(projectDetailsOne.name);
     expect(projectOne.description).toEqual(projectDetailsOne.description);
     expect(projectOne.url).toEqual(projectDetailsOne.url);
@@ -427,7 +436,6 @@ describe('vijay', () => {
       expect(freelancerProject.isActive).toEqual(true);
 
       // assert if the client report card has been updated
-      expect(clientReport.totalProjects.toNumber()).toEqual(1);
       expect(clientReport.projectsInProgress.toNumber()).toEqual(1);
 
       // assert if the freelancer report card has been updated
