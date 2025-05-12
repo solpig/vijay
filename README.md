@@ -277,7 +277,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Before submitting a PR be sure to run `anchor test` and `pnpm lint`.
 
 For support or feature requests:
-* [GitHub Issues](#https://github.com/Harry-027/vijay/issues)
+* [GitHub Issues](https://github.com/Harry-027/vijay/issues)
 
 ---
 
