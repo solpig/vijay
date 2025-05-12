@@ -290,6 +290,7 @@ function ModalAirdrop({ hide, show, address }: { hide: () => void; show: boolean
       submit={() => mutation.mutateAsync(parseFloat(amount)).then(() => hide())}
     >
       <input
+        name='airdrop-amount'
         disabled={mutation.isPending}
         type="number"
         step="any"
@@ -330,6 +331,7 @@ function ModalSend({ hide, show, address }: { hide: () => void; show: boolean; a
       }}
     >
       <input
+        name='destination'
         disabled={mutation.isPending}
         type="text"
         placeholder="Destination"
@@ -338,6 +340,7 @@ function ModalSend({ hide, show, address }: { hide: () => void; show: boolean; a
         onChange={(e) => setDestination(e.target.value)}
       />
       <input
+        name='send-amount'
         disabled={mutation.isPending}
         type="number"
         step="any"

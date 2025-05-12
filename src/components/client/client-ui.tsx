@@ -100,6 +100,7 @@ export function RegisterClient({ address }: { address: PublicKey }) {
           onChange={(e) => setContact(e.target.value)}
         />
         <button
+          id='client-register-button'
           className="btn btn-xs lg:btn-md btn-primary btn-outline"
           onClick={() => initializeClientMut.mutateAsync({name, domain, requiredSkills, contact})}
           disabled={initializeClientMut.isPending || queryClientAccount.data?.name !== undefined || !isClientFormValid()}>
@@ -151,6 +152,7 @@ export function RegisterClient({ address }: { address: PublicKey }) {
               onChange={(e) => setprojectBudget(Number(e.target.value))}
             />
             <button
+              id='client-project-publish-button'
               className="btn btn-xs lg:btn-md btn-primary btn-outline"
               onClick={() => newProjectMut.mutateAsync({name: projectName, description: projectDescription, url: projectURL, budget: projectBudget})} 
               disabled={newProjectMut.isPending || !isProjectFormValid()}>

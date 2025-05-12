@@ -524,7 +524,7 @@ function FreelancerProjectCard({ address, details }: { address: PublicKey, detai
                     disabled={details?.completedTaskUrl !== ''}
                     onChange={(e) => setTaskURL(e.target.value)}
                   />
-                  <button
+                  <button id="request-task-review"
                         className="btn btn-xs lg:btn-md btn-outline text-green-500  ml-auto hover:bg-green-500 hover:text-white transition-colors duration-300"
                         onClick={() => taskReviewMut.mutateAsync({projectID: details?.id, projectName: details?.projectName, taskURL: taskURL })} 
                         disabled={taskReviewMut.isPending || details?.completedTaskUrl !== '' || details?.isActive === false || !isRequestFormValid()}>
