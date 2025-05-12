@@ -20,7 +20,6 @@ export function MyProjects({ address }: { address: PublicKey }) {
     const clientProjectQueries = useQueries({
         queries: useMemo(() => {
           if (!clientProjectCounter) return [];
-          console.log("client Project Queries")
           return Array.from({ length: clientProjectCounter }, (_, i) => {
             return {
               queryKey: ['fetch-client-project', i + 1],
@@ -33,14 +32,12 @@ export function MyProjects({ address }: { address: PublicKey }) {
 
     const clientProjectsLoading = clientProjectQueries.some(q => q.isLoading)
     const clientProjects = clientProjectQueries.map(q => q.data).filter(Boolean)
-    console.log("client Projects", clientProjects)
     const freelancerDetails = queryFreelancerAccount.data;
     const freelancerProjectCounter = freelancerDetails?.projectCounter.toNumber() || 0;
 
     const freelancerProjectQueries = useQueries({
         queries: useMemo(() => {
           if (!freelancerProjectCounter) return [];
-          console.log("freelancer Project Queries")
           return Array.from({ length: freelancerProjectCounter }, (_, i) => {
             return {
               queryKey: ['fetch-freelancer-project', i + 1],
@@ -126,14 +123,11 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
   useEffect(() => {
       const DEFAULT_PROGRAM_ID = new PublicKey("11111111111111111111111111111111");
       const loadEscrowAccount = async () => {
-        if (!address || !details?.id || details?.assignedFreelancerProjectId.toNumber() === 0) return;
-        console.log(`Details: ${details.id}`, details);
+        if (!address || !details?.isActive || details?.assignedFreelancerProjectId.toNumber() === 0) return;
         try {
           const data = await fetchEscrowAccount(address, details?.id.toNumber());
           const vaultBalance = await fetchVaultAccountBalance(address, details?.id.toNumber());
           setVaultBalance(vaultBalance);
-          console.log(`Vault Balance: ${vaultBalance}`);
-          console.log(`Escrow Account: ${details?.id}`, data);
           setEscrowAccount(data);
           if (!(details?.assignedFreelancer.toString() === DEFAULT_PROGRAM_ID.toString()) && escrowAccount) {
             setFreelancerAccount(details?.assignedFreelancer.toString());
@@ -146,7 +140,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
 
       loadEscrowAccount();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, details]);
+  }, [address, details, setEscrowAccount]);
 
 
 
@@ -220,6 +214,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
               <div className="flex flex-col">
                 <label htmlFor="project-id">Project ID</label>
                 <input
+                  id="project-id"
                   type="number"
                   placeholder="Project ID"
                   className="input input-bordered w-full mb-4"
@@ -228,6 +223,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                 />
                 <label htmlFor="project-name">Project Name</label>
                 <input
+                  id="project-name"
                   type="text"
                   placeholder="Project Name"
                   className="input input-bordered w-full mb-4"
@@ -239,6 +235,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                     <div>
                       <label htmlFor="freelancer-account">Freelancer Account</label>
                       <input
+                          id="freelancer-account"
                           type="text"
                           placeholder="Freelancer Account Address"
                           className="input input-bordered w-full mb-4"
@@ -248,6 +245,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                       />
                       <label htmlFor="budget">Finalized Budget (in SOL)</label>
                       <input
+                        id="budget"
                         type="number"
                         min="0"
                         step="1"
@@ -264,6 +262,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                   <div>
                     <label htmlFor="freelancer-account">Assigned Freelancer</label>
                       <input
+                          id="freelancer-account"
                           type="text"
                           placeholder="Freelancer Account Address"
                           className="input input-bordered w-full mb-4"
@@ -271,8 +270,9 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                           required
                           disabled={true}
                       />
-                    <label htmlFor="budget">Finalized Budget (in SOL)</label>
+                    <label htmlFor="finalized-budget">Finalized Budget (in SOL)</label>
                       <input
+                        id="finalized-budget"
                         type="number"
                         min="0"
                         step="1"
@@ -283,6 +283,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                       />
                     <label htmlFor="amount-paid">Amount Paid</label>
                       <input
+                          id="amount-paid"
                           type="number"
                           min="0"
                           step="1"
@@ -291,8 +292,9 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                           disabled={true}
                           value={escrowAccount?.amountPaid.toNumber() / 1000000000}
                       />
-                    <label htmlFor="amount-paid">Vault Balance</label>
+                    <label htmlFor="vault-balance">Vault Balance</label>
                       <input
+                          id="vault-balance"
                           type="number"
                           min="0"
                           step="1"
@@ -303,6 +305,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                       />
                     <label htmlFor="total-tasks">Total Tasks</label>
                       <input
+                        id="total-tasks"
                         type="number"
                         min="0"
                         step="1"
@@ -313,6 +316,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                       />
                     <label htmlFor="tasks-completed">Tasks Completed</label>
                       <input
+                        id="tasks-completed"
                         type="number"
                         min="0"
                         step="1"
@@ -326,8 +330,9 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                 {(details?.assignedFreelancerProjectId.toNumber() === 0) ? 
                 ( 
                   <div className="flex flex-col">
-                   <label htmlFor="total-tasks">Total Tasks</label>
+                   <label htmlFor="new-total-tasks">Total Tasks</label>
                    <input
+                     id="new-total-tasks"
                      type="number"
                      min="0"
                      step="1"
@@ -348,8 +353,9 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                       <div>
                           { details?.isActive && details?.taskInReview && 
                               <div>
-                                  <label htmlFor="task-url">Requested Task Review</label>
+                                  <label htmlFor="task-url-link">Requested Task Review</label>
                                   <a
+                                    id="task-url-link"
                                     href={details?.taskInReview}
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -359,14 +365,14 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                                   </a>
                                   <div className="flex space-x-4 mb-12">
                                     <div className="ml-auto flex space-x-4">
-                                      <label className="cursor-pointer">
-                                            <input type="radio" name="taskStatus" value="approve" className="peer hidden" onChange={() => reviewProcessTaskMut.mutateAsync({ projectID: details?.id, approval: true, assignedFreelancer: details?.assignedFreelancer, assignedFreelancerProjectID: details?.assignedFreelancerProjectId.toNumber() })} />
+                                      <label htmlFor="approve" className="cursor-pointer">
+                                            <input id="approve" type="radio" name="taskStatus" value="approve" className="peer hidden" onChange={() => reviewProcessTaskMut.mutateAsync({ projectID: details?.id, approval: true, assignedFreelancer: details?.assignedFreelancer, assignedFreelancerProjectID: details?.assignedFreelancerProjectId.toNumber() })} />
                                             <div className="px-4 py-2 rounded-full border border-green-500 text-green-500 peer-checked:bg-green-500 peer-checked:text-white transition">
                                               Approve
                                             </div>
                                           </label>
-                                          <label className="cursor-pointer">
-                                            <input type="radio" name="taskStatus" value="reject" className="peer hidden" onChange={() => reviewProcessTaskMut.mutateAsync({ projectID: details?.id, approval: false, assignedFreelancer: details?.assignedFreelancer, assignedFreelancerProjectID: details?.assignedFreelancerProjectId.toNumber() })} />
+                                          <label htmlFor="reject" className="cursor-pointer">
+                                            <input id="reject" type="radio" name="taskStatus" value="reject" className="peer hidden" onChange={() => reviewProcessTaskMut.mutateAsync({ projectID: details?.id, approval: false, assignedFreelancer: details?.assignedFreelancer, assignedFreelancerProjectID: details?.assignedFreelancerProjectId.toNumber() })} />
                                             <div className="px-4 py-2 rounded-full border border-red-500 text-red-500 peer-checked:bg-red-500 peer-checked:text-white transition">
                                               Reject
                                             </div>
@@ -397,6 +403,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                             <div className="flex flex-col">
                               <label htmlFor="new-freelancer-account">New Freelancer Account</label>
                               <input
+                                  id="new-freelancer-account"
                                   type="text"
                                   placeholder="New Freelancer Account Address"
                                   className="input input-bordered w-full mb-4"
@@ -427,13 +434,11 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
 
 function FreelancerProjectCard({ address, details }: { address: PublicKey, details: any; }) {
   const { TaskReviewMutation } = useFreelancerAccounts({ account: address });
-  console.log("Freelancer Project Card details", details)
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false)
   const [taskURL, setTaskURL] = useState('')
 
   useEffect(() => {
-    console.log("freelancer Project Card")
     if (details && details?.completedTaskUrl !== '') {
       setTaskURL(details?.completedTaskUrl);
     }
@@ -486,16 +491,18 @@ function FreelancerProjectCard({ address, details }: { address: PublicKey, detai
     {isOpen && (
         <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>  
             <div className="flex flex-col">
-              <label htmlFor="project-id">Project ID</label>
+              <label htmlFor="modal-project-id">Project ID</label>
               <input
+                id="modal-project-id"
                 type="number"
                 placeholder="Project ID"
                 className="input input-bordered w-full mb-4"
                 value={details?.id}
                 disabled={true}
               />
-              <label htmlFor="project-name">Project Name</label>
+              <label htmlFor="modal-project-name">Project Name</label>
               <input
+                id="modal-project-name"
                 type="text"
                 placeholder="Project Name"
                 className="input input-bordered w-full mb-4"
@@ -505,8 +512,9 @@ function FreelancerProjectCard({ address, details }: { address: PublicKey, detai
               
               {details?.isActive &&
                 <div className="flex flex-col">
-                  <label htmlFor="task-url">Task Url</label>
+                  <label htmlFor="input-task-url">Task Url</label>
                   <input
+                    id="input-task-url"
                     type="text"
                     placeholder="Enter URL to completed task"
                     className="input input-bordered w-full mb-4"

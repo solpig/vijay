@@ -56,6 +56,7 @@ export function RegisterClient({ address }: { address: PublicKey }) {
           Register as a client to publish jobs and hire freelancers. Registeration fees is 1 SOL to be paid in the form of a transaction fee.
         </p>
         <input
+          id='client-name'
           type="text"
           placeholder="Name"
           className="input input-bordered w-full mb-4"
@@ -66,6 +67,7 @@ export function RegisterClient({ address }: { address: PublicKey }) {
           onChange={(e) => setName(e.target.value)}
         />
         <input
+          id='client-domain'
           type="text"
           placeholder="Domain"
           className="input input-bordered w-full mb-4"
@@ -76,6 +78,7 @@ export function RegisterClient({ address }: { address: PublicKey }) {
           onChange={(e) => setDomain(e.target.value)}
         />
         <input
+          id='client-required-skills'
           type="text"
           placeholder="Required Skills"
           className="input input-bordered w-full mb-4"
@@ -86,6 +89,7 @@ export function RegisterClient({ address }: { address: PublicKey }) {
           onChange={(e) => setRequiredSkills(e.target.value)}
         />
         <input
+          id='client-contact'
           type="text"
           placeholder="Contact"
           className="input input-bordered w-full mb-4"
@@ -107,6 +111,7 @@ export function RegisterClient({ address }: { address: PublicKey }) {
               Publish a job to get started!
             </p>
             <input
+              id='client-project-name'
               type="text"
               placeholder="Project name"
               className="input input-bordered w-full mb-4"
@@ -116,6 +121,7 @@ export function RegisterClient({ address }: { address: PublicKey }) {
               onChange={(e) => setProjectName(e.target.value)}
             />
             <input
+              id='client-project-description'
               type="text"
               placeholder="Description"
               maxLength={280}
@@ -125,6 +131,7 @@ export function RegisterClient({ address }: { address: PublicKey }) {
               onChange={(e) => setProjectDescription(e.target.value)}
             />
             <input
+              id='client-project-url'
               type="text"
               placeholder="URL"
               className="input input-bordered w-full mb-4"
@@ -134,6 +141,7 @@ export function RegisterClient({ address }: { address: PublicKey }) {
               onChange={(e) => setProjectURL(e.target.value)}
             />
             <input
+              id='client-project-budget'
               type="number"
               min="0"
               step="1"

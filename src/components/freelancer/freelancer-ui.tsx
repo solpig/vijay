@@ -33,6 +33,7 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
         <div>
           <p className="mb-4" >Freelancer Registeration</p>
           <input
+            id='freelancer-name'
             type="text"
             placeholder="Name"
             className="input input-bordered w-full mb-4"
@@ -43,6 +44,7 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
             onChange={(e) => setName(e.target.value)}
           />
           <input
+            id='freelancer-domain'
             type="text"
             placeholder="Domain"
             className="input input-bordered w-full mb-4"
@@ -53,6 +55,7 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
             onChange={(e) => setDomain(e.target.value)}
           />
           <input
+            id='freelancer-skills'
             type="text"
             placeholder="Skills"
             className="input input-bordered w-full mb-4"
@@ -63,6 +66,7 @@ export function RegisterFreelancer({ address }: { address: PublicKey }) {
             onChange={(e) => setSkills(e.target.value)}
           />
           <input
+            id='freelancer-contact'
             type="text"
             placeholder="Contact Details"
             className="input input-bordered w-full mb-4"

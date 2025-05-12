@@ -58,7 +58,6 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
 
   const fetchEscrowAccount = useCallback(
     async (account: PublicKey, projectID: number) => {
-      console.log("fetchEscrowAccount ===>>>", account.toBase58(), projectID);
       const [escrowPDA] = PublicKey.findProgramAddressSync(
         [Buffer.from('project_escrow'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
         program.programId
@@ -70,7 +69,6 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
 
   const fetchVaultAccountBalance = useCallback(
     async (account: PublicKey, projectID: number) => {
-      console.log("fetchVaultAccount ===>>>", account.toBase58(), projectID);
       const [vaultPDA] = PublicKey.findProgramAddressSync(
         [Buffer.from('vault'), new BN(projectID).toArrayLike(Buffer, 'le', 8), account.toBuffer()],
         program.programId
@@ -139,8 +137,6 @@ export function useClientAccounts({ account }: { account: PublicKey }) {
               );
           
               const clientProject = await program.account.project.fetch(clientProjectPda);
-              console.log("assignedFreelancerProjectID", assignedFreelancerProjectID);
-              console.log("assignedFreelancer", assignedFreelancer.toBase58());
               const [freelancerProjectPda] = PublicKey.findProgramAddressSync(
                 [Buffer.from("freelancer_project"), new BN(assignedFreelancerProjectID).toArrayLike(Buffer, "le", 8),  assignedFreelancer.toBuffer()],
                 program.programId

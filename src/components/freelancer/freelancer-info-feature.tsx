@@ -23,7 +23,6 @@ export default function FreelancerInfoFeature({ account }: { account: String }) 
   const projectQueries = useQueries({
     queries: useMemo(() => {
       if (!projectCounter) return [];
-      console.log("Query Freelancer Projects");
       return Array.from({ length: projectCounter }, (_, i) => {
         return {
           queryKey: ['fetch-freelancer-project', i + 1],

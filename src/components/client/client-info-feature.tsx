@@ -22,7 +22,6 @@ export default function ClientInfoFeature({ account }: { account: String }) {
 
   const projectQueries = useQueries({
     queries: useMemo(() => {
-      console.log("Query Client Projects");
       if (!projectCounter) return [];
       return Array.from({ length: projectCounter }, (_, i) => {
         return {
