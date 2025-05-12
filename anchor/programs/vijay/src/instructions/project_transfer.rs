@@ -72,7 +72,12 @@ pub fn transfer_project(ctx: Context<TransferInfo>, _project_id: u64, new_freela
      client_report.success_rate = ((client_report.completed * 10000) / actual_total_projects) as u16;
 
      let total_risk_points = client_report.transferred + client_report.withdrawn;
-     client_report.risk_score = ((total_risk_points * 10000) / client_report.completed) as u16; 
+     let divisor: u64 = if client_report.completed == 0 {
+        1
+     } else {
+        client_report.completed
+     };
+     client_report.risk_score = ((total_risk_points * 10000) / divisor) as u16; 
 
     Ok(())
 }

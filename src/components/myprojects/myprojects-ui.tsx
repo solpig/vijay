@@ -349,13 +349,14 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                           { details?.isActive && details?.taskInReview && 
                               <div>
                                   <label htmlFor="task-url">Requested Task Review</label>
-                                  <input
-                                    type="text"
-                                    placeholder="Task URL"
-                                    className="input input-bordered w-full mb-4"
-                                    value={details?.taskInReview}
-                                    disabled={true}
-                                  />
+                                  <a
+                                    href={details?.taskInReview}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="input input-bordered w-full mb-4 block w-full px-4 py-2 border border-gray-300 rounded-lg text-blue-600 hover:text-blue-800 hover:underline break-words"
+                                  >
+                                    {details?.taskInReview || "No URL available"}
+                                  </a>
                                   <div className="flex space-x-4 mb-12">
                                     <div className="ml-auto flex space-x-4">
                                       <label className="cursor-pointer">
