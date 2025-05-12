@@ -83,12 +83,8 @@ pub fn review_task_process(
                 client_report_card.success_rate = ((client_report_card.completed * 10000) / actual_total_projects) as u16;
                 
                 let total_risk_points = client_report_card.withdrawn + client_report_card.transferred;
-                let divisor: u64 = if client_report_card.completed == 0 {
-                    1
-                } else {
-                    client_report_card.completed
-                };
-                client_report_card.risk_score = ((total_risk_points * 10000) / divisor) as u16;
+                let total_finished_projects = total_risk_points + client_report_card.completed;
+                client_report_card.risk_score = ((total_risk_points * 10000) / total_finished_projects) as u16;
             }
 
         }
