@@ -270,13 +270,21 @@ Vijay enables:
 
 ## Demo Screenshots
 
+### Dashboard
 ![Dashboard](./demo/Vijay_dashboard.png)
+### Client registeration
 ![Client registeration](./demo/Client_registeration.png)
+### Freelancer registeration
 ![Freelancer registeration](./demo/Freelancer_registeration.png)
+### Available freelancers
 ![Available freelancers](./demo/Available_freelancers.png)
+### Freelancer project dashboard
 ![Freelancer project dashboard](./demo/Freelancer_project_dashboard.png)
+### Client action
 ![Client action](./demo/Client_action.png)
+### Freelancer report card
 ![Freelancer report card](./demo/Freelancer_report_card.png)
+### Client report card
 ![Client report card](./demo/Client_report_card.png)
 
 ---
