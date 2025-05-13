@@ -1,5 +1,7 @@
 # Vijay: A Trustless Freelancing Platform on Solana
 
+> 🏗️ Built for [Solana Colosseum Hackathon](https://www.colosseum.org/breakout)
+
 ## Overview
 
 Vijay is a decentralized freelancing platform built on the Solana blockchain. It introduces a new trustless protocol where clients and freelancers can collaborate on projects securely, without intermediaries. The platform leverages smart contracts to manage registration, project assignment, escrowed payments, and task validation.
@@ -18,7 +20,7 @@ It enables Clients and Freelancers to collaborate trustlessly using a milestone-
 * [Workflow](#workflow)
 * [Security & Trust](#security--trust)
 * [Roadmap](#roadmap)
-* [Screenshots](#screenshots)
+* [Screenshots](#demo-screenshots)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -165,6 +167,7 @@ Vijay enables:
 
    ```bash
    pnpm install
+   pnpm build
    ```
 
 3. Build and deploy smart contracts locally:
@@ -265,9 +268,16 @@ Vijay enables:
 
 ---
 
-## Screenshots
+## Demo Screenshots
 
-*To be added: UI showing Client dashboard, task approvals, escrow balances.*
+![Dashboard](./demo/Vijay_dashboard.png)
+![Client registeration](./demo/Client_registeration.png)
+![Freelancer registeration](./demo/Freelancer_registeration.png)
+![Available freelancers](./demo/Available_freelancers.png)
+![Freelancer project dashboard](./demo/Freelancer_project_dashboard.png)
+![Client action](./demo/Client_action.png)
+![Freelancer report card](./demo/Freelancer_report_card.png)
+![Client report card](./demo/Client_report_card.png)
 
 ---
 
@@ -284,6 +294,10 @@ For support or feature requests:
 ## License
 
 MIT © 2025 Harish Bhawnani
+
+## Hackathon Submission
+
+This project was built as part of the **Solana Colosseum Hackathon** to promote milestone-based trustless freelancing using smart contracts on Solana.
 
 
 

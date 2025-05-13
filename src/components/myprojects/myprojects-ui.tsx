@@ -54,13 +54,12 @@ export function MyProjects({ address }: { address: PublicKey }) {
     if (clientProjectsLoading && freelancerProjectLoading) {
         return <div className="text-center">Loading...</div>;
     }
-
     return (
         <div>
             {
                 clientProjects.length > 0 && 
-                <div className="flex mt-32 justify-center min-h-screen bg-gray-70">
-                    <div className="max-w-16xl px-4">
+                    <div className="max-w-16xl px-12 mt-32 bg-gray-70">
+                      <h1 className="text-3xl font-bold text-center mb-8">Client Projects</h1>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {clientProjects.map((result, i) => (
                         <ClientProjectCard 
@@ -69,14 +68,14 @@ export function MyProjects({ address }: { address: PublicKey }) {
                           details={result} 
                         />
                       ))}
-                    </div>
                   </div>
                 </div>
             }
             {
                 freelancerProjects.length > 0 && 
-                <div className="flex mt-32 justify-center min-h-screen bg-gray-70">
+                <div className="flex mt-32 justify-center bg-gray-70">
                     <div className="max-w-16xl px-4">
+                      <h1 className="text-3xl font-bold text-center mb-8">Freelancer Projects</h1>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {freelancerProjects.map((result, i) => (
                         <FreelancerProjectCard 
@@ -285,7 +284,7 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                         disabled={true}
                         value={escrowAccount?.budget.toNumber()}
                       />
-                    <label htmlFor="amount-paid">Amount Paid</label>
+                    <label htmlFor="amount-paid">Amount Paid (in SOL)</label>
                       <input
                           id="amount-paid"
                           type="number"
@@ -470,7 +469,7 @@ function FreelancerProjectCard({ address, details }: { address: PublicKey, detai
   return (
   <div>
     <div onClick={() => setIsOpen(true)} className={`rounded-3xl shadow-lg bg-gradient-to-br ${cardColor}
-                        to-slate-50 p-6 space-y-4 border border-gray-200
+                        p-6 space-y-4 border
                         cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden h-60`}>
       
       <h2 className="text-2xl font-semibold text-center text-indigo-600">
@@ -482,7 +481,7 @@ function FreelancerProjectCard({ address, details }: { address: PublicKey, detai
           <span className="font-medium text-gray-900">project Owner:</span> {details?.projectClient.toBase58()}
         </p>
         <p>
-          <span className="font-medium text-gray-900">Amount Paid:</span> {details?.amountPaid.toNumber() / 1000000000}
+          <span className="font-medium text-gray-900">Amount Paid:</span> {details?.amountPaid.toNumber() / 1000000000} SOL
         </p>
         <p>
           <span className="font-medium text-gray-900">Approved Tasks:</span> {details?.approvedTasks.toNumber()}
