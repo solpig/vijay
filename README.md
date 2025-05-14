@@ -21,6 +21,8 @@ It enables Clients and Freelancers to collaborate trustlessly using a milestone-
 * [Security & Trust](#security--trust)
 * [Roadmap](#roadmap)
 * [Screenshots](#demo-screenshots)
+* [Pitch](https://www.loom.com/share/3a2f7b3111de4521984a320792fc1868?sid=0c4fc0c9-6e4d-4e11-859d-9f9dc96cc932)
+* [Technical Demo](https://www.loom.com/share/a144cca663d649989e24fcec78baaf64?sid=02c9f799-51fc-4938-a7ca-4aec28e5ca52)
 * [Contributing](#contributing)
 * [License](#license)
 
