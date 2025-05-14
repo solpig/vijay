@@ -257,7 +257,16 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                         disabled={details?.assignedFreelancerProjectId.toNumber() !== 0}
                         value={budget}
                         required
-                        onChange={(e) => setBudget(Number(e.target.value))}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^\d*$/.test(value)) {
+                            setBudget(Number(value));
+                          }
+                        }}
+                        onBlur={(e) => {
+                          const val = Math.floor(Number(e.target.value));
+                          setBudget(val);
+                        }}
                       />
                     </div>)
                 }
@@ -343,7 +352,17 @@ function ClientProjectCard({ address, details }: { address: PublicKey, details: 
                      className="input input-bordered w-full mb-4"
                      value={totalTasks}
                      required
-                     onChange={(e) => setTotalTasks(Number(e.target.value))}
+                     onChange={(e) => {
+                        const value = e.target.value;
+                        if (/^\d*$/.test(value)) {
+                          setTotalTasks(Number(value));
+                        }
+                      }
+                     }
+                     onBlur={(e) => {
+                      const val = Math.floor(Number(e.target.value));
+                      setTotalTasks(val);
+                    }}
                    />
                    <button
                       className="btn btn-xs lg:btn-md btn-primary btn-outline text-blue-500 ml-auto"

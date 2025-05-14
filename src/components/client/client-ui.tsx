@@ -149,7 +149,17 @@ export function RegisterClient({ address }: { address: PublicKey }) {
               placeholder="Estimated Budget (in SOL)"
               className="input input-bordered w-full mb-4"
               value={projectBudget === 0 ? '' : projectBudget}
-              onChange={(e) => setprojectBudget(Number(e.target.value))}
+              onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d*$/.test(value)) {
+                    setprojectBudget(Number(value));
+                  }
+                }
+              }
+              onBlur={(e) => {
+                  const val = Math.floor(Number(e.target.value));
+                  setprojectBudget(val);
+              }}
             />
             <button
               id='client-project-publish-button'
