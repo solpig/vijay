@@ -11,6 +11,7 @@ It enables Clients and Freelancers to collaborate trustlessly using a milestone-
 
 * [Overview](#overview)
 * [Features](#features)
+* [Live Demo](https://vijay-woad.vercel.app/)
 * [Architecture](#architecture)
 * [Directory Structure](#directory-structure)
 * [Smart Contract Overview](#smart-contract-overview)
