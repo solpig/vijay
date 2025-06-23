@@ -9,7 +9,7 @@ export default function MyProjectsFeature() {
 
   return publicKey ? (
     <div>
-        <MyProjects address={publicKey} />
+        {/* <MyProjects address={publicKey} /> */}
     </div>
   ) : (
     <div className="max-w-4xl mx-auto">
