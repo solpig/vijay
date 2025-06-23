@@ -11,7 +11,7 @@ export default function FreelancersFeature() {
   return publicKey ? (
     <div>
       <AppHero title="Available Freelancers" subtitle={'Freelancers registered on platform'}>
-      <FreelancersList address={publicKey} />
+      {/* <FreelancersList address={publicKey} /> */}
       </AppHero>
     </div>
   ) : (
